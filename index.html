@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burgsta Games - ألعاب برجستا</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23c49b41'/><text x='50' y='60' text-anchor='middle' font-size='40' fill='white'>🍔</text></svg>">
+    
+    <!-- إعادة توجيه فورية -->
+    <meta http-equiv="refresh" content="0; url=./games.html">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #c49b41 0%, #f5f1e6 50%, #8b6914 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            direction: rtl;
+        }
+        
+        .redirect-message {
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .loading {
+            margin-top: 20px;
+        }
+        
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: white;
+            margin: 0 3px;
+            animation: loading 1.4s infinite both;
+        }
+        
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes loading {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="redirect-message">
+        <h2>🍔 مرحباً بك في Burgsta Games</h2>
+        <p>جاري تحميل صفحة الألعاب...</p>
+        <div class="loading">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+    
+    <script>
+        // إعادة توجيه JavaScript كبديل
+        setTimeout(() => {
+            window.location.href = './games.html';
+        }, 1000);
+    </script>
+</body>
+</html>

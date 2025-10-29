@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burgsta - السندوتشات المتساقطة</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23c49b41'/><text x='50' y='60' text-anchor='middle' font-size='40' fill='white'>🍔</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            background: linear-gradient(135deg, #f9f5e7 0%, #f0e6d2 25%, #e8dcc0 50%, #d4c4a0 75%, #c49b41 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            direction: rtl;
+        }
+        
+        #gameContainer {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: linear-gradient(to bottom, 
+                rgba(249, 245, 231, 0.9) 0%,
+                rgba(240, 230, 210, 0.8) 50%,
+                rgba(212, 196, 160, 0.7) 100%);
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #c49b41;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            z-index: 1000;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            border: 4px solid #c49b41;
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+        
+        /* تأثيرات خلفية متحركة */
+        .background-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-image: 
+                radial-gradient(circle at 20% 20%, #c49b41 2px, transparent 2px),
+                radial-gradient(circle at 80% 80%, #d4af37 1px, transparent 1px),
+                radial-gradient(circle at 40% 40%, #c49b41 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px, 70px 70px;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-pattern"></div>
+    <div id="gameContainer">
+        <div class="loading">
+            🍔 جاري تحميل السندوتشات المتساقطة...
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>

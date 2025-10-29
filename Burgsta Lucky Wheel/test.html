@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار لعبة عجلة الحظ</title>
+    <style>
+        body {
+            font-family: 'Cairo', Arial, sans-serif;
+            background: #f5f1e6;
+            margin: 20px;
+            direction: rtl;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #c49b41;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        button:hover {
+            background: #d4af37;
+        }
+        .status {
+            background: #e8dcc0;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 اختبار لعبة عجلة الحظ - Burgsta</h1>
+        
+        <div class="status" id="status">جاري التحميل...</div>
+        
+        <h2>أدوات الاختبار:</h2>
+        <button onclick="testSettings()">اختبار الإعدادات</button>
+        <button onclick="testStorage()">اختبار التخزين</button>
+        <button onclick="testGameManager()">اختبار مدير اللعبة</button>
+        <button onclick="resetGame()">إعادة تعيين اللعبة</button>
+        <button onclick="addTestPrizes()">إضافة جوائز للاختبار</button>
+        <button onclick="showStats()">عرض الإحصائيات</button>
+        <button onclick="exportData()">تصدير البيانات</button>
+        
+        <h2>حالة اللعبة:</h2>
+        <pre id="gameState">سيتم تحديث الحالة هنا...</pre>
+        
+        <h2>سجل الأحداث:</h2>
+        <div id="log"></div>
+    </div>
+
+    <script src="helpers.js"></script>
+    <script>
+        let gameManager;
+        
+        // تحميل مدير اللعبة للاختبار
+        class TestGameManager {
+            constructor() {
+                this.settings = null;
+                this.dailyLimits = {};
+                this.colors = {
+                    primary: '#c49b41',
+                    secondary: '#f5f1e6',
+                    dark: '#8b6914',
+                    light: '#fff9e6',
+                    text: '#5d4e37',
+                    accent: '#d4af37'
+                };
+            }
+
+            async loadSettings() {
+                try {
+                    const response = await fetch('./settings.json');
+                    this.settings = await response.json();
+                    this.initializeDailyLimits();
+                    return true;
+                } catch (error) {
+                    log('خطأ في تحميل الإعدادات: ' + error.message, 'error');
+                    return false;
+                }
+            }
+
+            initializeDailyLimits() {
+                const today = new Date().toDateString();
+                const savedDate = localStorage.getItem('burgsta_date');
+                
+                if (savedDate !== today) {
+                    localStorage.setItem('burgsta_date', today);
+                    localStorage.removeItem('burgsta_daily_limits');
+                }
+
+                const savedLimits = localStorage.getItem('burgsta_daily_limits');
+                if (savedLimits) {
+                    this.dailyLimits = JSON.parse(savedLimits);
+                } else {
+                    this.dailyLimits = { ...this.settings.daily_limits };
+                    this.saveDailyLimits();
+                }
+            }
+
+            saveDailyLimits() {
+                localStorage.setItem('burgsta_daily_limits', JSON.stringify(this.dailyLimits));
+            }
+
+            getAvailablePrizes() {
+                if (!this.dailyLimits || Object.keys(this.dailyLimits).length === 0) {
+                    return [];
+                }
+                return Object.keys(this.dailyLimits).filter(prize => this.dailyLimits[prize] > 0);
+            }
+        }
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString('ar-SA');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+            logDiv.innerHTML += `<div class="status ${className}">[${time}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type === 'error' ? 'error' : type === 'success' ? 'success' : ''}`;
+            statusDiv.textContent = message;
+        }
+        
+        function updateGameState() {
+            const state = {
+                date: BurgstaHelpers.Storage.get('burgsta_date'),
+                limits: BurgstaHelpers.Storage.get('burgsta_daily_limits'),
+                spins: BurgstaHelpers.Storage.get('burgsta_daily_spins'),
+                wins: BurgstaHelpers.Storage.get('burgsta_daily_wins'),
+                support: BurgstaHelpers.Performance.checkSupport()
+            };
+            
+            document.getElementById('gameState').textContent = JSON.stringify(state, null, 2);
+        }
+        
+        async function testSettings() {
+            log('بدء اختبار الإعدادات...');
+            
+            try {
+                const response = await fetch('./settings.json');
+                const settings = await response.json();
+                
+                if (settings.daily_limits && settings.probabilities) {
+                    log('✅ تم تحميل الإعدادات بنجاح', 'success');
+                    
+                    // التحقق من صحة الاحتماليات
+                    const totalProb = Object.values(settings.probabilities).reduce((sum, prob) => sum + prob, 0);
+                    if (totalProb === 100) {
+                        log('✅ مجموع الاحتماليات صحيح (100%)', 'success');
+                    } else {
+                        log(`⚠️ مجموع الاحتماليات: ${totalProb}% (يجب أن يكون 100%)`, 'error');
+                    }
+                } else {
+                    log('❌ هيكل الإعدادات غير صحيح', 'error');
+                }
+            } catch (error) {
+                log('❌ فشل في تحميل الإعدادات: ' + error.message, 'error');
+            }
+            
+            updateGameState();
+        }
+        
+        function testStorage() {
+            log('بدء اختبار التخزين...');
+            
+            const testKey = 'burgsta_test';
+            const testValue = { test: true, timestamp: Date.now() };
+            
+            if (BurgstaHelpers.Storage.set(testKey, testValue)) {
+                log('✅ كتابة التخزين تعمل', 'success');
+                
+                const retrieved = BurgstaHelpers.Storage.get(testKey);
+                if (retrieved && retrieved.test === true) {
+                    log('✅ قراءة التخزين تعمل', 'success');
+                    BurgstaHelpers.Storage.remove(testKey);
+                    log('✅ حذف التخزين يعمل', 'success');
+                } else {
+                    log('❌ قراءة التخزين لا تعمل', 'error');
+                }
+            } else {
+                log('❌ كتابة التخزين لا تعمل', 'error');
+            }
+            
+            updateGameState();
+        }
+        
+        async function testGameManager() {
+            log('بدء اختبار مدير اللعبة...');
+            
+            gameManager = new TestGameManager();
+            const success = await gameManager.loadSettings();
+            
+            if (success) {
+                log('✅ تم تحميل مدير اللعبة بنجاح', 'success');
+                
+                const availablePrizes = gameManager.getAvailablePrizes();
+                log(`📊 الجوائز المتاحة: ${availablePrizes.length}`, 'info');
+                availablePrizes.forEach(prize => {
+                    const count = gameManager.dailyLimits[prize];
+                    log(`  - ${prize}: ${count} متبقية`);
+                });
+            } else {
+                log('❌ فشل في تحميل مدير اللعبة', 'error');
+            }
+            
+            updateGameState();
+        }
+        
+        function resetGame() {
+            log('إعادة تعيين اللعبة...');
+            BurgstaHelpers.Debug.resetGame();
+        }
+        
+        function addTestPrizes() {
+            log('إضافة جوائز للاختبار...');
+            
+            const prizes = ['وجبة مجانية 🍔', 'خصم 50% 💸', 'مشروب مجاني 🥤', 'خصم 10% 💰'];
+            prizes.forEach(prize => {
+                BurgstaHelpers.Debug.addPrizes(prize, 5);
+            });
+            
+            log('✅ تم إضافة 5 جوائز لكل نوع', 'success');
+            updateGameState();
+        }
+        
+        function showStats() {
+            log('عرض الإحصائيات...');
+            
+            const stats = BurgstaHelpers.Analytics.getAllTimeStats();
+            log(`📊 إجمالي الدورات: ${stats.totalSpins}`);
+            log(`🏆 إجمالي الجوائز: ${stats.totalWins}`);
+            log(`📈 معدل الفوز: ${stats.winRate}%`);
+            
+            Object.entries(stats.prizeBreakdown).forEach(([prize, count]) => {
+                log(`  - ${prize}: ${count} مرة`);
+            });
+        }
+        
+        function exportData() {
+            log('تصدير البيانات...');
+            BurgstaHelpers.Debug.exportData();
+            log('✅ تم تصدير البيانات كملف JSON', 'success');
+        }
+        
+        // بدء الاختبارات التلقائية
+        window.addEventListener('DOMContentLoaded', async () => {
+            updateStatus('جاري تشغيل الاختبارات التلقائية...');
+            
+            // اختبار الدعم
+            const support = BurgstaHelpers.Performance.checkSupport();
+            log('🔍 فحص دعم المتصفح:');
+            Object.entries(support).forEach(([feature, supported]) => {
+                log(`  - ${feature}: ${supported ? '✅' : '❌'}`, supported ? 'success' : 'error');
+            });
+            
+            // اختبار الإعدادات
+            await testSettings();
+            
+            // اختبار التخزين
+            testStorage();
+            
+            // اختبار مدير اللعبة
+            await testGameManager();
+            
+            updateStatus('اكتملت الاختبارات التلقائية', 'success');
+            updateGameState();
+        });
+    </script>
+</body>
+</html>

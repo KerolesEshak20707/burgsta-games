@@ -1,0 +1,55 @@
+{
+  "name": "burgsta-lucky-wheel",
+  "version": "1.0.0",
+  "description": "لعبة عجلة الحظ المخصصة لمطعم Burgsta",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "live-server --port=8000",
+    "build": "echo 'اللعبة جاهزة للنشر'",
+    "test": "echo 'لا توجد اختبارات محددة'",
+    "reset": "echo 'إعادة تعيين بيانات اللعبة - افتح المتصفح واكتب BurgstaHelpers.Debug.resetGame() في Console'"
+  },
+  "keywords": [
+    "game",
+    "wheel",
+    "phaser",
+    "restaurant",
+    "arabic",
+    "burgsta",
+    "lucky-wheel",
+    "prizes"
+  ],
+  "author": "مطور لمطعم Burgsta",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/burgsta/lucky-wheel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/burgsta/lucky-wheel/issues"
+  },
+  "homepage": "https://github.com/burgsta/lucky-wheel#readme",
+  "dependencies": {
+    "phaser": "^3.70.0"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "files": [
+    "index.html",
+    "game.js",
+    "helpers.js",
+    "styles.css",
+    "settings.json",
+    "README.md"
+  ]
+}
