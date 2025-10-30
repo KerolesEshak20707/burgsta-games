@@ -1,13 +1,13 @@
-/* تحسينات بصرية إضافية للعبة عجلة الحظ - مُحسّنة لـ Responsive */
+/* تحسينات بصرية إضافية للعبة عجلة الحظ */
 
-/* ✅ تأثيرات الخلفية (تبقى كما هي، لكن مع ضمان الملء الكامل) */
+/* تأثيرات الخلفية */
 body::before {
     content: '';
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;  /* تغيير إلى نسبي */
-    height: 100vh; /* تغيير إلى نسبي */
+    width: 100%;
+    height: 100%;
     background: 
         radial-gradient(circle at 20% 80%, rgba(196, 155, 65, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
@@ -49,7 +49,7 @@ body::before {
     100% { transform: rotate(360deg); }
 }
 
-/* ✅ تأثيرات الجوال (تحسين Responsive مع قياسات نسبية) */
+/* تأثيرات الجوال */
 @media (max-width: 768px) {
     body {
         font-size: 14px;
@@ -58,11 +58,6 @@ body::before {
     .loading {
         font-size: 18px;
     }
-
-    /* تقليل حجم العناصر النسبيًا على الشاشات الصغيرة */
-    #gameContainer canvas {
-        image-rendering: pixelated; /* أو crisp-edges للألعاب */
-    }
 }
 
 /* تحسينات الأداء */
@@ -70,9 +65,6 @@ body::before {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: optimize-contrast;
     image-rendering: crisp-edges;
-    width: 100vw !important;  /* ضمان الملء */
-    height: 100vh !important; /* ضمان الملء */
-    display: block;
 }
 
 /* تأثيرات الهوفر للأزرار */
@@ -131,7 +123,3 @@ body::before {
         margin-top: 50px;
     }
 }
-
-/* ✅ إزالة التعديلات الخاصة بـ WebView غير المتوافقة (مثل zoom و max-width) لتجنب التشويه */
-/* بدلاً من ذلك، نعتمد على Viewport و Resize Script في index.html */
-/* إذا كان هناك حاجة لتصغير طفيف على أجهزة معينة، يمكن إضافته هنا بناءً على اختبار */
