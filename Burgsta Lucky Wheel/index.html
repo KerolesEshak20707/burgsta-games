@@ -1,90 +1,48 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <!-- ✅ إضافة Viewport للتوافق مع WebView -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-  <title>Burgsta - عجلة الحظ (مُحسّنة لـ Flutter WebView)</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23c49b41'/><text x='50' y='60' text-anchor='middle' font-size='40' fill='white'>🍔</text></svg>">
-
-  <!-- ربط ملف CSS المعدّل (styles.css) -->
-  <link rel="stylesheet" href="styles.css">
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
-
-    /* ✅ إعادة تعيين الهوامش وملء الشاشة بالكامل (قياسات نسبية) */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background: linear-gradient(135deg, #f5f1e6 0%, #e8dcc0 50%, #d4c4a0 100%);
-      font-family: 'Cairo', Arial, sans-serif;
-      touch-action: none; /* منع التمرير الافتراضي على الجوال */
-    }
-
-    #gameContainer {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-
-    .loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #c49b41;
-      font-size: 24px;
-      font-weight: 600;
-    }
-
-    /* ✅ إزالة أي تعديلات خاصة بـ WebView غير ضرورية (مثل zoom أو max-width) من CSS الإضافي */
-    /* تم نقل أي تحسينات ضرورية إلى styles.css المعدّل أدناه */
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burgsta - عجلة الحظ</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23c49b41'/><text x='50' y='60' text-anchor='middle' font-size='40' fill='white'>🍔</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f1e6 0%, #e8dcc0 50%, #d4c4a0 100%);
+            font-family: 'Cairo', Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        #gameContainer {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #c49b41;
+            font-size: 24px;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
-  <div id="gameContainer">
-    <div class="loading">جاري تحميل اللعبة...</div>
-  </div>
-
-  <!-- تحميل Phaser -->
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
-  <script src="helpers.js"></script>
-  <script src="game.js"></script>
-
-  <!-- ✅ كود JavaScript لضبط حجم Canvas تلقائيًا (خاص بـ Phaser) -->
-  <script>
-    function resizeGame() {
-      const canvas = document.querySelector('canvas');
-      if (!canvas) return;
-
-      // ضبط حجم Canvas ليملأ الشاشة بالكامل
-      canvas.style.width = window.innerWidth + 'px';
-      canvas.style.height = window.innerHeight + 'px';
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      // إذا كانت اللعبة تستخدم Phaser، أعد تهيئة الحجم داخل اللعبة
-      if (window.game && window.game.scale) {
-        window.game.scale.resize(window.innerWidth, window.innerHeight);
-      }
-    }
-
-    // استدعاء عند التحميل وعند تغيير الحجم
-    window.addEventListener('resize', resizeGame);
-    window.addEventListener('load', resizeGame);
-    window.addEventListener('orientationchange', resizeGame); // دعم لتدوير الشاشة على الجوال
-  </script>
+    <div id="gameContainer">
+        <div class="loading">جاري تحميل اللعبة...</div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+    <script src="helpers.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
