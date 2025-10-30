@@ -1,4 +1,9 @@
 // ===== مدير إعدادات اللعبة وإدارة البيانات =====
+window.addEventListener('resize', () => {
+  if (game && game.scale) {
+    game.scale.resize(window.innerWidth, window.innerHeight);
+  }
+});
 class GameManager {
     constructor() {
         this.settings = null;
