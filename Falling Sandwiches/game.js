@@ -2792,11 +2792,9 @@ const gameConfig = {
 };
 
 window.addEventListener('load', () => {
-
-    // 🧠 اكتشاف ما إذا كنا داخل تطبيق Flutter WebView
     const ua = navigator.userAgent.toLowerCase();
     const isFlutterApp =
-        ua.includes("wv") || ua.includes("flutter") || ua.includes("android webview");
+      ua.includes("wv") || ua.includes("flutter") || ua.includes("android webview");
 
     // 🔹 ضبط الحجم فقط في حالة تشغيل اللعبة داخل تطبيق Flutter
     if (isFlutterApp) {
@@ -2813,17 +2811,18 @@ window.addEventListener('load', () => {
         gameConfig.height = window.innerHeight;
     }
 
-    // 🔹 إنشاء اللعبة بعد تحديد الإعداد المناسب
+    // 🔹 إنشاء اللعبة
     const game = new Phaser.Game(gameConfig);
     window.game = game;
 
-    // إخفاء شاشة التحميل عند جاهزية اللعبة
+    // 🔹 إخفاء شاشة التحميل بعد التشغيل
     setTimeout(() => {
-        document.querySelector('.loading').style.display = 'none';
+        const loading = document.querySelector('.loading');
+        if (loading) loading.style.display = 'none';
     }, 1000);
 });
 
-// 🔹 تعديل حجم اللعبة عند تغيير حجم النافذة (فقط في المتصفح)
+// 🔹 تحديث الحجم عند تغيير حجم النافذة (في المتصفح فقط)
 window.addEventListener('resize', () => {
     if (window.game && !navigator.userAgent.toLowerCase().includes("wv")) {
         window.game.scale.refresh();
