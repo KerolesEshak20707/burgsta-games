@@ -2793,44 +2793,59 @@ const gameConfig = {
 
 // تشغيل اللعبة عند تحميل الصفحة
 // تشغيل اللعبة عند تحميل الإعدادات
-gameManager.loadSettings().then(success => {
-    if (success) {
+const gameConfig = {
+  type: Phaser.AUTO,
+  width: GAME_CONFIG.width,
+  height: GAME_CONFIG.height,
+  backgroundColor: GAME_CONFIG.colors.secondary,
+  parent: "gameContainer",
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity: { y: 400 },
+      debug: false,
+    },
+  },
+  scene: GameScene,
+  scale: {
+    mode: Phaser.Scale.RESIZE,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
+};
 
-        // 🧠 اكتشاف ما إذا كنا داخل تطبيق Flutter WebView
-        const ua = navigator.userAgent.toLowerCase();
-        const isFlutterApp =
-            ua.includes("wv") || ua.includes("flutter") || ua.includes("android webview");
+// 🔹 تشغيل اللعبة عند تحميل الإعدادات
+gameManager.loadSettings().then((success) => {
+  if (success) {
+    // 🧠 اكتشاف ما إذا كنا داخل تطبيق Flutter WebView
+    const ua = navigator.userAgent.toLowerCase();
+    const isFlutterApp =
+      ua.includes("wv") || ua.includes("flutter") || ua.includes("android webview");
 
-        // 🔹 ضبط الحجم فقط في حالة تشغيل اللعبة داخل تطبيق Flutter
-        if (isFlutterApp) {
-            console.log("📱 Running inside Flutter WebView — forcing desktop-like size");
-            if (config.scale) {
-                config.scale.mode = Phaser.Scale.FIT;
-                config.scale.autoCenter = Phaser.Scale.CENTER_BOTH;
-            }
-            config.width = 1280;
-            config.height = 720;
-        } else {
-            console.log("💻 Running in normal browser — using responsive mode");
-            config.width = window.innerWidth;
-            config.height = window.innerHeight;
-            window.addEventListener("resize", () => {
-                if (window.game && window.game.scale) {
-                    window.game.scale.resize(window.innerWidth, window.innerHeight);
-                }
-            });
-        }
-
-        // 🔹 إنشاء اللعبة بعد تحديد الإعداد المناسب
-        const game = new Phaser.Game(config);
-        window.game = game; // حفظ مرجع للعبة
-
-        // إخفاء شاشة التحميل بعد التشغيل
-        document.querySelector('.loading').style.display = 'none';
-
+    // 🔹 تعديل نمط العرض فقط داخل Flutter
+    if (isFlutterApp) {
+      console.log("📱 Running inside Flutter WebView — adjusting scale to FIT");
+      if (gameConfig.scale) {
+        gameConfig.scale.mode = Phaser.Scale.FIT;
+        gameConfig.scale.autoCenter = Phaser.Scale.CENTER_BOTH;
+      }
     } else {
-        document.querySelector('.loading').innerHTML =
-            'خطأ في تحميل اللعبة - تحقق من ملف settings.json';
-        console.error('فشل في تحميل إعدادات اللعبة');
+      console.log("💻 Running in normal browser — using RESIZE mode");
+      window.addEventListener("resize", () => {
+        if (window.game && window.game.scale) {
+          window.game.scale.refresh();
+        }
+      });
     }
+
+    // 🔹 إنشاء اللعبة
+    const game = new Phaser.Game(gameConfig);
+    window.game = game;
+
+    // 🔹 إخفاء شاشة التحميل بعد التشغيل
+    document.querySelector(".loading").style.display = "none";
+  } else {
+    document.querySelector(".loading").innerHTML =
+      "خطأ في تحميل اللعبة - تحقق من ملف settings.json";
+    console.error("فشل في تحميل إعدادات اللعبة");
+  }
 });
