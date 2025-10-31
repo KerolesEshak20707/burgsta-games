@@ -2793,14 +2793,15 @@ const gameConfig = {
 
 // تشغيل اللعبة عند تحميل الصفحة
 // تشغيل اللعبة عند تحميل الإعدادات
+
+const gameManager = new GameManager();
+
 gameManager.loadSettings().then((success) => {
   if (success) {
-    // 🧠 اكتشاف ما إذا كنا داخل تطبيق Flutter WebView
     const ua = navigator.userAgent.toLowerCase();
     const isFlutterApp =
       ua.includes("wv") || ua.includes("flutter") || ua.includes("android webview");
 
-    // 🔹 تعديل نمط العرض فقط داخل Flutter
     if (isFlutterApp) {
       console.log("📱 Running inside Flutter WebView — adjusting scale to FIT");
       if (gameConfig.scale) {
@@ -2816,11 +2817,9 @@ gameManager.loadSettings().then((success) => {
       });
     }
 
-    // 🔹 إنشاء اللعبة
     const game = new Phaser.Game(gameConfig);
     window.game = game;
 
-    // 🔹 إخفاء شاشة التحميل بعد التشغيل
     document.querySelector(".loading").style.display = "none";
   } else {
     document.querySelector(".loading").innerHTML =
