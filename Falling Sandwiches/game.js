@@ -2791,20 +2791,41 @@ const gameConfig = {
     }
 };
 
-// تشغيل اللعبة عند تحميل الصفحة
 window.addEventListener('load', () => {
+
+    // 🧠 اكتشاف ما إذا كنا داخل تطبيق Flutter WebView
+    const ua = navigator.userAgent.toLowerCase();
+    const isFlutterApp =
+        ua.includes("wv") || ua.includes("flutter") || ua.includes("android webview");
+
+    // 🔹 ضبط الحجم فقط في حالة تشغيل اللعبة داخل تطبيق Flutter
+    if (isFlutterApp) {
+        console.log("📱 Running inside Flutter WebView — forcing desktop-like size");
+        if (gameConfig.scale) {
+            gameConfig.scale.mode = Phaser.Scale.FIT;
+            gameConfig.scale.autoCenter = Phaser.Scale.CENTER_BOTH;
+        }
+        gameConfig.width = 1280;
+        gameConfig.height = 720;
+    } else {
+        console.log("💻 Running in normal browser — using responsive mode");
+        gameConfig.width = window.innerWidth;
+        gameConfig.height = window.innerHeight;
+    }
+
+    // 🔹 إنشاء اللعبة بعد تحديد الإعداد المناسب
     const game = new Phaser.Game(gameConfig);
     window.game = game;
-    
+
     // إخفاء شاشة التحميل عند جاهزية اللعبة
     setTimeout(() => {
         document.querySelector('.loading').style.display = 'none';
     }, 1000);
 });
 
-// تعديل حجم اللعبة عند تغيير حجم النافذة
+// 🔹 تعديل حجم اللعبة عند تغيير حجم النافذة (فقط في المتصفح)
 window.addEventListener('resize', () => {
-    if (window.game) {
+    if (window.game && !navigator.userAgent.toLowerCase().includes("wv")) {
         window.game.scale.refresh();
     }
 });
