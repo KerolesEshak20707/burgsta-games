@@ -2791,36 +2791,20 @@ const gameConfig = {
     }
 };
 
-const gameManager = new GameManager();
-
-gameManager.loadSettings().then((success) => {
-  if (success) {
-    const ua = navigator.userAgent.toLowerCase();
-    const isFlutterApp =
-      ua.includes("wv") || ua.includes("flutter") || ua.includes("android webview");
-
-    if (isFlutterApp) {
-      console.log("📱 Running inside Flutter WebView — adjusting scale to FIT");
-      if (gameConfig.scale) {
-        gameConfig.scale.mode = Phaser.Scale.FIT;
-        gameConfig.scale.autoCenter = Phaser.Scale.CENTER_BOTH;
-      }
-    } else {
-      console.log("💻 Running in normal browser — using RESIZE mode");
-      window.addEventListener("resize", () => {
-        if (window.game && window.game.scale) {
-          window.game.scale.refresh();
-        }
-      });
-    }
-
+// تشغيل اللعبة عند تحميل الصفحة
+window.addEventListener('load', () => {
     const game = new Phaser.Game(gameConfig);
     window.game = game;
+    
+    // إخفاء شاشة التحميل عند جاهزية اللعبة
+    setTimeout(() => {
+        document.querySelector('.loading').style.display = 'none';
+    }, 1000);
+});
 
-    document.querySelector(".loading").style.display = "none";
-  } else {
-    document.querySelector(".loading").innerHTML =
-      "خطأ في تحميل اللعبة - تحقق من ملف settings.json";
-    console.error("فشل في تحميل إعدادات اللعبة");
-  }
+// تعديل حجم اللعبة عند تغيير حجم النافذة
+window.addEventListener('resize', () => {
+    if (window.game) {
+        window.game.scale.refresh();
+    }
 });
