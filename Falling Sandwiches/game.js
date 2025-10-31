@@ -2793,27 +2793,6 @@ const gameConfig = {
 
 // تشغيل اللعبة عند تحميل الصفحة
 // تشغيل اللعبة عند تحميل الإعدادات
-const gameConfig = {
-  type: Phaser.AUTO,
-  width: GAME_CONFIG.width,
-  height: GAME_CONFIG.height,
-  backgroundColor: GAME_CONFIG.colors.secondary,
-  parent: "gameContainer",
-  physics: {
-    default: "arcade",
-    arcade: {
-      gravity: { y: 400 },
-      debug: false,
-    },
-  },
-  scene: GameScene,
-  scale: {
-    mode: Phaser.Scale.RESIZE,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-  },
-};
-
-// 🔹 تشغيل اللعبة عند تحميل الإعدادات
 gameManager.loadSettings().then((success) => {
   if (success) {
     // 🧠 اكتشاف ما إذا كنا داخل تطبيق Flutter WebView
