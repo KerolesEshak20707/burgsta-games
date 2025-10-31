@@ -2791,9 +2791,6 @@ const gameConfig = {
     }
 };
 
-// تشغيل اللعبة عند تحميل الصفحة
-// تشغيل اللعبة عند تحميل الإعدادات
-
 const gameManager = new GameManager();
 
 gameManager.loadSettings().then((success) => {
