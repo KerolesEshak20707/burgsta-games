@@ -429,7 +429,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('وافل شوكلاته', './images/وافل شوكلاته.png');
         
         // تحميل صورة خصم 5% بالاسم العربي
-        this.load.image('خصم 5%', './images/خصم 5%.png');
+        this.load.image('خصم5', './images/خصم5.png');
         
         // تحميل صورة الموهيتو بالاسم العربي
         this.load.image('موهيتو', './images/موهيتو.png');
@@ -438,7 +438,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('دليفري', './images/دليفري.png');
         
         // تحميل صورة خصم 15% بالاسم العربي
-        this.load.image('خصم 15%', './images/خصم 15%.png');
+        this.load.image('خصم15', './images/خصم15.png');
         
         // تحميل صورة الأورجينال برجر بالاسم العربي
         this.load.image('اورجينال', './images/اورجينال.png');
@@ -2116,10 +2116,10 @@ class GameScene extends Phaser.Scene {
     addPrizeImage(x, y, prizeName, wheelRadius) {
         // خريطة أسماء الصور للهدايا - تربط اسم الجائزة بالاسم المحمل للصورة
         const imageMap = {
-            'خصم 5% 💰': 'خصم 5%',
+            'خصم 5% 💰': 'خصم5',
             'فرى دليفرى 🛵': 'دليفري',
             'موهيتو فرى 🍹': 'موهيتو',
-            'خصم 15% 💸': 'خصم 15%',
+            'خصم 15% 💸': 'خصم15',
             'كومبو فرى 🍟🧃': 'كومبو فري',
             'وافل شكولاته 🥞': 'وافل شوكلاته',
             'اورجينال برجر 🍔': 'اورجينال',
@@ -2144,7 +2144,7 @@ class GameScene extends Phaser.Scene {
                     const imageWidth = Math.max(110, wheelRadius * 0.48); // أعرض بكثير
                     const imageHeight = Math.max(65, wheelRadius * 0.28); // أقصر من العرض
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
-                } else if (fileName === 'خصم 15%') {
+                } else if (fileName === 'خصم15') {
                     // لخصم 15%: مربع مناسب لملء الخانة
                     const imageSize = Math.max(85, wheelRadius * 0.38); // حجم جيد
                     prizeImage.setDisplaySize(imageSize, imageSize);
