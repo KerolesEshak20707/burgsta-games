@@ -424,18 +424,7 @@ class GameScene extends Phaser.Scene {
             progressBox.destroy();
         });
 
-        // تحميل صور الهدايا (اختياري - ستظهر إذا كانت متوفرة)
-        const images = [
-            'delivery', 'mojito', 'discount15',
-            'combo', 'burger', 'chicken_lava',
-            'try_later', 'better_luck'
-        ];
-
-        images.forEach(imageName => {
-            // تحميل الصور مع معالجة الأخطاء (لا تتوقف اللعبة إذا لم توجد الصور)
-            this.load.image(imageName, `./images/${imageName}.png`);
-        });
-        
+        // تحميل صور الهدايا بالأسماء العربية
         // تحميل صورة الوافل بالاسم العربي
         this.load.image('وافل شوكلاته', './images/وافل شوكلاته.png');
         
