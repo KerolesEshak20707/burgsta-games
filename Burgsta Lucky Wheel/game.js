@@ -15,6 +15,7 @@ class GameManager {
 
     async loadSettings() {
         try {
+            // تحميل الإعدادات (بدون تعديل على الرابط - لا نضيف cache-busting هنا)
             const response = await fetch('./settings.json');
             this.settings = await response.json();
             this.initializeDailyLimits();
@@ -26,18 +27,34 @@ class GameManager {
     }
 
     initializeDailyLimits() {
-        const today = new Date().toDateString();
-        const savedDate = localStorage.getItem('burgsta_date');
+    const today = new Date().toDateString();
+    const savedDate = localStorage.getItem('burgsta_date');
+
+    // لا نجبر على إعادة تعيين بيانات المستخدم تلقائياً
+    // التحقق من تطابق الجوائز المحفوظة مع الإعدادات الحالية
+    const savedLimits = localStorage.getItem('burgsta_daily_limits');
+    let needsReset = false; // لا نجبر على إعادة التعيين
         
-        // إذا كان يوم جديد، قم بتصفير العد
-        if (savedDate !== today) {
+        if (savedLimits) {
+            const parsed = JSON.parse(savedLimits);
+            const currentPrizes = Object.keys(this.settings.daily_limits);
+            const savedPrizes = Object.keys(parsed);
+            
+            // إذا اختلفت الجوائز، امسح البيانات المحفوظة
+            if (currentPrizes.length !== savedPrizes.length || 
+                !currentPrizes.every(prize => savedPrizes.includes(prize))) {
+                needsReset = true;
+                console.log('🔄 تم اكتشاف تحديث في الجوائز، إعادة تعيين البيانات...');
+            }
+        }
+        
+        // إذا كان يوم جديد أو تحديث في الجوائز، قم بتصفير العد
+        if (savedDate !== today || needsReset) {
             localStorage.setItem('burgsta_date', today);
             localStorage.removeItem('burgsta_daily_limits');
-        }
-
-        // تحميل الحدود المحفوظة أو إنشاء جديدة
-        const savedLimits = localStorage.getItem('burgsta_daily_limits');
-        if (savedLimits) {
+            this.dailyLimits = { ...this.settings.daily_limits };
+            this.saveDailyLimits();
+        } else if (savedLimits) {
             this.dailyLimits = JSON.parse(savedLimits);
         } else {
             this.dailyLimits = { ...this.settings.daily_limits };
@@ -162,19 +179,25 @@ class GameManager {
         let baseGenerosity;
         let scarcityMultiplier;
         
-        if (totalDailyPrizes <= 5) {
-            // مطعم صغير جداً - بخيل جداً لحماية الجوائز القليلة
+        if (totalDailyPrizes <= 9) {
+            // مطعم صغير جداً جداً - بخيل جداً جداً لحماية الجوائز القليلة
+            generosityLevel = "بخيل جداً جداً";
+            baseGenerosity = 0.85; // 85% حاول لاحقاً في البداية
+            scarcityMultiplier = 4.5;
+            // تم تحديد النمط: بخيل جداً جداً
+        } else if (totalDailyPrizes <= 20) {
+            // مطعم صغير - بخيل جداً حسب طلب المستخدم (10-20 جوائز = بخيل جداً)
             generosityLevel = "بخيل جداً";
             baseGenerosity = 0.75; // 75% حاول لاحقاً في البداية
             scarcityMultiplier = 4.0;
             // تم تحديد النمط: بخيل جداً
-        } else if (totalDailyPrizes <= 15) {
-            // مطعم صغير - بخيل لحماية الميزانية
+        } else if (totalDailyPrizes <= 35) {
+            // مطعم متوسط صغير - بخيل لحماية الميزانية
             generosityLevel = "بخيل";
-            baseGenerosity = 0.60; // 60% حاول لاحقاً في البداية
+            baseGenerosity = 0.55; // 55% حاول لاحقاً في البداية
             scarcityMultiplier = 3.0;
             // تم تحديد النمط: بخيل
-        } else if (totalDailyPrizes <= 50) {
+        } else if (totalDailyPrizes <= 60) {
             // مطعم متوسط - متوازن
             generosityLevel = "متوسط";
             baseGenerosity = 0.35; // 35% حاول لاحقاً في البداية
@@ -215,16 +238,18 @@ class GameManager {
 
         // حدود ذكية بناءً على مستوى الكرم
         let minChance, maxChance;
-        if (generosityLevel === "بخيل جداً") {
+        if (generosityLevel === "بخيل جداً جداً") {
+            minChance = 0.75; maxChance = 0.98;
+        } else if (generosityLevel === "بخيل جداً") {
             minChance = 0.65; maxChance = 0.95;
         } else if (generosityLevel === "بخيل") {
-            minChance = 0.45; maxChance = 0.90;
+            minChance = 0.45; maxChance = 0.88;
         } else if (generosityLevel === "متوسط") {
-            minChance = 0.25; maxChance = 0.80;
+            minChance = 0.25; maxChance = 0.75;
         } else if (generosityLevel === "كريم") {
-            minChance = 0.15; maxChance = 0.70;
+            minChance = 0.15; maxChance = 0.65;
         } else {
-            minChance = 0.05; maxChance = 0.60;
+            minChance = 0.05; maxChance = 0.55;
         }
         
         tryLaterChance = Math.min(Math.max(tryLaterChance, minChance), maxChance);
@@ -232,7 +257,8 @@ class GameManager {
         // تم حساب الإحصائيات
 
         // قرار استخدام "حظ سعيد" بدلاً من جائزة حقيقية (أقل مع المطاعم الصغيرة)
-        const luckChance = generosityLevel === "بخيل جداً" ? 0.02 : 
+        const luckChance = generosityLevel === "بخيل جداً جداً" ? 0.01 : 
+                          generosityLevel === "بخيل جداً" ? 0.02 : 
                           generosityLevel === "بخيل" ? 0.03 : 
                           0.05 + (consumptionRatio * 0.1);
         const shouldUseLuck = Math.random() < luckChance;
@@ -370,7 +396,77 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        // سيتم إنشاء الأصوات عند أول تفاعل للمستخدم
+        // إضافة مؤشر تحميل بسيط
+        const { width, height } = this.cameras.main;
+        
+        // خلفية تحميل
+        const loadingBg = this.add.rectangle(width / 2, height / 2, width, height, 0x0D5016);
+        
+        // شريط تحميل ذهبي
+        const progressBar = this.add.graphics();
+        const progressBox = this.add.graphics();
+        progressBox.fillStyle(0x1F1F1F, 0.9); // خلفية داكنة للشريط
+        progressBox.fillRect(width / 2 - 160, height / 2 - 25, 320, 50);
+        
+        // إطار ذهبي للشريط
+        progressBox.lineStyle(3, 0xFFD700, 1);
+        progressBox.strokeRect(width / 2 - 160, height / 2 - 25, 320, 50);
+        
+        this.load.on('progress', (value) => {
+            progressBar.clear();
+            progressBar.fillStyle(0xFFD700, 1);
+            progressBar.fillRect(width / 2 - 150, height / 2 - 15, 300 * value, 30);
+        });
+        
+        this.load.on('complete', () => {
+            loadingBg.destroy();
+            progressBar.destroy();
+            progressBox.destroy();
+        });
+
+        // تحميل صور الهدايا (اختياري - ستظهر إذا كانت متوفرة)
+        const images = [
+            'delivery', 'mojito', 'discount15',
+            'combo', 'burger', 'chicken_lava',
+            'try_later', 'better_luck'
+        ];
+
+        images.forEach(imageName => {
+            // تحميل الصور مع معالجة الأخطاء (لا تتوقف اللعبة إذا لم توجد الصور)
+            this.load.image(imageName, `./images/${imageName}.png`);
+        });
+        
+        // تحميل صورة الوافل بالاسم العربي
+        this.load.image('وافل شوكلاته', './images/وافل شوكلاته.png');
+        
+        // تحميل صورة خصم 5% بالاسم العربي
+        this.load.image('خصم 5%', './images/خصم 5%.png');
+        
+        // تحميل صورة الموهيتو بالاسم العربي
+        this.load.image('موهيتو', './images/موهيتو.png');
+        
+        // تحميل صورة الدليفري بالاسم العربي
+        this.load.image('دليفري', './images/دليفري.png');
+        
+        // تحميل صورة خصم 15% بالاسم العربي
+        this.load.image('خصم 15%', './images/خصم 15%.png');
+        
+        // تحميل صورة الأورجينال برجر بالاسم العربي
+        this.load.image('اورجينال', './images/اورجينال.png');
+        
+        // تحميل صورة التشيكن لافا بالاسم العربي
+        this.load.image('تشكن لافا', './images/تشكن لافا.png');
+        
+        // تحميل صورة الكومبو بالاسم العربي
+        this.load.image('كومبو فري', './images/كومبو فري.png');
+        
+        // تحميل صورة "حاول وقت لاحق"
+        this.load.image('حاول وقت لاحق', './images/حاول وقت لاحق.png');
+
+        // إضافة مستمع للأخطاء لتجاهل الصور المفقودة
+        this.load.on('loaderror', (file) => {
+            console.log(`📷 صورة غير متوفرة: ${file.key}.png - ستعمل اللعبة بالنصوص فقط`);
+        });
     }
 
     // دالة خلط المصفوفات عشوائياً (Fisher-Yates shuffle)
@@ -388,6 +484,8 @@ class GameScene extends Phaser.Scene {
 
         // خلفية متدرجة احترافية
         this.createProfessionalBackground(width, height);
+
+        // تمت إزالة مؤشر التحديث المؤقت لعدم التأثير على واجهة المستخدم النهائية
 
         // شعار المطعم في الأعلى مع تأثير إضاءة
         const restaurantName = this.add.text(width / 2, 80, 'BURGSTA', {
@@ -420,15 +518,25 @@ class GameScene extends Phaser.Scene {
         this.originalPrizes = Object.keys(gameManager.settings.probabilities || {});
         this.availablePrizes = gameManager.getAvailablePrizes();
         
+        // 📊 مراقبة الهدايا المحملة
+        console.log('🎁 الهدايا المحملة من الإعدادات:', this.originalPrizes);
+        console.log('📋 الهدايا المتاحة:', this.availablePrizes);
+        console.log('⚙️ إعدادات daily_limits:', gameManager.settings.daily_limits);
+        
         // خلط الجوائز عشوائياً لتجنب التكرار المتوقع (خلط إضافي)
         let shuffledPrizes = this.shuffleArray([...this.originalPrizes]);
         shuffledPrizes = this.shuffleArray(shuffledPrizes); // خلط مزدوج للتأكد
         
-        // إضافة "حاول في وقت لاحق" في موضع عشوائي (مع خلط إضافي)
-        const positions = Array.from({length: shuffledPrizes.length + 1}, (_, i) => i);
-        const shuffledPositions = this.shuffleArray(positions);
-        const randomPosition = shuffledPositions[0];
-        shuffledPrizes.splice(randomPosition, 0, "حاول في وقت لاحق ⏰");
+        // إضافة الرسائل النظام في مواضع عشوائية
+        const systemMessages = ["حاول في وقت لاحق ⏰"];
+        
+        // إضافة كل رسالة في موضع عشوائي
+        systemMessages.forEach(message => {
+            const positions = Array.from({length: shuffledPrizes.length + 1}, (_, i) => i);
+            const shuffledPositions = this.shuffleArray(positions);
+            const randomPosition = shuffledPositions[0];
+            shuffledPrizes.splice(randomPosition, 0, message);
+        });
         
         // خلط نهائي للتأكد من العشوائية الكاملة
         shuffledPrizes = this.shuffleArray(shuffledPrizes);
@@ -439,11 +547,11 @@ class GameScene extends Phaser.Scene {
         
         // تم تحميل الجوائز بنجاح وخلطها عشوائياً
 
-        // إنشاء العجلة في المنتصف
-        this.createWheel(width, height);
-        
-        // زر البدء تحت العجلة
+        // زر البدء أولاً (ليكون خلف العجلة)
         this.createPlayButton(width, height);
+        
+        // إنشاء العجلة في المنتصف (فوق الزر)
+        this.createWheel(width, height);
         
         // إضافة تأثيرات الإضاءة المحيطة
         this.createAmbientLighting(width, height);
@@ -468,35 +576,39 @@ class GameScene extends Phaser.Scene {
     }
 
     createProfessionalBackground(width, height) {
-        // خلفية متدرجة أساسية
+        // خلفية كازينو متدرجة (أخضر داكن إلى أخضر أفتح)
         const bgGradient = this.add.graphics();
-        bgGradient.fillGradientStyle(0xf9f5e7, 0xf9f5e7, 0xe8dcc0, 0xd4c4a0, 1);
+        bgGradient.fillGradientStyle(0x0D5016, 0x126B1B, 0x0F5718, 0x0B4014, 1);
         bgGradient.fillRect(0, 0, width, height);
 
-        // دوائر زخرفية ذهبية شفافة
-        for (let i = 0; i < 8; i++) {
+        // نقوش كازينو - معين الورق
+        this.createCasinoPattern(width, height);
+
+        // دوائر ذهبية لامعة كالكازينو (مقللة للسرعة)
+        for (let i = 0; i < 4; i++) {
             const circle = this.add.graphics();
-            circle.lineStyle(2, 0xc49b41, 0.1);
+            circle.lineStyle(3, 0xFFD700, 0.15); // ذهبي لامع
             const x = (width / 9) * (i + 1);
             const y = height / 6 + Math.sin(i) * 50;
             const radius = 40 + Math.random() * 30;
             circle.strokeCircle(x, y, radius);
             
-            // تأثير حركة لطيفة للدوائر
+            // تأثير حركة لطيفة للدوائر (مع تأخير)
             this.tweens.add({
                 targets: circle,
                 y: y + Math.sin(i) * 20,
                 duration: 3000 + i * 500,
                 yoyo: true,
                 repeat: -1,
-                ease: 'Sine.easeInOut'
+                ease: 'Sine.easeInOut',
+                delay: 1000 + i * 200 // تأخير لتقليل الحمل
             });
         }
 
-        // دوائر زخرفية في الأسفل
-        for (let i = 0; i < 6; i++) {
+        // دوائر نحاسية في الأسفل (مقللة للسرعة)
+        for (let i = 0; i < 3; i++) {
             const circle = this.add.graphics();
-            circle.lineStyle(1, 0xd4af37, 0.08);
+            circle.lineStyle(2, 0xB8860B, 0.12); // نحاسي داكن
             const x = (width / 7) * (i + 1);
             const y = height * 5/6 + Math.cos(i) * 30;
             const radius = 25 + Math.random() * 20;
@@ -508,13 +620,14 @@ class GameScene extends Phaser.Scene {
                 duration: 4000 + i * 300,
                 yoyo: true,
                 repeat: -1,
-                ease: 'Sine.easeInOut'
+                ease: 'Sine.easeInOut',
+                delay: 1500 + i * 300 // تأخير إضافي
             });
         }
 
-        // خطوط زخرفية أنيقة
+        // خطوط زخرفية ذهبية كالكازينو
         const decorLines = this.add.graphics();
-        decorLines.lineStyle(1, 0xc49b41, 0.3);
+        decorLines.lineStyle(2, 0xFFD700, 0.2); // خطوط ذهبية
         
         // خطوط علوية
         decorLines.moveTo(width / 2 - 250, 50);
@@ -535,9 +648,9 @@ class GameScene extends Phaser.Scene {
     }
 
     createFloatingParticles(width, height) {
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 6; i++) { // قللت من 12 إلى 6
             const particle = this.add.graphics();
-            particle.fillStyle(0xc49b41, 0.6);
+            particle.fillStyle(0xFFD700, 0.4); // ذهبي أكثر إشراقاً
             const size = 2 + Math.random() * 3;
             particle.fillCircle(0, 0, size);
             
@@ -560,10 +673,58 @@ class GameScene extends Phaser.Scene {
         }
     }
 
+    createCasinoPattern(width, height) {
+        // نقوش معين الورق (♦ ♠ ♥ ♣) كالكازينو
+        const suits = ['♠', '♣', '♦', '♥'];
+        const colors = [0xFFD700, 0xFF6B6B, 0xFFD700, 0xFF6B6B]; // ذهبي وأحمر
+        
+        // نقوش في الخلفية (مقللة للسرعة)
+        for (let i = 0; i < 8; i++) {
+            const suitIndex = i % 4;
+            const suitText = this.add.text(
+                Math.random() * width,
+                Math.random() * height,
+                suits[suitIndex],
+                {
+                    fontSize: '24px',
+                    color: `#${colors[suitIndex].toString(16).padStart(6, '0')}`,
+                    alpha: 0.08
+                }
+            );
+            
+            // حركة دوران بطيئة
+            this.tweens.add({
+                targets: suitText,
+                rotation: Math.PI * 2,
+                duration: 20000 + Math.random() * 10000,
+                repeat: -1,
+                ease: 'Linear'
+            });
+        }
+
+        // خطوط شبكة كازينو رفيعة
+        const grid = this.add.graphics();
+        grid.lineStyle(1, 0xFFD700, 0.05);
+        
+        // خطوط عمودية (مقللة)
+        for (let x = 200; x < width; x += 300) {
+            grid.moveTo(x, 0);
+            grid.lineTo(x, height);
+        }
+        
+        // خطوط أفقية (مقللة)
+        for (let y = 200; y < height; y += 300) {
+            grid.moveTo(0, y);
+            grid.lineTo(width, y);
+        }
+        
+        grid.strokePath();
+    }
+
     createWheel(width, height) {
         const centerX = width / 2;
         const centerY = height / 2 + 20; // نزل العجلة أكثر
-        const radius = 180;
+        const radius = Math.min(width, height) * 0.32; // حجم أكبر يتكيف مع الشاشة (كان 180)
         
         this.sectorAngle = 360 / this.prizes.length;
         
@@ -578,14 +739,44 @@ class GameScene extends Phaser.Scene {
         for (let i = 0; i < this.prizes.length; i++) {
             const startAngle = (i * this.sectorAngle - 90) * Math.PI / 180;
             const endAngle = ((i + 1) * this.sectorAngle - 90) * Math.PI / 180;
-            const color = colors[i % colors.length];
             
-            // رسم القطاع مع تدرج لوني - جميع الجوائز تبدو متشابهة
+            // ألوان خاصة للجوائز المحددة
+            let color;
+            let lighterColor;
+            if (this.prizes[i] && this.prizes[i].includes('وافل شكولاته')) {
+                color = 0x6a1b9a; // اللون البنفسجي للوافل
+                lighterColor = 0x8b4dbf; // لون فاتح مناسب للوافل
+            } else if (this.prizes[i] && this.prizes[i].includes('خصم 5%')) {
+                color = 0xff8c00; // اللون البرتقالي لخصم 5%
+                lighterColor = 0xffa500; // برتقالي فاتح
+            } else if (this.prizes[i] && this.prizes[i].includes('موهيتو فرى')) {
+                color = 0xcceff5; // اللون الأزرق الفاتح للموهيتو
+                lighterColor = 0xe0f7ff; // أزرق فاتح أكثر
+            } else if (this.prizes[i] && this.prizes[i].includes('فرى دليفرى')) {
+                color = 0x001f3f; // اللون الأزرق الداكن للدليفري
+                lighterColor = 0x003d5c; // أزرق داكن أفتح قليلاً
+            } else if (this.prizes[i] && this.prizes[i].includes('خصم 15%')) {
+                color = 0xff8c00; // اللون البرتقالي لخصم 15% (نفس لون خصم 5%)
+                lighterColor = 0xffa500; // برتقالي فاتح
+            } else if (this.prizes[i] && this.prizes[i].includes('اورجينال برجر')) {
+                color = 0xd2b48c; // لون بني فاتح جميل للبرجر
+                lighterColor = 0xe6d3b7; // بني فاتح أكثر
+            } else if (this.prizes[i] && this.prizes[i].includes('كومبو فرى')) {
+                color = 0xdc143c; // لون أحمر للكومبو
+                lighterColor = 0xff6b6b; // أحمر فاتح
+            } else if (this.prizes[i] && this.prizes[i].includes('حاول في وقت لاحق')) {
+                color = 0x000000; // لون أسود للخلفية
+                lighterColor = 0x333333; // رمادي داكن للتدرج
+            } else {
+                color = colors[i % colors.length];
+                // ألوان فاتحة مخلوطة عشوائياً لتجنب التكرار المتوقع
+                const baseLighterColors = [0xe8dcc0, 0xf0e6d2, 0xd4c5a0, 0xc9b876, 0xf5f1e6, 0xede4d2];
+                const lighterColors = this.shuffleArray([...baseLighterColors]);
+                lighterColor = lighterColors[i % lighterColors.length];
+            }
+            
+            // رسم القطاع مع تدرج لوني
             const sector = this.add.graphics();
-            // ألوان فاتحة مخلوطة عشوائياً لتجنب التكرار المتوقع
-            const baseLighterColors = [0xe8dcc0, 0xf0e6d2, 0xd4c5a0, 0xc9b876, 0xf5f1e6, 0xede4d2];
-            const lighterColors = this.shuffleArray([...baseLighterColors]);
-            const lighterColor = lighterColors[i % lighterColors.length];
             
             sector.fillGradientStyle(color, color, lighterColor, color, 0.9);
             sector.lineStyle(3, 0x8b6914, 1);
@@ -603,43 +794,79 @@ class GameScene extends Phaser.Scene {
             innerShadow.arc(0, 0, radius - 5, startAngle, endAngle);
             innerShadow.strokePath();
             
-            // نص الجائزة - جميع النصوص تبدو متشابهة دون أي إشارة لحالة التوفر
+            // نص/صورة الجائزة
             const textAngle = (startAngle + endAngle) / 2;
-            const textRadius = radius * 0.65;
+            const textRadius = radius * 0.70; // أقرب للحافة مع العجلة الكبيرة
             const textX = Math.cos(textAngle) * textRadius;
             const textY = Math.sin(textAngle) * textRadius;
             
-            const prizeText = this.add.text(textX, textY, this.prizes[i], {
-                fontFamily: 'Cairo, Arial',
-                fontSize: '14px',
-                fontWeight: '700',
-                color: color === 0xe8dcc0 ? '#5d4e37' : '#ffffff',
-                align: 'center',
-                wordWrap: { width: 70 },
-                stroke: color === 0xe8dcc0 ? '#ffffff' : '#8b6914',
-                strokeThickness: 1,
-                shadow: {
-                    offsetX: 1,
-                    offsetY: 1,
-                    color: 'rgba(0,0,0,0.5)',
-                    blur: 2,
-                    fill: true
-                }
-            }).setOrigin(0.5);
+            // حساب حجم الخط بناءً على حجم العجلة
+            const fontSize = Math.max(16, Math.min(24, radius / 12));
             
-            this.wheel.add([sector, innerShadow, prizeText]);
+            // إضافة صورة الجائزة إذا كانت متوفرة (خاصة للوافل)
+            const prizeImageResult = this.addPrizeImage(textX, textY - fontSize * 0.3, this.prizes[i], radius);
+            
+            // الحصول على صورة الجائزة
+            const prizeImage = prizeImageResult;
+            
+            // عرض النص دائماً، لكن إذا وجدت الصورة، نزل النص تحتها
+            let displayText = this.prizes[i];
+            
+            // إذا كانت الصورة موجودة، لا نعرض نص للجوائز التي لها صور
+            if (prizeImage && (this.prizes[i].includes('وافل شكولاته') || this.prizes[i].includes('خصم 5%') || this.prizes[i].includes('موهيتو فرى') || this.prizes[i].includes('فرى دليفرى') || this.prizes[i].includes('خصم 15%') || this.prizes[i].includes('اورجينال برجر') || this.prizes[i].includes('تشيكن لافا') || this.prizes[i].includes('كومبو فرى') || this.prizes[i].includes('حاول في وقت لاحق'))) {
+                displayText = ''; // لا نص - الصورة فقط
+            }
+            
+            // إنشاء النص فقط إذا كان هناك نص للعرض
+            let prizeText = null;
+            if (displayText.trim() !== '') {
+                prizeText = this.add.text(
+                    textX, 
+                    prizeImage ? textY + fontSize * 0.8 : textY, 
+                    displayText, 
+                    {
+                        fontFamily: 'Cairo, Arial',
+                        fontSize: `${fontSize}px`,
+                        fontWeight: '700',
+                        color: color === 0xe8dcc0 ? '#5d4e37' : '#ffffff',
+                        align: 'center',
+                        wordWrap: { width: radius * 0.35 }, // أوسع مع العجلة الكبيرة
+                        stroke: color === 0xe8dcc0 ? '#ffffff' : '#8b6914',
+                        strokeThickness: 2,
+                        shadow: {
+                            offsetX: 2,
+                            offsetY: 2,
+                            color: 'rgba(0,0,0,0.6)',
+                            blur: 3,
+                            fill: true
+                        }
+                    }
+                ).setOrigin(0.5);
+            }
+            
+            // إضافة جميع العناصر للعجلة
+            if (prizeImage && prizeText) {
+                this.wheel.add([sector, innerShadow, prizeImage, prizeText]);
+            } else if (prizeImage) {
+                this.wheel.add([sector, innerShadow, prizeImage]);
+            } else if (prizeText) {
+                this.wheel.add([sector, innerShadow, prizeText]);
+            } else {
+                this.wheel.add([sector, innerShadow]);
+            }
         }
 
-        // دائرة المركز مع تأثير ثلاثي الأبعاد
+        // دائرة المركز مع تأثير ثلاثي الأبعاد (أكبر مع العجلة الجديدة)
+        const centerRadius = Math.max(15, radius * 0.08);
         const centerOuter = this.add.graphics();
         centerOuter.fillGradientStyle(0x8b6914, 0x8b6914, 0xc49b41, 0xd4af37, 0.9);
-        centerOuter.lineStyle(2, 0x6d5011);
-        centerOuter.fillCircle(0, 0, 12);
-        centerOuter.strokeCircle(0, 0, 12);
+        centerOuter.lineStyle(3, 0x6d5011);
+        centerOuter.fillCircle(0, 0, centerRadius);
+        centerOuter.strokeCircle(0, 0, centerRadius);
 
         const centerInner = this.add.graphics();
         centerInner.fillStyle(0xc49b41);
-        centerInner.fillCircle(0, 0, 8);
+        centerInner.fillCircle(0, 0, centerRadius * 0.6);
 
         this.wheel.add([centerOuter, centerInner]);
 
@@ -662,24 +889,29 @@ class GameScene extends Phaser.Scene {
     }
 
     createEnhancedPointer(centerX, centerY, radius) {
+        // حساب أبعاد المؤشر بناءً على حجم العجلة
+        const pointerLength = radius * 0.12;
+        const pointerWidth = radius * 0.08;
+        const pointerOffset = radius + pointerLength * 0.8;
+        
         // ظل المؤشر
         const pointerShadow = this.add.graphics();
         pointerShadow.fillStyle(0x000000, 0.3);
         pointerShadow.beginPath();
-        pointerShadow.moveTo(centerX + 2, centerY - radius - 13);
-        pointerShadow.lineTo(centerX - 10, centerY - radius + 10);
-        pointerShadow.lineTo(centerX + 14, centerY - radius + 10);
+        pointerShadow.moveTo(centerX + 3, centerY - radius - 15);
+        pointerShadow.lineTo(centerX - pointerWidth + 2, centerY - radius + 10);
+        pointerShadow.lineTo(centerX + pointerWidth + 4, centerY - radius + 10);
         pointerShadow.closePath();
         pointerShadow.fillPath();
 
-        // المؤشر الرئيسي مع تدرج
+        // المؤشر الرئيسي مع تدرج (يشير للأسفل نحو العجلة)
         const pointer = this.add.graphics();
         pointer.fillGradientStyle(0xd4af37, 0xc49b41, 0x8b6914, 0x6d5011, 1);
-        pointer.lineStyle(2, 0x6d5011);
+        pointer.lineStyle(3, 0x6d5011);
         pointer.beginPath();
         pointer.moveTo(centerX, centerY - radius - 15);
-        pointer.lineTo(centerX - 12, centerY - radius + 8);
-        pointer.lineTo(centerX + 12, centerY - radius + 8);
+        pointer.lineTo(centerX - pointerWidth, centerY - radius + 10);
+        pointer.lineTo(centerX + pointerWidth, centerY - radius + 10);
         pointer.closePath();
         pointer.fillPath();
         pointer.strokePath();
@@ -687,10 +919,11 @@ class GameScene extends Phaser.Scene {
         // تأثير توهج للمؤشر
         const pointerGlow = this.add.graphics();
         pointerGlow.fillStyle(0xd4af37, 0.4);
+        const glowOffset = 4;
         pointerGlow.beginPath();
-        pointerGlow.moveTo(centerX, centerY - radius - 18);
-        pointerGlow.lineTo(centerX - 15, centerY - radius + 5);
-        pointerGlow.lineTo(centerX + 15, centerY - radius + 5);
+        pointerGlow.moveTo(centerX, centerY - radius - 15 - glowOffset);
+        pointerGlow.lineTo(centerX - pointerWidth - glowOffset, centerY - radius + 10 - glowOffset);
+        pointerGlow.lineTo(centerX + pointerWidth + glowOffset, centerY - radius + 10 - glowOffset);
         pointerGlow.closePath();
         pointerGlow.fillPath();
     }
@@ -698,12 +931,13 @@ class GameScene extends Phaser.Scene {
     createPlayButton(width, height) {
         const buttonX = width / 2;
         const buttonY = height / 2 + 20; // نفس مكان العجلة الجديد
-        const buttonSize = 60;
+        const buttonSize = Math.max(70, Math.min(100, Math.min(width, height) * 0.08)); // أكبر وتكيفي
         
         // ظل الزر
         const buttonShadow = this.add.graphics();
         buttonShadow.fillStyle(0x000000, 0.2);
         buttonShadow.fillCircle(buttonX + 4, buttonY + 4, buttonSize / 2);
+        buttonShadow.setDepth(100);
 
         // دائرة الزر مع تدرج ثلاثي الأبعاد
         this.buttonCircle = this.add.graphics();
@@ -711,32 +945,37 @@ class GameScene extends Phaser.Scene {
         this.buttonCircle.lineStyle(4, 0x6d5011);
         this.buttonCircle.fillCircle(buttonX, buttonY, buttonSize / 2);
         this.buttonCircle.strokeCircle(buttonX, buttonY, buttonSize / 2);
+        this.buttonCircle.setDepth(101);
 
         // حلقة توهج خارجية
         const buttonGlow = this.add.graphics();
         buttonGlow.lineStyle(3, 0xd4af37, 0.6);
         buttonGlow.strokeCircle(buttonX, buttonY, (buttonSize / 2) + 8);
+        buttonGlow.setDepth(102);
 
-        // رمز تشغيل مع ظل وتوهج
+        // رمز تشغيل مع ظل وتوهج (حجم تكيفي)
+        const iconScale = buttonSize / 60; // نسبة التكبير بناءً على الحجم الجديد
         const playIconShadow = this.add.graphics();
         playIconShadow.fillStyle(0x000000, 0.3);
         playIconShadow.beginPath();
-        playIconShadow.moveTo(buttonX - 6, buttonY - 10);
-        playIconShadow.lineTo(buttonX + 14, buttonY + 2);
-        playIconShadow.lineTo(buttonX - 6, buttonY + 14);
+        playIconShadow.moveTo(buttonX - 6 * iconScale, buttonY - 10 * iconScale);
+        playIconShadow.lineTo(buttonX + 14 * iconScale, buttonY + 2 * iconScale);
+        playIconShadow.lineTo(buttonX - 6 * iconScale, buttonY + 14 * iconScale);
         playIconShadow.closePath();
         playIconShadow.fillPath();
+        playIconShadow.setDepth(103);
 
         this.playIcon = this.add.graphics();
         this.playIcon.fillStyle(0xffffff);
-        this.playIcon.lineStyle(1, 0xe8dcc0);
+        this.playIcon.lineStyle(2 * iconScale, 0xe8dcc0);
         this.playIcon.beginPath();
-        this.playIcon.moveTo(buttonX - 8, buttonY - 12);
-        this.playIcon.lineTo(buttonX + 12, buttonY);
-        this.playIcon.lineTo(buttonX - 8, buttonY + 12);
+        this.playIcon.moveTo(buttonX - 8 * iconScale, buttonY - 12 * iconScale);
+        this.playIcon.lineTo(buttonX + 12 * iconScale, buttonY);
+        this.playIcon.lineTo(buttonX - 8 * iconScale, buttonY + 12 * iconScale);
         this.playIcon.closePath();
         this.playIcon.fillPath();
         this.playIcon.strokePath();
+        this.playIcon.setDepth(104);
 
         // تأثير التوهج
         this.glowTween = this.tweens.add({
@@ -751,6 +990,7 @@ class GameScene extends Phaser.Scene {
         // منطقة التفاعل
         const buttonZone = this.add.zone(buttonX, buttonY, buttonSize, buttonSize);
         buttonZone.setInteractive({ cursor: 'pointer' });
+        buttonZone.setDepth(105);
         
         // تأثيرات التفاعل
         buttonZone.on('pointerover', () => {
@@ -828,8 +1068,6 @@ class GameScene extends Phaser.Scene {
             const random = Math.random();
             if (random < tryLaterChance) {
                 selectedPrize = "حاول في وقت لاحق ⏰";
-            } else if (shouldUseLuck) {
-                selectedPrize = "حظ سعيد مرة أخرى 🍀";
             } else {
                 // 🔒 اختيار آمن: الاختيار من الجوائز المؤكدة المتاحة فقط
                 selectedPrize = gameManager.selectSafeAvailablePrize(currentAvailablePrizes);
@@ -845,7 +1083,7 @@ class GameScene extends Phaser.Scene {
         let prizeIndex;
         let targetAngle;
         
-        if (selectedPrize === "حظ سعيد مرة أخرى 🍀" || selectedPrize === "حاول في وقت لاحق ⏰") {
+        if (selectedPrize === "حاول في وقت لاحق ⏰") {
             // إذا كانت رسالة خاصة، ابحث عن موقعها في العجلة
             prizeIndex = this.allPrizes.indexOf(selectedPrize);
             if (prizeIndex === -1) {
@@ -959,10 +1197,7 @@ class GameScene extends Phaser.Scene {
 
                     // إظهار النتيجة بعد توقف واضح
                     this.time.delayedCall(1000, () => {
-                        if (selectedPrize === "حظ سعيد مرة أخرى 🍀") {
-                            // إظهار رسالة "حظ سعيد" دون استهلاك جائزة
-                            this.showLuckMessageWithClickToContinue();
-                        } else if (selectedPrize === "حاول في وقت لاحق ⏰") {
+                        if (selectedPrize === "حاول في وقت لاحق ⏰") {
                             // إظهار رسالة "حاول في وقت لاحق"
                             this.showTryLaterMessageWithClickToContinue();
                         } else {
@@ -990,13 +1225,19 @@ class GameScene extends Phaser.Scene {
     showWinMessage(prize) {
         const { width, height } = this.cameras.main;
         
+        // إخفاء الزر أثناء عرض النتيجة
+        if (this.buttonCircle) this.buttonCircle.setVisible(false);
+        if (this.playIcon) this.playIcon.setVisible(false);
+        
         // خلفية شبه شفافة مع تأثير ضبابي
-        const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85);
+        const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
+            .setDepth(200);
         
         // ظل الصندوق
         const messageShadow = this.add.graphics();
         messageShadow.fillStyle(0x000000, 0.4);
         messageShadow.fillRoundedRect(width / 2 - 195, height / 2 - 145, 400, 300, 25);
+        messageShadow.setDepth(201);
         
         // صندوق الرسالة مع تدرج
         const messageBox = this.add.graphics();
@@ -1004,11 +1245,13 @@ class GameScene extends Phaser.Scene {
         messageBox.lineStyle(6, 0xc49b41);
         messageBox.fillRoundedRect(width / 2 - 200, height / 2 - 150, 400, 300, 25);
         messageBox.strokeRoundedRect(width / 2 - 200, height / 2 - 150, 400, 300, 25);
+        messageBox.setDepth(202);
 
         // حدود داخلية ذهبية
         const innerBorder = this.add.graphics();
         innerBorder.lineStyle(2, 0xd4af37, 0.8);
         innerBorder.strokeRoundedRect(width / 2 - 185, height / 2 - 135, 370, 270, 20);
+        innerBorder.setDepth(203);
         
         // نص التهنئة مع تأثيرات
         const congratsText = this.add.text(width / 2, height / 2 - 80, '🎉 مبروك! 🎉', {
@@ -1025,7 +1268,7 @@ class GameScene extends Phaser.Scene {
                 blur: 5,
                 fill: true
             }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(204);
 
         // تأثير توهج للنص
         this.tweens.add({
@@ -1050,7 +1293,7 @@ class GameScene extends Phaser.Scene {
                 blur: 2,
                 fill: true
             }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(205);
         
         const prizeText = this.add.text(width / 2, height / 2 + 20, prize, {
             fontFamily: 'Cairo, Arial',
@@ -1066,7 +1309,7 @@ class GameScene extends Phaser.Scene {
                 blur: 4,
                 fill: true
             }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(206);
 
         // تأثير نبضة للجائزة
         this.tweens.add({
@@ -1086,7 +1329,7 @@ class GameScene extends Phaser.Scene {
             align: 'center',
             backgroundColor: 'rgba(255,255,255,0.8)',
             padding: { x: 15, y: 8 }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(207);
 
         // تأثير الاحتفال المحسن
         this.createEnhancedCelebrationEffect(width, height);
@@ -1096,14 +1339,20 @@ class GameScene extends Phaser.Scene {
     showWinMessageWithClickToContinue(prize) {
         const { width, height } = this.cameras.main;
         
+        // إخفاء الزر أثناء عرض النتيجة
+        if (this.buttonCircle) this.buttonCircle.setVisible(false);
+        if (this.playIcon) this.playIcon.setVisible(false);
+        
         // خلفية شبه شفافة مع تأثير ضبابي
         const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
-            .setInteractive();
+            .setInteractive()
+            .setDepth(200); // عمق أعلى من الزر
         
         // ظل الصندوق
         const messageShadow = this.add.graphics();
         messageShadow.fillStyle(0x000000, 0.4);
         messageShadow.fillRoundedRect(width / 2 - 195, height / 2 - 165, 400, 330, 25);
+        messageShadow.setDepth(201);
         
         // صندوق الرسالة مع تدرج
         const messageBox = this.add.graphics();
@@ -1111,11 +1360,13 @@ class GameScene extends Phaser.Scene {
         messageBox.lineStyle(6, 0xc49b41);
         messageBox.fillRoundedRect(width / 2 - 200, height / 2 - 170, 400, 330, 25);
         messageBox.strokeRoundedRect(width / 2 - 200, height / 2 - 170, 400, 330, 25);
+        messageBox.setDepth(202);
 
         // حدود داخلية ذهبية
         const innerBorder = this.add.graphics();
         innerBorder.lineStyle(2, 0xd4af37, 0.8);
         innerBorder.strokeRoundedRect(width / 2 - 185, height / 2 - 155, 370, 300, 20);
+        innerBorder.setDepth(203);
         
         // نص التهنئة مع تأثيرات
         const congratsText = this.add.text(width / 2, height / 2 - 100, '🎉 مبروك! 🎉', {
@@ -1132,7 +1383,7 @@ class GameScene extends Phaser.Scene {
                 blur: 5,
                 fill: true
             }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(204);
 
         // تأثير توهج للنص
         this.tweens.add({
@@ -1157,10 +1408,10 @@ class GameScene extends Phaser.Scene {
                 blur: 2,
                 fill: true
             }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(205);
         
         const prizeText = this.add.text(width / 2, height / 2, prize, {
-            fontFamily: 'Cairo, Arial',
+            fontFamily: 'Cairo, Arabic',
             fontSize: '30px',
             fontWeight: 'bold',
             color: gameManager.colors.primary,
@@ -1173,7 +1424,7 @@ class GameScene extends Phaser.Scene {
                 blur: 4,
                 fill: true
             }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(206);
 
         // تأثير نبضة للجائزة
         this.tweens.add({
@@ -1193,7 +1444,7 @@ class GameScene extends Phaser.Scene {
             align: 'center',
             backgroundColor: 'rgba(255,255,255,0.8)',
             padding: { x: 15, y: 8 }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(207);
 
         // 👆 رسالة النقر للمتابعة
         const clickToContinueText = this.add.text(width / 2, height / 2 + 100, '👆 اضغط في أي مكان للمتابعة', {
@@ -1203,7 +1454,7 @@ class GameScene extends Phaser.Scene {
             color: gameManager.colors.primary,
             backgroundColor: 'rgba(196, 155, 65, 0.2)',
             padding: { x: 20, y: 10 }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(208);
 
         // تأثير وميض لرسالة النقر
         this.tweens.add({
@@ -1224,139 +1475,28 @@ class GameScene extends Phaser.Scene {
         this.createEnhancedCelebrationEffect(width, height);
     }
 
-    // 🍀 دالة حظ سعيد مع النقر للمتابعة
-    showLuckMessageWithClickToContinue() {
-        const { width, height } = this.cameras.main;
-        
-        // خلفية شبه شفافة
-        const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
-            .setInteractive();
-        
-        // ظل الصندوق
-        const messageShadow = this.add.graphics();
-        messageShadow.fillStyle(0x000000, 0.4);
-        messageShadow.fillRoundedRect(width / 2 - 195, height / 2 - 115, 400, 230, 25);
-        
-        // صندوق الرسالة
-        const messageBox = this.add.graphics();
-        messageBox.fillGradientStyle(0xfaf6e8, 0xf5f1e6, 0xe8dcc0, 0xf0e6d2, 1);
-        messageBox.lineStyle(6, 0xc49b41);
-        messageBox.fillRoundedRect(width / 2 - 200, height / 2 - 120, 400, 230, 25);
-        messageBox.strokeRoundedRect(width / 2 - 200, height / 2 - 120, 400, 230, 25);
 
-        // نص "حظ سعيد"
-        const messageText = this.add.text(width / 2, height / 2 - 40, '🍀 حظ سعيد المرة القادمة!', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '28px',
-            fontWeight: 'bold',
-            color: gameManager.colors.primary,
-            stroke: gameManager.colors.dark,
-            strokeThickness: 2
-        }).setOrigin(0.5);
 
-        const subText = this.add.text(width / 2, height / 2 + 5, 'استمر في المحاولة للفوز بجوائز رائعة', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '18px',
-            fontWeight: '500',
-            color: gameManager.colors.text
-        }).setOrigin(0.5);
 
-        // 👆 رسالة النقر للمتابعة
-        const clickToContinueText = this.add.text(width / 2, height / 2 + 50, '👆 اضغط في أي مكان للمتابعة', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '16px',
-            fontWeight: '400',
-            color: gameManager.colors.primary,
-            backgroundColor: 'rgba(196, 155, 65, 0.2)',
-            padding: { x: 20, y: 10 }
-        }).setOrigin(0.5);
-
-        // تأثير نبضة للنص الرئيسي
-        this.tweens.add({
-            targets: messageText,
-            scaleX: 1.05,
-            scaleY: 1.05,
-            duration: 1000,
-            yoyo: true,
-            repeat: 2,
-            ease: 'Sine.easeInOut'
-        });
-
-        // تأثير وميض لرسالة النقر
-        this.tweens.add({
-            targets: clickToContinueText,
-            alpha: 0.5,
-            duration: 1000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-
-        // إضافة مستمع النقر
-        overlay.on('pointerdown', () => {
-            this.scene.restart();
-        });
-    }
-
-    showLuckMessage() {
-        const { width, height } = this.cameras.main;
-        
-        // خلفية شبه شفافة
-        const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85);
-        
-        // ظل الصندوق
-        const messageShadow = this.add.graphics();
-        messageShadow.fillStyle(0x000000, 0.4);
-        messageShadow.fillRoundedRect(width / 2 - 195, height / 2 - 95, 400, 200, 25);
-        
-        // صندوق الرسالة
-        const messageBox = this.add.graphics();
-        messageBox.fillGradientStyle(0xfaf6e8, 0xf5f1e6, 0xe8dcc0, 0xf0e6d2, 1);
-        messageBox.lineStyle(6, 0xc49b41);
-        messageBox.fillRoundedRect(width / 2 - 200, height / 2 - 100, 400, 200, 25);
-        messageBox.strokeRoundedRect(width / 2 - 200, height / 2 - 100, 400, 200, 25);
-
-        // نص "حظ سعيد"
-        const messageText = this.add.text(width / 2, height / 2 - 20, '🍀 حظ سعيد المرة القادمة!', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '28px',
-            fontWeight: 'bold',
-            color: gameManager.colors.primary,
-            stroke: gameManager.colors.dark,
-            strokeThickness: 2
-        }).setOrigin(0.5);
-
-        const subText = this.add.text(width / 2, height / 2 + 25, 'استمر في المحاولة للفوز بجوائز رائعة', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '18px',
-            fontWeight: '500',
-            color: gameManager.colors.text
-        }).setOrigin(0.5);
-
-        // تأثير نبضة للنص
-        this.tweens.add({
-            targets: messageText,
-            scaleX: 1.05,
-            scaleY: 1.05,
-            duration: 1000,
-            yoyo: true,
-            repeat: 2,
-            ease: 'Sine.easeInOut'
-        });
-    }
 
     // ⏰ دالة حاول لاحقاً مع النقر للمتابعة
     showTryLaterMessageWithClickToContinue() {
         const { width, height } = this.cameras.main;
         
+        // إخفاء الزر أثناء عرض النتيجة
+        if (this.buttonCircle) this.buttonCircle.setVisible(false);
+        if (this.playIcon) this.playIcon.setVisible(false);
+        
         // خلفية شبه شفافة
         const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
-            .setInteractive();
+            .setInteractive()
+            .setDepth(200);
         
         // ظل الصندوق
         const messageShadow = this.add.graphics();
         messageShadow.fillStyle(0x000000, 0.4);
         messageShadow.fillRoundedRect(width / 2 - 195, height / 2 - 115, 400, 230, 25);
+        messageShadow.setDepth(201);
         
         // صندوق الرسالة
         const messageBox = this.add.graphics();
@@ -1364,6 +1504,7 @@ class GameScene extends Phaser.Scene {
         messageBox.lineStyle(6, 0xc49b41);
         messageBox.fillRoundedRect(width / 2 - 200, height / 2 - 120, 400, 230, 25);
         messageBox.strokeRoundedRect(width / 2 - 200, height / 2 - 120, 400, 230, 25);
+        messageBox.setDepth(202);
 
         // نص "حاول في وقت لاحق"
         const messageText = this.add.text(width / 2, height / 2 - 40, '⏰ حاول في وقت لاحق', {
@@ -1373,14 +1514,9 @@ class GameScene extends Phaser.Scene {
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
             strokeThickness: 2
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(203);
 
-        const subText = this.add.text(width / 2, height / 2 + 5, 'عد مرة أخرى قريباً لجوائز أفضل', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '18px',
-            fontWeight: '500',
-            color: gameManager.colors.text
-        }).setOrigin(0.5);
+
 
         // 👆 رسالة النقر للمتابعة
         const clickToContinueText = this.add.text(width / 2, height / 2 + 50, '👆 اضغط في أي مكان للمتابعة', {
@@ -1390,7 +1526,7 @@ class GameScene extends Phaser.Scene {
             color: gameManager.colors.primary,
             backgroundColor: 'rgba(196, 155, 65, 0.2)',
             padding: { x: 20, y: 10 }
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(205);
 
         // تأثير نبضة للنص الرئيسي
         this.tweens.add({
@@ -1447,12 +1583,7 @@ class GameScene extends Phaser.Scene {
             strokeThickness: 2
         }).setOrigin(0.5);
 
-        const subText = this.add.text(width / 2, height / 2 + 25, 'عد مرة أخرى قريباً لجوائز أفضل', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '18px',
-            fontWeight: '500',
-            color: gameManager.colors.text
-        }).setOrigin(0.5);
+
 
         // تأثير نبضة للنص
         this.tweens.add({
@@ -1991,6 +2122,77 @@ class GameScene extends Phaser.Scene {
         
         return isOnPrizeBoundary || randomChance;
     }
+
+    // 🖼️ دالة إضافة الصور للجوائز (للاستخدام المستقبلي)
+    addPrizeImage(x, y, prizeName, wheelRadius) {
+        // خريطة أسماء الصور للهدايا
+        const imageMap = {
+            'خصم 5% 💰': 'خصم 5%.png',
+            'فرى دليفرى 🛵': 'دليفري.png',
+            'موهيتو فرى 🍹': 'موهيتو.png',
+            'خصم 15% 💸': 'خصم 15%.png',
+            'كومبو فرى 🍟🧃': 'كومبو فري.png',
+            'وافل شكولاته 🥞': 'وافل شوكلاته.png',
+            'اورجينال برجر 🍔': 'اورجينال.png',
+            'تشيكن لافا 🍔': 'تشكن لافا.png',
+            'حاول في وقت لاحق ⏰': 'حاول وقت لاحق.png'
+        };
+
+        const imageName = imageMap[prizeName];
+        if (imageName) {
+            // تحديد اسم الملف بدون امتداد
+            const fileName = imageName.replace('.png', '');
+            
+            if (this.textures.exists(fileName)) {
+                const prizeImage = this.add.image(x, y, fileName);
+                
+                // التحقق من نوع الصورة لضبط النسبة الصحيحة
+                if (fileName === 'موهيتو') {
+                    // للموهيتو: نحافظ على النسبة الطبيعية للكوب (أطول من العرض) - أكبر
+                    const imageWidth = Math.max(65, wheelRadius * 0.35); // أعرض
+                    const imageHeight = Math.max(90, wheelRadius * 0.45); // أطول للكوب
+                    prizeImage.setDisplaySize(imageWidth, imageHeight);
+                } else if (fileName === 'دليفري') {
+                    // للدليفري: أعرض من الطول بكثير لأن الصورة الأصلية بالعرض
+                    const imageWidth = Math.max(110, wheelRadius * 0.48); // أعرض بكثير
+                    const imageHeight = Math.max(65, wheelRadius * 0.28); // أقصر من العرض
+                    prizeImage.setDisplaySize(imageWidth, imageHeight);
+                } else if (fileName === 'خصم 15%') {
+                    // لخصم 15%: مربع مناسب لملء الخانة
+                    const imageSize = Math.max(85, wheelRadius * 0.38); // حجم جيد
+                    prizeImage.setDisplaySize(imageSize, imageSize);
+                } else if (fileName === 'اورجينال') {
+                    // للأورجينال برجر: أعرض من الطول ليبدو طبيعياً
+                    const imageWidth = Math.max(95, wheelRadius * 0.42); // أعرض
+                    const imageHeight = Math.max(75, wheelRadius * 0.32); // أقصر نسبياً
+                    prizeImage.setDisplaySize(imageWidth, imageHeight);
+                } else if (fileName === 'تشكن لافا') {
+                    // لتشكن لافا: أعرض من الطول بكثير ليبدو كساندوتش مسطح
+                    const imageWidth = Math.max(110, wheelRadius * 0.48); // أعرض بكثير
+                    const imageHeight = Math.max(65, wheelRadius * 0.28); // أقصر بكثير
+                    prizeImage.setDisplaySize(imageWidth, imageHeight);
+                } else if (fileName === 'كومبو فري') {
+                    // للكومبو: حجم متوسط مناسب
+                    const imageSize = Math.max(85, wheelRadius * 0.36);
+                    prizeImage.setDisplaySize(imageSize, imageSize);
+                } else if (fileName === 'حاول وقت لاحق') {
+                    // لحاول وقت لاحق: صورة صغيرة داخل القطاع الأسود
+                    const imageWidth = Math.max(40, wheelRadius * 0.20); // عرض أصغر ليبقى في الحدود
+                    const imageHeight = Math.max(60, wheelRadius * 0.30); // طول مناسب ليبقى في الحدود
+                    prizeImage.setDisplaySize(imageWidth, imageHeight);
+                } else {
+                    // للصور الأخرى: مربع عادي
+                    const imageSize = Math.max(75, wheelRadius * 0.32);
+                    prizeImage.setDisplaySize(imageSize, imageSize);
+                }
+                
+                prizeImage.setAlpha(1.0); // شفافية كاملة للوضوح
+                // لا نضيف الصورة هنا - ستُضاف في الدالة الرئيسية
+                return prizeImage;
+            }
+        }
+        return null;
+    }
 }
 
 // ===== إعداد وتشغيل اللعبة =====
@@ -2000,7 +2202,7 @@ const config = {
     type: Phaser.AUTO,
     width: window.innerWidth,
     height: window.innerHeight,
-    backgroundColor: '#f5f1e6',
+    backgroundColor: '#0D5016', // أخضر كازينو داكن
     parent: 'gameContainer',
     scene: [GameScene],
     scale: {
