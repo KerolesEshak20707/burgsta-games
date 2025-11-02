@@ -2223,21 +2223,42 @@ const config = {
 // تشغيل اللعبة عند تحميل الإعدادات
 gameManager.loadSettings().then(success => {
     if (success) {
+
+        // 🧠 اكتشاف ما إذا كنا داخل تطبيق Flutter WebView
+        const ua = navigator.userAgent.toLowerCase();
+        const isFlutterApp =
+            ua.includes("wv") || ua.includes("flutter") || ua.includes("android webview");
+
+        // 🔹 ضبط الحجم فقط في حالة تشغيل اللعبة داخل تطبيق Flutter
+        if (isFlutterApp) {
+            console.log("📱 Running inside Flutter WebView — forcing desktop-like size");
+            if (config.scale) {
+                config.scale.mode = Phaser.Scale.FIT;
+                config.scale.autoCenter = Phaser.Scale.CENTER_BOTH;
+            }
+            config.width = 1280;
+            config.height = 720;
+        } else {
+            console.log("💻 Running in normal browser — using responsive mode");
+            config.width = window.innerWidth;
+            config.height = window.innerHeight;
+            window.addEventListener("resize", () => {
+                if (window.game && window.game.scale) {
+                    window.game.scale.resize(window.innerWidth, window.innerHeight);
+                }
+            });
+        }
+
+        // 🔹 إنشاء اللعبة بعد تحديد الإعداد المناسب
         const game = new Phaser.Game(config);
         window.game = game; // حفظ مرجع للعبة
-        document.querySelector('.loading').style.display = 'none';
-    } else {
-        document.querySelector('.loading').innerHTML = 'خطأ في تحميل اللعبة - تحقق من ملف settings.json';
-        console.error('فشل في تحميل إعدادات اللعبة');
-    }
-}).catch(error => {
-    console.error('خطأ في تشغيل اللعبة:', error);
-    document.querySelector('.loading').innerHTML = 'خطأ في تشغيل اللعبة';
-});
 
-// تعديل حجم اللعبة عند تغيير حجم النافذة
-window.addEventListener('resize', () => {
-    if (window.game) {
-        window.game.scale.refresh();
+        // إخفاء شاشة التحميل بعد التشغيل
+        document.querySelector('.loading').style.display = 'none';
+
+    } else {
+        document.querySelector('.loading').innerHTML =
+            'خطأ في تحميل اللعبة - تحقق من ملف settings.json';
+        console.error('فشل في تحميل إعدادات اللعبة');
     }
 });

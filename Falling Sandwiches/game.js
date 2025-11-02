@@ -2791,7 +2791,7 @@ const gameConfig = {
     }
 };
 
-// تشغيل اللعبة عند تحميل الصفحة
+// تشغيل اللعبة عند تحميل الصفحة 
 window.addEventListener('load', () => {
     const game = new Phaser.Game(gameConfig);
     window.game = game;
