@@ -743,25 +743,25 @@ class GameScene extends Phaser.Scene {
             // ألوان خاصة للجوائز المحددة
             let color;
             let lighterColor;
-            if (this.prizes[i] && this.prizes[i].includes('وافل شكولاته')) {
+            if (this.prizes[i] && this.prizes[i].includes('وافل شكولاته 🥞')) {
                 color = 0x6a1b9a; // اللون البنفسجي للوافل
                 lighterColor = 0x8b4dbf; // لون فاتح مناسب للوافل
-            } else if (this.prizes[i] && this.prizes[i].includes('خصم 5%')) {
+            } else if (this.prizes[i] && this.prizes[i].includes('خصم 5% 💰')) {
                 color = 0xff8c00; // اللون البرتقالي لخصم 5%
                 lighterColor = 0xffa500; // برتقالي فاتح
-            } else if (this.prizes[i] && this.prizes[i].includes('موهيتو فرى')) {
+            } else if (this.prizes[i] && this.prizes[i].includes('موهيتو فرى 🍹')) {
                 color = 0xcceff5; // اللون الأزرق الفاتح للموهيتو
                 lighterColor = 0xe0f7ff; // أزرق فاتح أكثر
-            } else if (this.prizes[i] && this.prizes[i].includes('فرى دليفرى')) {
+            } else if (this.prizes[i] && this.prizes[i].includes('فرى دليفرى 🛵')) {
                 color = 0x001f3f; // اللون الأزرق الداكن للدليفري
                 lighterColor = 0x003d5c; // أزرق داكن أفتح قليلاً
-            } else if (this.prizes[i] && this.prizes[i].includes('خصم 15%')) {
+            } else if (this.prizes[i] && this.prizes[i].includes('خصم 15% 💸')) {
                 color = 0xff8c00; // اللون البرتقالي لخصم 15% (نفس لون خصم 5%)
                 lighterColor = 0xffa500; // برتقالي فاتح
-            } else if (this.prizes[i] && this.prizes[i].includes('اورجينال برجر')) {
+            } else if (this.prizes[i] && this.prizes[i].includes('اورجينال برجر 🍔')) {
                 color = 0xd2b48c; // لون بني فاتح جميل للبرجر
                 lighterColor = 0xe6d3b7; // بني فاتح أكثر
-            } else if (this.prizes[i] && this.prizes[i].includes('كومبو فرى')) {
+            } else if (this.prizes[i] && this.prizes[i].includes('كومبو فرى 🍟🧃')) {
                 color = 0xdc143c; // لون أحمر للكومبو
                 lighterColor = 0xff6b6b; // أحمر فاتح
             } else if (this.prizes[i] && this.prizes[i].includes('حاول في وقت لاحق')) {
@@ -812,8 +812,8 @@ class GameScene extends Phaser.Scene {
             // عرض النص دائماً، لكن إذا وجدت الصورة، نزل النص تحتها
             let displayText = this.prizes[i];
             
-            // إذا كانت الصورة موجودة، لا نعرض نص للجوائز التي لها صور
-            if (prizeImage && (this.prizes[i].includes('وافل شكولاته') || this.prizes[i].includes('خصم 5%') || this.prizes[i].includes('موهيتو فرى') || this.prizes[i].includes('فرى دليفرى') || this.prizes[i].includes('خصم 15%') || this.prizes[i].includes('اورجينال برجر') || this.prizes[i].includes('تشيكن لافا') || this.prizes[i].includes('كومبو فرى') || this.prizes[i].includes('حاول في وقت لاحق'))) {
+            // إذا كانت الصورة موجودة، لا نعرض نص للجوائز التي لها صور (باستخدام الأسماء الصحيحة مع الإيموجي)
+            if (prizeImage && (this.prizes[i].includes('وافل شكولاته 🥞') || this.prizes[i].includes('خصم 5% 💰') || this.prizes[i].includes('موهيتو فرى 🍹') || this.prizes[i].includes('فرى دليفرى 🛵') || this.prizes[i].includes('خصم 15% 💸') || this.prizes[i].includes('اورجينال برجر 🍔') || this.prizes[i].includes('تشيكن لافا 🍔') || this.prizes[i].includes('كومبو فرى 🍟🧃') || this.prizes[i].includes('حاول في وقت لاحق'))) {
                 displayText = ''; // لا نص - الصورة فقط
             }
             
