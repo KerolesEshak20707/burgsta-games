@@ -2788,6 +2788,7 @@ const gameConfig = {
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+        parent: 'gameContainer',
         width: 800,
         height: 600,
         min: {
@@ -2797,7 +2798,9 @@ const gameConfig = {
         max: {
             width: 1200,
             height: 900
-        }
+        },
+        expandParent: false,
+        autoRound: true
     },
     render: {
         antialias: true,
