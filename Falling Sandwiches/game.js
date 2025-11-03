@@ -29,16 +29,16 @@ const GAME_CONFIG = {
         maxDiscount: 100
     },
     
-    // الألوان (هوية Burgsta)
+    // الألوان (هوية Burgsta الجديدة - أحمر وذهبي)
     colors: {
-        primary: '#c49b41',
-        secondary: '#f5f1e6',
-        dark: '#8b6914',
-        light: '#fff9e6',
-        text: '#5d4e37',
-        accent: '#d4af37',
-        danger: '#e74c3c',
-        success: '#27ae60'
+        primary: '#FFD700',        // ذهبي رئيسي
+        secondary: '#8B0000',      // أحمر داكن
+        dark: '#B22222',           // أحمر متوسط  
+        light: '#FFF8DC',          // ذهبي فاتح
+        text: '#FFD700',           // ذهبي للنصوص
+        accent: '#FFA500',         // برتقالي ذهبي
+        danger: '#8B0000',         // أحمر للخطر
+        success: '#FFD700'         // ذهبي للنجاح
     }
 };
 
@@ -248,17 +248,17 @@ class GameScene extends Phaser.Scene {
         
         // اللاعب (طبق جميل)
         const playerGraphics = this.add.graphics();
-        // خلفية الطبق (ذهبية)
-        playerGraphics.fillStyle(0xc49b41);
+        // خلفية الطبق (أحمر داكن)
+        playerGraphics.fillStyle(0x8B0000);
         playerGraphics.fillRoundedRect(0, 0, 80, 20, 10);
-        // حافة الطبق (ذهبي فاتح)
-        playerGraphics.fillStyle(0xd4af37);
+        // حافة الطبق (ذهبي)
+        playerGraphics.fillStyle(0xFFD700);
         playerGraphics.fillRoundedRect(3, 3, 74, 14, 7);
         // وسط الطبق (أبيض كريمي)
         playerGraphics.fillStyle(0xfff9e6);
         playerGraphics.fillRoundedRect(6, 6, 68, 8, 4);
         // خطوط زخرفية
-        playerGraphics.lineStyle(1, 0xc49b41);
+        playerGraphics.lineStyle(1, 0xFFD700);
         playerGraphics.beginPath();
         playerGraphics.moveTo(10, 10);
         playerGraphics.lineTo(70, 10);
@@ -444,13 +444,13 @@ class GameScene extends Phaser.Scene {
     }
     
     createBackground() {
-        // خلفية متدرجة مع تأثيرات
+        // خلفية متدرجة حمراء مع تأثيرات
         const bg = this.add.graphics();
         bg.fillGradientStyle(
-            Phaser.Display.Color.HexStringToColor(GAME_CONFIG.colors.light).color,
-            Phaser.Display.Color.HexStringToColor(GAME_CONFIG.colors.light).color,
-            Phaser.Display.Color.HexStringToColor(GAME_CONFIG.colors.secondary).color,
-            Phaser.Display.Color.HexStringToColor(GAME_CONFIG.colors.secondary).color,
+            Phaser.Display.Color.HexStringToColor('#8B0000').color,  // أحمر داكن
+            Phaser.Display.Color.HexStringToColor('#DC143C').color,  // أحمر زاهي
+            Phaser.Display.Color.HexStringToColor('#B22222').color,  // أحمر متوسط
+            Phaser.Display.Color.HexStringToColor('#8B0000').color,  // أحمر داكن
             1
         );
         bg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
@@ -460,10 +460,10 @@ class GameScene extends Phaser.Scene {
     }
     
     createBackgroundElements() {
-        // دوائر زخرفية
+        // دوائر زخرفية ذهبية
         for (let i = 0; i < 8; i++) {
             const circle = this.add.graphics();
-            circle.lineStyle(2, Phaser.Display.Color.HexStringToColor(GAME_CONFIG.colors.primary).color, 0.1);
+            circle.lineStyle(2, Phaser.Display.Color.HexStringToColor('#FFD700').color, 0.15);
             const x = Math.random() * GAME_CONFIG.width;
             const y = Math.random() * GAME_CONFIG.height;
             const radius = 20 + Math.random() * 40;
@@ -533,7 +533,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
             fontWeight: '600',
-            color: GAME_CONFIG.colors.primary
+            color: '#FFD700'
         });
         currentY += 35;
         
@@ -542,7 +542,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
             fontWeight: 'bold',
-            color: GAME_CONFIG.colors.primary
+            color: '#FFD700'
         });
         currentY += 35;
         
@@ -550,14 +550,14 @@ class GameScene extends Phaser.Scene {
         this.ui.livesLabel = this.add.text(panelX, currentY, 'أكياس البطاطس:', {
             fontFamily: 'Cairo, Arial',
             fontSize: '14px',
-            color: GAME_CONFIG.colors.primary
+            color: '#FFD700'
         });
         currentY += 25;
         
         this.ui.livesText = this.add.text(panelX, currentY, '🍟🍟🍟', {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
-            color: GAME_CONFIG.colors.primary
+            color: '#FFD700'
         });
         currentY += 40;
         
@@ -566,7 +566,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
             fontWeight: 'bold',
-            color: GAME_CONFIG.colors.accent
+            color: '#FFD700'
         });
         currentY += 30;
         
@@ -575,7 +575,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '32px',
             fontWeight: 'bold',
-            color: GAME_CONFIG.colors.primary
+            color: '#FFD700'
         });
         currentY += 50;
         
@@ -584,7 +584,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '14px',
             fontWeight: '600',
-            color: GAME_CONFIG.colors.dark
+            color: '#FFD700'
         });
         currentY += 40;
         
@@ -1656,8 +1656,8 @@ class GameScene extends Phaser.Scene {
         
         // خلفية الإشعار مع حدود
         const notificationBg = this.add.graphics();
-        notificationBg.fillStyle(0xffa500, 0.95);
-        notificationBg.lineStyle(4, 0xff6600, 1);
+        notificationBg.fillStyle(0x8B0000, 0.95);
+        notificationBg.lineStyle(4, 0xFFD700, 1);
         notificationBg.fillRoundedRect(-220, -60, 440, 120, 20);
         notificationBg.strokeRoundedRect(-220, -60, 440, 120, 20);
         
@@ -1665,7 +1665,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Arial Black',
             fontSize: '22px',
             fontWeight: 'bold',
-            color: '#ffffff',
+            color: '#FFD700',
             stroke: '#000000',
             strokeThickness: 3,
             align: 'center'
@@ -1674,7 +1674,7 @@ class GameScene extends Phaser.Scene {
         const messageText = this.add.text(0, 15, message, {
             fontFamily: 'Arial',
             fontSize: '16px',
-            color: '#ffffff',
+            color: '#FFD700',
             stroke: '#000000',
             strokeThickness: 2,
             align: 'center',
@@ -1749,7 +1749,7 @@ class GameScene extends Phaser.Scene {
         // صندوق الرسالة مع خلفية
         const messageBox = this.add.graphics();
         messageBox.fillStyle(0xffffff, 0.95);
-        messageBox.lineStyle(4, 0xc49b41, 1);
+        messageBox.lineStyle(4, 0xFFD700, 1);
         messageBox.fillRoundedRect(-250, -120, 500, 240, 20);
         messageBox.strokeRoundedRect(-250, -120, 500, 240, 20);
         
@@ -1758,7 +1758,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Arial Black',
             fontSize: '32px',
             fontWeight: 'bold',
-            color: '#c49b41',
+            color: '#FFD700',
             stroke: '#000000',
             strokeThickness: 2,
             align: 'center'
@@ -1768,7 +1768,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Arial',
             fontSize: '20px',
             fontWeight: 'bold',
-            color: '#333333',
+            color: '#8B0000',
             align: 'center',
             lineSpacing: 8,
             wordWrap: { width: 400 }
@@ -2035,7 +2035,7 @@ class GameScene extends Phaser.Scene {
         // صندوق الحوار الرئيسي
         const dialogBox = this.add.graphics();
         dialogBox.fillStyle(0xffffff, 0.95);
-        dialogBox.lineStyle(4, 0xc49b41, 1);
+        dialogBox.lineStyle(4, 0xFFD700, 1);
         dialogBox.fillRoundedRect(centerX - 300, 120, 600, 200, 20);
         dialogBox.strokeRoundedRect(centerX - 300, 120, 600, 200, 20);
         dialogBox.setDepth(52);
@@ -2043,7 +2043,7 @@ class GameScene extends Phaser.Scene {
         // العنوان الرئيسي
         const titleText = this.add.text(centerX, 160, 'مبروك وصلت لمستوى جديد', {
             fontSize: '28px',
-            fill: '#c49b41',
+            fill: '#FFD700',
             fontFamily: 'Cairo, Arial',
             fontWeight: 'bold',
             align: 'center'
@@ -2053,7 +2053,7 @@ class GameScene extends Phaser.Scene {
         // رسالة الخصم
         const rewardText = this.add.text(centerX, 200, `حصلت على خصم ${level.percent}%`, {
             fontSize: '24px',
-            fill: '#27ae60',
+            fill: '#8B0000',
             fontFamily: 'Cairo, Arial',
             fontWeight: 'bold',
             align: 'center'

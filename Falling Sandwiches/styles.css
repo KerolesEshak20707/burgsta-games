@@ -9,7 +9,7 @@
 
 body {
     font-family: 'Cairo', Arial, sans-serif;
-    background: linear-gradient(135deg, #0D5016 0%, #126B1B 50%, #0B4014 100%);
+    background: linear-gradient(135deg, #8B0000 0%, #DC143C 50%, #B22222 100%);
     overflow: hidden;
     direction: rtl;
     user-select: none;
@@ -31,7 +31,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #0D5016 0%, #126B1B 50%, #0B4014 100%);
+    background: linear-gradient(135deg, #8B0000 0%, #DC143C 50%, #B22222 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -322,7 +322,7 @@ body::before {
     background: 
         radial-gradient(circle at 20% 80%, rgba(196, 155, 65, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-        linear-gradient(135deg, #0D5016 0%, #126B1B 50%, #0B4014 100%);
+        linear-gradient(135deg, #8B0000 0%, #DC143C 50%, #B22222 100%);
     z-index: -1;
 }
 
