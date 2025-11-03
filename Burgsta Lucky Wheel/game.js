@@ -2195,14 +2195,24 @@ const gameManager = new GameManager();
 
 const config = {
     type: Phaser.AUTO,
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: 800,
+    height: 600,
     backgroundColor: '#0D5016', // أخضر كازينو داكن
     parent: 'gameContainer',
     scene: [GameScene],
     scale: {
-        mode: Phaser.Scale.RESIZE,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 800,
+        height: 600,
+        min: {
+            width: 320,
+            height: 240
+        },
+        max: {
+            width: 1200,
+            height: 900
+        }
     },
     audio: {
         disableWebAudio: false // تمكين Web Audio للأصوات
@@ -2212,6 +2222,11 @@ const config = {
         arcade: {
             debug: false
         }
+    },
+    render: {
+        antialias: true,
+        pixelArt: false,
+        roundPixels: true
     }
 };
 

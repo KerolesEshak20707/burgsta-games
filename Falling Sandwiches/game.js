@@ -2,9 +2,9 @@
 
 // إعدادات اللعبة
 const GAME_CONFIG = {
-    // أبعاد اللعبة
-    width: window.innerWidth,
-    height: window.innerHeight,
+    // أبعاد اللعبة - ثابتة للـ WebView
+    width: 800,
+    height: 600,
     
     // إعدادات اللاعب
     player: {
@@ -2770,11 +2770,11 @@ class GameScene extends Phaser.Scene {
     }
 }
 
-// إعداد وتشغيل اللعبة
+// إعداد وتشغيل اللعبة - محسّنة للـ WebView
 const gameConfig = {
     type: Phaser.AUTO,
-    width: GAME_CONFIG.width,
-    height: GAME_CONFIG.height,
+    width: 800,
+    height: 600,
     backgroundColor: GAME_CONFIG.colors.secondary,
     parent: 'gameContainer',
     physics: {
@@ -2786,8 +2786,23 @@ const gameConfig = {
     },
     scene: GameScene,
     scale: {
-        mode: Phaser.Scale.RESIZE,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 800,
+        height: 600,
+        min: {
+            width: 320,
+            height: 240
+        },
+        max: {
+            width: 1200,
+            height: 900
+        }
+    },
+    render: {
+        antialias: true,
+        pixelArt: false,
+        roundPixels: true
     }
 };
 

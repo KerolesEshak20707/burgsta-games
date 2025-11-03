@@ -1,9 +1,9 @@
 /* تحسينات بصرية إضافية للعبة عجلة الحظ */
 
-/* تأثيرات الخلفية */
+/* تأثيرات الخلفية - محسّنة للـ WebView */
 body::before {
     content: '';
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -13,6 +13,7 @@ body::before {
         radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
         linear-gradient(135deg, #f5f1e6 0%, #e8dcc0 50%, #d4c4a0 100%);
     z-index: -1;
+    pointer-events: none;
 }
 
 /* تأثيرات النصوص */
