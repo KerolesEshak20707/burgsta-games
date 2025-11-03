@@ -432,17 +432,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('وافل شوكلاته', './images/وافل شوكلاته.png');
         console.log('✅ تم طلب تحميل: وافل شوكلاته');
         
-        // تحميل صورة خصم 5% بطرق متعددة للـ WebView
-        try {
-            // الطريقة الأولى: مسار نسبي مع cache busting
-            this.load.image('خصم5', './images/خصم5.png?v=3');
-            console.log('✅ تم طلب تحميل: خصم5 مع cache busting');
-            
-            // الطريقة الثانية: مسار مطلق كنسخة احتياطية
-            this.load.image('خصم5_backup', 'https://keroleseshak20707.github.io/burgsta-games/Burgsta%20Lucky%20Wheel/images/خصم5.png');
-        } catch (error) {
-            console.error('❌ خطأ في تحميل صور الخصم 5%:', error);
-        }
+        // تحميل صورة خصم 5% بالاسم العربي الجديد (بدون %)
+        this.load.image('خصم5', './images/خصم5.png');
+        console.log('✅ تم طلب تحميل: خصم5');
         
         // تحميل صورة الموهيتو بالاسم العربي
         this.load.image('موهيتو', './images/موهيتو.png');
@@ -452,17 +444,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('دليفري', './images/دليفري.png');
         console.log('✅ تم طلب تحميل: دليفري');
         
-        // تحميل صورة خصم 15% بطرق متعددة للـ WebView
-        try {
-            // الطريقة الأولى: مسار نسبي مع cache busting
-            this.load.image('خصم15', './images/خصم15.png?v=3');
-            console.log('✅ تم طلب تحميل: خصم15 مع cache busting');
-            
-            // الطريقة الثانية: مسار مطلق كنسخة احتياطية
-            this.load.image('خصم15_backup', 'https://keroleseshak20707.github.io/burgsta-games/Burgsta%20Lucky%20Wheel/images/خصم15.png');
-        } catch (error) {
-            console.error('❌ خطأ في تحميل صور الخصم 15%:', error);
-        }
+        // تحميل صورة خصم 15% بالاسم العربي الجديد (بدون %)
+        this.load.image('خصم15', './images/خصم15.png');
+        console.log('✅ تم طلب تحميل: خصم15');
         
         // تحميل صورة الأورجينال برجر بالاسم العربي
         this.load.image('اورجينال', './images/اورجينال.png');
@@ -479,27 +463,6 @@ class GameScene extends Phaser.Scene {
         // إضافة مستمع للأخطاء لتجاهل الصور المفقودة
         this.load.on('loaderror', (file) => {
             console.log(`📷 صورة غير متوفرة: ${file.key}.png - ستعمل اللعبة بالنصوص فقط`);
-            
-            // معالجة خاصة لصور الخصم في WebView
-            if (file.key === 'خصم5' || file.key === 'خصم15') {
-                console.log(`🔄 محاولة إعادة تحميل ${file.key} بطريقة مختلفة...`);
-                
-                // إنشاء صورة احتياطية ملونة للخصم
-                const graphics = this.add.graphics();
-                graphics.fillStyle(0xc49b41); // لون ذهبي
-                graphics.fillRect(0, 0, 100, 100);
-                graphics.generateTexture(file.key, 100, 100);
-                graphics.destroy();
-                
-                console.log(`✅ تم إنشاء نسخة احتياطية لـ ${file.key}`);
-            }
-        });
-        
-        // معالج إضافي لفحص تحميل الصور
-        this.load.on('filecomplete', (key) => {
-            if (key === 'خصم5' || key === 'خصم15') {
-                console.log(`✅ تم تحميل ${key} بنجاح في WebView`);
-            }
         });
     }
 
@@ -2175,23 +2138,8 @@ class GameScene extends Phaser.Scene {
         const fileName = imageMap[prizeName];
         if (fileName) {
             // التحقق من وجود الصورة المحملة
-            let imageKey = fileName;
-            
-            // جرب النسخة الأصلية أولاً
-            if (!this.textures.exists(fileName)) {
-                // جرب النسخة الاحتياطية
-                const backupKey = fileName + '_backup';
-                if (this.textures.exists(backupKey)) {
-                    imageKey = backupKey;
-                    console.log(`🔄 استخدام النسخة الاحتياطية لـ ${fileName}`);
-                } else {
-                    console.log(`❌ لم يتم العثور على صورة ${fileName} أو نسختها الاحتياطية`);
-                    return { success: false, reason: 'image_not_found' };
-                }
-            }
-            
-            if (this.textures.exists(imageKey)) {
-                const prizeImage = this.add.image(x, y, imageKey);
+            if (this.textures.exists(fileName)) {
+                const prizeImage = this.add.image(x, y, fileName);
                 
                 // التحقق من نوع الصورة لضبط النسبة الصحيحة
                 if (fileName === 'موهيتو') {
