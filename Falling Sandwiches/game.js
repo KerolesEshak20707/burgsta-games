@@ -31,14 +31,14 @@ const GAME_CONFIG = {
     
     // الألوان (هوية Burgsta الجديدة - أحمر وذهبي)
     colors: {
-        primary: '#c49b41',        // بني ذهبي رئيسي
-        secondary: '#27ae60',      // أخضر جميل
-        dark: '#2c3e50',           // أزرق داكن
-        light: '#f39c12',          // برتقالي فاتح
-        text: '#2c3e50',           // أزرق داكن للنصوص
-        accent: '#e67e22',         // برتقالي للتأكيد
-        danger: '#e74c3c',         // أحمر للخطر
-        success: '#27ae60'         // أخضر للنجاح
+        primary: '#c49b41',        // اللون الذهبي الرئيسي لعلامة Burgsta
+        secondary: '#f5f1e6',      // بيج فاتح للخلفيات
+        dark: '#8b6914',           // بني ذهبي داكن للعناوين أو الإطارات
+        light: '#fff9e6',          // أبيض كريمي لخلفية الطبق والعناصر الفاتحة
+        text: '#5d4e37',           // بني مطفي للنصوص
+        accent: '#d4af37',         // ذهبي لامع للتأكيدات أو العناصر الفاخرة
+        danger: '#e74c3c',         // أحمر للتحذيرات والعناصر السيئة
+        success: '#27ae60'         // أخضر للنجاح أو جمع العناصر الجيدة
     }
 };
 
@@ -428,13 +428,13 @@ class GameScene extends Phaser.Scene {
     }
     
     createBackground() {
-        // خلفية خضراء جميلة مع تدرجات طبيعية
+        // خلفية بالتدرج الذهبي والكريمي حسب مواصفات Burgsta
         const bg = this.add.graphics();
         bg.fillGradientStyle(
-            Phaser.Display.Color.HexStringToColor('#2ecc71').color,  // أخضر فاتح
-            Phaser.Display.Color.HexStringToColor('#27ae60').color,  // أخضر متوسط
-            Phaser.Display.Color.HexStringToColor('#1e8449').color,  // أخضر داكن
-            Phaser.Display.Color.HexStringToColor('#27ae60').color,  // أخضر متوسط
+            Phaser.Display.Color.HexStringToColor('#f9f5e7').color,  // كريمي فاتح جداً
+            Phaser.Display.Color.HexStringToColor('#f0e6d2').color,  // كريمي فاتح
+            Phaser.Display.Color.HexStringToColor('#e8dcc0').color,  // بيج ذهبي
+            Phaser.Display.Color.HexStringToColor('#d4c4a0').color,  // بيج داكن
             1
         );
         bg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
@@ -444,10 +444,11 @@ class GameScene extends Phaser.Scene {
     }
     
     createBackgroundElements() {
-        // دوائر زخرفية ذهبية
+        // دوائر زخرفية متحركة بألوان ذهبية متنوعة
         for (let i = 0; i < 8; i++) {
             const circle = this.add.graphics();
-            circle.lineStyle(2, Phaser.Display.Color.HexStringToColor('#c49b41').color, 0.1);
+            const goldColor = i % 2 === 0 ? '#c49b41' : '#d4af37';
+            circle.lineStyle(2, Phaser.Display.Color.HexStringToColor(goldColor).color, 0.15);
             const x = Math.random() * GAME_CONFIG.width;
             const y = Math.random() * GAME_CONFIG.height;
             const radius = 20 + Math.random() * 40;
@@ -510,10 +511,12 @@ class GameScene extends Phaser.Scene {
         const panelX = GAME_CONFIG.width - 150;
         let currentY = 20;
         
-        // خلفية اللوحة (أزرق شفاف أنيق)
+        // خلفية اللوحة بالبيج الفاتح الشفاف
         const panelBg = this.add.graphics();
-        panelBg.fillStyle(0x2c3e50, 0.15);
+        panelBg.fillStyle(0xf5f1e6, 0.2);
+        panelBg.lineStyle(2, 0x8b6914, 0.5);
         panelBg.fillRoundedRect(panelX - 10, 10, 140, GAME_CONFIG.height - 20, 10);
+        panelBg.strokeRoundedRect(panelX - 10, 10, 140, GAME_CONFIG.height - 20, 10);
         
         // === 1. النقاط ===
         this.ui.scoreText = this.add.text(panelX, currentY, 'النقاط: 0', {

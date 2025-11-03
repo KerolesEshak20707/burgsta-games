@@ -9,7 +9,7 @@
 
 body {
     font-family: 'Cairo', Arial, sans-serif;
-    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 50%, #1e8449 100%);
+    background: linear-gradient(135deg, #f9f5e7 0%, #f0e6d2 25%, #e8dcc0 50%, #d4c4a0 75%, #c49b41 100%);
     overflow: hidden;
     direction: rtl;
     user-select: none;
@@ -31,7 +31,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 50%, #1e8449 100%);
+    background: linear-gradient(135deg, #f9f5e7 0%, #f0e6d2 25%, #e8dcc0 50%, #d4c4a0 75%, #c49b41 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -42,7 +42,7 @@ body {
 
 .loading-content {
     text-align: center;
-    color: #fff;
+    color: #5d4e37;
     max-width: 400px;
     padding: 0 20px;
 }
@@ -58,14 +58,14 @@ body {
 .loading h2 {
     font-size: 1.8em;
     margin-bottom: 30px;
-    color: #fff9e6;
+    color: #8b6914;
     font-weight: 600;
 }
 
 .loading p {
     font-size: 1.1em;
     line-height: 1.6;
-    color: #fff9e6;
+    color: #5d4e37;
     margin-bottom: 40px;
     opacity: 0.9;
 }
@@ -136,7 +136,7 @@ body {
     align-items: center;
     margin-bottom: 15px;
     font-size: 1em;
-    color: #fff9e6;
+    color: #5d4e37;
 }
 
 .instruction-item:last-child {
@@ -322,7 +322,7 @@ body::before {
     background: 
         radial-gradient(circle at 20% 80%, rgba(196, 155, 65, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-        linear-gradient(135deg, #2ecc71 0%, #27ae60 50%, #1e8449 100%);
+        linear-gradient(135deg, #f9f5e7 0%, #f0e6d2 25%, #e8dcc0 50%, #d4c4a0 75%, #c49b41 100%);
     z-index: -1;
 }
 
