@@ -1304,14 +1304,19 @@ class GameScene extends Phaser.Scene {
     }
     
     handleBadItem() {
-        // 💥 السندوتش الفاسد يخسرك من الخصم المُجمّع بالفعل!
+        // 💥 السندوتش الفاسد يخسرك من الخصم المُجمّع
         const lostDiscount = Math.abs(GAME_CONFIG.discount.badItem);
         this.gameManager.addDiscount(-lostDiscount); // خسارة من الخصم المُجمّع
-        this.gameManager.loseLife();
-        this.gameManager.badCaught++;
         
-        // تأثير بصري سلبي محسن
-        this.showFloatingText(`-${lostDiscount.toFixed(1)}%`, GAME_CONFIG.colors.danger);
+        // 🍟 يخسر كيس بطاطس (حياة) فقط إذا كان الخصم 0.0%
+        if (this.gameManager.discount <= 0) {
+            this.gameManager.loseLife();
+            this.showFloatingText(`-${lostDiscount.toFixed(1)}% و حياة!`, GAME_CONFIG.colors.danger);
+        } else {
+            this.showFloatingText(`-${lostDiscount.toFixed(1)}%`, GAME_CONFIG.colors.danger);
+        }
+        
+        this.gameManager.badCaught++;
         this.shakeScreen();
         
         // صوت سلبي
