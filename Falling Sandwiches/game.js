@@ -2182,7 +2182,7 @@ class GameScene extends Phaser.Scene {
         this.currentDialog = {
             bg: dialogBg,
             box: null,
-            texts: [titleText, rewardText, questionText, choiceText, countdownText],
+            texts: [titleText, choiceText, countdownText],
             buttons: [withdrawBtn, continueBtn],
             timer: countdownTimer
         };
