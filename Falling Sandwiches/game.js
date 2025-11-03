@@ -12,20 +12,20 @@ const GAME_CONFIG = {
         size: 80
     },
     
-    // إعدادات السندوتشات
+    // إعدادات السندوتشات - صعوبة جهنمية 🔥🔥
     items: {
-        baseSpeed: 80,         // بداية هادئة وبطيئة
-        speedIncrement: 10,    // زيادة سرعة تدريجية
-        baseSpawnRate: 1200,   // بداية مريحة جداً
-        spawnRateDecrement: 30, // تسارع تدريجي في الظهور
-        minSpawnRate: 300      // حد أدنى معقول في النهاية
+        baseSpeed: 150,        // سريع من البداية!
+        speedIncrement: 25,    // زيادة سرعة قاتلة
+        baseSpawnRate: 800,    // كثافة عالية من البداية
+        spawnRateDecrement: 60, // تسارع جنوني في الظهور
+        minSpawnRate: 150      // جحيم حقيقي! 
     },
     
-    // نظام الخصم
+    // نظام الخصم - صعوبة عالية جداً 🔥
     discount: {
-        goodSandwich: 1,    // +1% لكل سندوتش جيد (تدريج بطيء)
-        goldenSandwich: 3,  // +3% للسندوتش الذهبي (معقول)
-        badItem: -2,        // -2% للعناصر السيئة (مش قاسي)
+        goodSandwich: 0.3,  // +0.3% لكل سندوتش جيد (صعب جداً!)
+        goldenSandwich: 1.5,  // +1.5% للسندوتش الذهبي (نادر)
+        badItem: -1.5,      // -1.5% للعناصر السيئة (عقاب قاسي)
         maxDiscount: 100
     },
     
@@ -181,34 +181,38 @@ class GameManager {
     }
     
     getCurrentItemSpeed() {
-        // السرعة تزيد حسب نسبة الخصم المحققة
+        // السرعة تزيد بشكل جنوني حسب نسبة الخصم المحققة 🚀
         let speedMultiplier = 1;
         
-        if (this.discount >= 75) {
-            speedMultiplier = 2.5; // سريع جداً!
-        } else if (this.discount >= 50) {
-            speedMultiplier = 2.0; // سريع
-        } else if (this.discount >= 25) {
-            speedMultiplier = 1.5; // متوسط السرعة
+        if (this.discount >= 25) {
+            speedMultiplier = 6.0; // مستحيل تقريباً! 🔥🔥🔥
+        } else if (this.discount >= 15) {
+            speedMultiplier = 4.5; // جحيم حقيقي! 🔥🔥
         } else if (this.discount >= 10) {
-            speedMultiplier = 1.2; // أسرع قليلاً
+            speedMultiplier = 3.0; // صعوبة قاتلة! 🔥
+        } else if (this.discount >= 5) {
+            speedMultiplier = 2.0; // سريع جداً
+        } else if (this.discount >= 3) {
+            speedMultiplier = 1.5; // بداية التحدي
         }
         
         return GAME_CONFIG.items.baseSpeed * speedMultiplier;
     }
     
     getCurrentSpawnRate() {
-        // معدل الظهور يزيد (الوقت يقل) حسب نسبة الخصم
+        // معدل الظهور يزيد بشكل جنوني (الوقت يقل) حسب نسبة الخصم 💀
         let spawnMultiplier = 1;
         
-        if (this.discount >= 75) {
-            spawnMultiplier = 0.3; // ظهور سريع جداً!
-        } else if (this.discount >= 50) {
-            spawnMultiplier = 0.5; // ظهور سريع
-        } else if (this.discount >= 25) {
-            spawnMultiplier = 0.7; // ظهور متوسط
+        if (this.discount >= 25) {
+            spawnMultiplier = 0.15; // مطر من السندوتشات! 🌧️💀
+        } else if (this.discount >= 15) {
+            spawnMultiplier = 0.25; // كثافة جهنمية! 🔥💀
         } else if (this.discount >= 10) {
-            spawnMultiplier = 0.85; // ظهور أسرع قليلاً
+            spawnMultiplier = 0.4;  // ظهور قاتل! ⚡💀
+        } else if (this.discount >= 5) {
+            spawnMultiplier = 0.6;  // ظهور سريع جداً
+        } else if (this.discount >= 3) {
+            spawnMultiplier = 0.8;  // بداية الجحيم
         }
         
         const rate = GAME_CONFIG.items.baseSpawnRate * spawnMultiplier;
@@ -1383,20 +1387,22 @@ class GameScene extends Phaser.Scene {
         // تحديد نوع العنصر (بدون سندوتشات ذهبية عادية)
         const currentDifficulty = this.getCurrentDifficultyLevel();
         
-        // احتماليات بدون السندوتش الذهبي (السندوتش الذهبي حدث خاص منفصل)
-        const badChance = Math.min(0.6, 0.35 + (currentDifficulty * 0.05)); // من 35% إلى 60%
-        const goodChance = 1 - badChance; // باقي الاحتمال للعناصر الجيدة
+        // احتماليات قاسية - سندوتشات سيئة أكثر! 💀
+        const badChance = Math.min(0.85, 0.60 + (currentDifficulty * 0.08)); // من 60% إلى 85% سيئة! 🔥
+        const goodChance = 1 - badChance; // قليل جداً من العناصر الجيدة
         
-        // إنتاج سندوتشات متدرج حسب الصعوبة
+        // إنتاج سندوتشات بكثافة جهنمية 🔥💀
         let numItems;
-        if (this.gameManager.discount < 10) {
-            numItems = 1; // في البداية: سندوتش واحد بس
-        } else if (this.gameManager.discount < 30) {
-            numItems = Math.floor(Math.random() * 2) + 1; // 1-2 سندوتشات
-        } else if (this.gameManager.discount < 50) {
-            numItems = Math.floor(Math.random() * 3) + 1; // 1-3 سندوتشات
+        if (this.gameManager.discount < 3) {
+            numItems = Math.floor(Math.random() * 3) + 2; // 2-4 سندوتشات (صعب من البداية!)
+        } else if (this.gameManager.discount < 5) {
+            numItems = Math.floor(Math.random() * 4) + 3; // 3-6 سندوتشات (جحيم!)
+        } else if (this.gameManager.discount < 10) {
+            numItems = Math.floor(Math.random() * 6) + 4; // 4-9 سندوتشات (مستحيل تقريباً!)
+        } else if (this.gameManager.discount < 15) {
+            numItems = Math.floor(Math.random() * 8) + 6; // 6-13 سندوتشات (جحيم حقيقي! 🔥🔥)
         } else {
-            numItems = Math.floor(Math.random() * 4) + 2; // 2-5 سندوتشات (صعب!)
+            numItems = Math.floor(Math.random() * 10) + 8; // 8-17 سندوتشات (مطر جهنمي! 🌧️💀🔥)
         }
         
         for (let i = 0; i < numItems; i++) {
