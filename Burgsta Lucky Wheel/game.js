@@ -2147,37 +2147,8 @@ class GameScene extends Phaser.Scene {
 
         const fileName = imageMap[prizeName];
         if (fileName) {
-            // التحقق من وجود الصورة المحملة مع logging خاص للـ WebView
+            // التحقق من وجود الصورة المحملة
             if (this.textures.exists(fileName)) {
-                console.log(`📱 WebView: إنشاء صورة ${fileName} للجائزة ${prizeName}`);
-                
-                // للصور الخصم: إنشاء نص بديل أفضل للـ WebView
-                if (fileName === 'offer5' || fileName === 'offer15') {
-                    // إنشاء نص مصمم خصيصاً للخصم بدلاً من الصورة المشكلة
-                    const discountValue = fileName === 'offer5' ? '5%' : '15%';
-                    const prizeText = this.add.text(x, y, `خصم\n${discountValue}`, {
-                        fontFamily: 'Cairo, Arial',
-                        fontSize: '22px',
-                        fontWeight: 'bold',
-                        color: '#ffffff',
-                        align: 'center',
-                        backgroundColor: '#ff8c00',
-                        padding: { x: 15, y: 10 },
-                        stroke: '#8b6914',
-                        strokeThickness: 2,
-                        shadow: {
-                            offsetX: 2,
-                            offsetY: 2,
-                            color: 'rgba(0,0,0,0.5)',
-                            blur: 3,
-                            fill: true
-                        }
-                    }).setOrigin(0.5);
-                    
-                    console.log(`🎨 WebView: تم إنشاء نص خصم محسن بدلاً من الصورة المشكلة`);
-                    return prizeText;
-                }
-                
                 const prizeImage = this.add.image(x, y, fileName);
                 
                 // التحقق من نوع الصورة لضبط النسبة الصحيحة
@@ -2192,12 +2163,12 @@ class GameScene extends Phaser.Scene {
                     const imageHeight = Math.max(65, wheelRadius * 0.28); // أقصر من العرض
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else if (fileName === 'offer15') {
-                    // لخصم 15%: مربع مناسب مع شفافية صحيحة
-                    const imageSize = Math.max(85, wheelRadius * 0.38);
+                    // لخصم 15%: مربع مناسب لملء الخانة
+                    const imageSize = Math.max(85, wheelRadius * 0.38); // حجم جيد
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 } else if (fileName === 'offer5') {
-                    // لخصم 5%: مربع مناسب مع شفافية صحيحة  
-                    const imageSize = Math.max(85, wheelRadius * 0.38);
+                    // لخصم 5%: مربع مناسب لملء الخانة
+                    const imageSize = Math.max(85, wheelRadius * 0.38); // حجم جيد
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 } else if (fileName === 'اورجينال') {
                     // للأورجينال برجر: أعرض من الطول ليبدو طبيعياً
@@ -2224,57 +2195,12 @@ class GameScene extends Phaser.Scene {
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 }
                 
-                // ضبط الشفافية والعرض بشكل صحيح
                 prizeImage.setAlpha(1.0); // شفافية كاملة للوضوح
-                
-                // إعدادات خاصة لصور الخصم الجديدة - إصلاح WebView
-                if (fileName === 'offer5' || fileName === 'offer15') {
-                    // تأكيد أن الخلفية الشفافة تختفي والصورة تظهر بوضوح
-                    prizeImage.setOrigin(0.5, 0.5); // توسيط مثالي
-                    prizeImage.setTint(0xffffff); // ألوان طبيعية بدون تغيير
-                    
-                    // إصلاح مشكلة WebView: إزالة الخلفية الملونة
-                    prizeImage.setBlendMode(Phaser.BlendModes.NORMAL);
-                    prizeImage.setDepth(10); // طبقة أعلى لضمان العرض الصحيح
-                    
-                    console.log(`🎨 إصلاح WebView للصورة: ${fileName}`);
-                }
-                
+                // لا نضيف الصورة هنا - ستُضاف في الدالة الرئيسية
                 return prizeImage;
             } else {
-                console.error(`❌ WebView: الصورة ${fileName} غير محملة للجائزة: ${prizeName}`);
-                
-                // إنشاء نص بديل محسن للخصومات
-                if (prizeName.includes('خصم')) {
-                    const discountValue = prizeName.includes('5%') ? '5%' : prizeName.includes('15%') ? '15%' : '';
-                    const fallbackText = this.add.text(x, y, `خصم\n${discountValue}`, {
-                        fontFamily: 'Cairo, Arial',
-                        fontSize: '20px',
-                        fontWeight: 'bold',
-                        color: '#ffffff',
-                        align: 'center',
-                        backgroundColor: '#ff8c00',
-                        padding: { x: 12, y: 8 },
-                        stroke: '#8b6914',
-                        strokeThickness: 2
-                    }).setOrigin(0.5);
-                    
-                    console.log(`🔄 WebView: تم إنشاء نص خصم بديل محسن`);
-                    return fallbackText;
-                } else {
-                    // للجوائز الأخرى
-                    const fallbackText = this.add.text(x, y, prizeName.split(' ')[0], {
-                        fontFamily: 'Cairo, Arial',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        color: '#ffffff',
-                        align: 'center',
-                        backgroundColor: 'rgba(196, 155, 65, 0.9)',
-                        padding: { x: 8, y: 4 }
-                    }).setOrigin(0.5);
-                    
-                    return fallbackText;
-                }
+                console.log(`⚠️ الصورة ${fileName} غير محملة للجائزة: ${prizeName}`);
+                return null;
             }
         }
         
