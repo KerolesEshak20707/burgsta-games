@@ -2093,8 +2093,6 @@ class GameScene extends Phaser.Scene {
                     // إزالة عناصر الحوار
                     dialogBg.destroy();
                     titleText.destroy();
-                    rewardText.destroy();
-                    questionText.destroy();
                     choiceText.destroy();
                     countdownText.destroy();
                     withdrawBtn.destroy();
@@ -2155,8 +2153,6 @@ class GameScene extends Phaser.Scene {
             // إزالة عناصر الحوار
             dialogBg.destroy();
             titleText.destroy();
-            rewardText.destroy();
-            questionText.destroy();
             choiceText.destroy();
             countdownText.destroy();
             withdrawBtn.destroy();
@@ -2170,8 +2166,6 @@ class GameScene extends Phaser.Scene {
             // إزالة عناصر الحوار
             dialogBg.destroy();
             titleText.destroy();
-            rewardText.destroy();
-            questionText.destroy();
             choiceText.destroy();
             countdownText.destroy();
             withdrawBtn.destroy();
