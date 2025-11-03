@@ -31,14 +31,14 @@ const GAME_CONFIG = {
     
     // الألوان (هوية Burgsta الجديدة - أحمر وذهبي)
     colors: {
-        primary: '#FFD700',        // ذهبي رئيسي
-        secondary: '#4A148C',      // بنفسجي داكن
-        dark: '#7B1FA2',           // بنفسجي متوسط  
-        light: '#F3E5F5',          // بنفسجي فاتح جداً
-        text: '#FFD700',           // ذهبي للنصوص
-        accent: '#9C27B0',         // بنفسجي فاتح
-        danger: '#4A148C',         // بنفسجي داكن للخطر
-        success: '#FFD700'         // ذهبي للنجاح
+        primary: '#333333',        // رمادي داكن للنصوص
+        secondary: '#f5f5f5',      // أوف وايت فاتح
+        dark: '#666666',           // رمادي متوسط  
+        light: '#fafafa',          // أبيض مكسور
+        text: '#444444',           // رمادي داكن للنصوص
+        accent: '#e0e0e0',         // رمادي فاتح للتأكيد
+        danger: '#ff4444',         // أحمر للخطر
+        success: '#4caf50'         // أخضر للنجاح
     }
 };
 
@@ -239,32 +239,16 @@ class GameScene extends Phaser.Scene {
     }
     
     preload() {
+        // تحميل صورة الباسكت
+        this.load.image('basket', 'images/554090850_1223329739812689_6490089936297556677_n.png');
+        
         // إنشاء الأشكال بدلاً من تحميل صور
         this.createGameAssets();
     }
     
     createGameAssets() {
         // إنشاء أشكال ملونة وجذابة للعناصر المختلفة
-        
-        // اللاعب (طبق جميل)
-        const playerGraphics = this.add.graphics();
-        // خلفية الطبق (بنفسجي داكن)
-        playerGraphics.fillStyle(0x4A148C);
-        playerGraphics.fillRoundedRect(0, 0, 80, 20, 10);
-        // حافة الطبق (ذهبي)
-        playerGraphics.fillStyle(0xFFD700);
-        playerGraphics.fillRoundedRect(3, 3, 74, 14, 7);
-        // وسط الطبق (أبيض كريمي)
-        playerGraphics.fillStyle(0xfff9e6);
-        playerGraphics.fillRoundedRect(6, 6, 68, 8, 4);
-        // خطوط زخرفية
-        playerGraphics.lineStyle(1, 0xFFD700);
-        playerGraphics.beginPath();
-        playerGraphics.moveTo(10, 10);
-        playerGraphics.lineTo(70, 10);
-        playerGraphics.strokePath();
-        playerGraphics.generateTexture('player', 80, 20);
-        playerGraphics.destroy();
+        // ملاحظة: الباسكت سيتم تحميله كصورة حقيقية من مجلد images
         
         // سندوتش جيد (برجر شهي)
         const goodSandwichGraphics = this.add.graphics();
@@ -444,13 +428,13 @@ class GameScene extends Phaser.Scene {
     }
     
     createBackground() {
-        // خلفية متدرجة بنفسجية أنيقة مع تأثيرات
+        // خلفية هادئة أوف وايت مع تأثيرات خفيفة
         const bg = this.add.graphics();
         bg.fillGradientStyle(
-            Phaser.Display.Color.HexStringToColor('#4A148C').color,  // بنفسجي داكن
-            Phaser.Display.Color.HexStringToColor('#7B1FA2').color,  // بنفسجي متوسط
-            Phaser.Display.Color.HexStringToColor('#9C27B0').color,  // بنفسجي فاتح
-            Phaser.Display.Color.HexStringToColor('#4A148C').color,  // بنفسجي داكن
+            Phaser.Display.Color.HexStringToColor('#fafafa').color,  // أبيض مكسور
+            Phaser.Display.Color.HexStringToColor('#f5f5f5').color,  // أوف وايت
+            Phaser.Display.Color.HexStringToColor('#f0f0f0').color,  // رمادي فاتح جداً
+            Phaser.Display.Color.HexStringToColor('#fafafa').color,  // أبيض مكسور
             1
         );
         bg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
@@ -460,10 +444,10 @@ class GameScene extends Phaser.Scene {
     }
     
     createBackgroundElements() {
-        // دوائر زخرفية ذهبية
+        // دوائر زخرفية هادئة
         for (let i = 0; i < 8; i++) {
             const circle = this.add.graphics();
-            circle.lineStyle(2, Phaser.Display.Color.HexStringToColor('#FFD700').color, 0.15);
+            circle.lineStyle(2, Phaser.Display.Color.HexStringToColor('#e0e0e0').color, 0.05);
             const x = Math.random() * GAME_CONFIG.width;
             const y = Math.random() * GAME_CONFIG.height;
             const radius = 20 + Math.random() * 40;
@@ -489,12 +473,15 @@ class GameScene extends Phaser.Scene {
         this.player = this.physics.add.sprite(
             gameAreaWidth / 2, 
             GAME_CONFIG.height - 50, 
-            'player'
+            'basket'
         );
+        
+        // تحديد حجم الصورة ومنطقة التصادم
+        this.player.setScale(0.15); // تصغير الصورة لحجم مناسب
         
         // تحسينات فيزياء للاستجابة الصاروخية
         this.player.setCollideWorldBounds(true);
-        this.player.body.setSize(70, 15); // تقليل منطقة التصادم قليلاً
+        this.player.body.setSize(80, 20); // منطقة التصادم مناسبة للباسكت
         this.player.setGravityY(-400); // إلغاء تأثير الجاذبية على اللاعب
         this.player.body.setDrag(0); // إزالة أي مقاومة
         this.player.body.setMaxVelocity(0); // إيقاف السرعة التلقائية
@@ -523,17 +510,19 @@ class GameScene extends Phaser.Scene {
         const panelX = GAME_CONFIG.width - 150;
         let currentY = 20;
         
-        // خلفية اللوحة
+        // خلفية اللوحة (أحمر أنيق)
         const panelBg = this.add.graphics();
-        panelBg.fillStyle(0x000000, 0.1);
+        panelBg.fillStyle(0xdc143c, 0.9);
+        panelBg.lineStyle(2, 0xb22222, 1);
         panelBg.fillRoundedRect(panelX - 10, 10, 140, GAME_CONFIG.height - 20, 10);
+        panelBg.strokeRoundedRect(panelX - 10, 10, 140, GAME_CONFIG.height - 20, 10);
         
         // === 1. النقاط ===
         this.ui.scoreText = this.add.text(panelX, currentY, 'النقاط: 0', {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
             fontWeight: '600',
-            color: '#FFD700'
+            color: '#ffffff'
         });
         currentY += 35;
         
@@ -542,7 +531,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
             fontWeight: 'bold',
-            color: '#FFD700'
+            color: '#ffffff'
         });
         currentY += 35;
         
@@ -550,14 +539,14 @@ class GameScene extends Phaser.Scene {
         this.ui.livesLabel = this.add.text(panelX, currentY, 'أكياس البطاطس:', {
             fontFamily: 'Cairo, Arial',
             fontSize: '14px',
-            color: '#FFD700'
+            color: '#ffffff'
         });
         currentY += 25;
         
         this.ui.livesText = this.add.text(panelX, currentY, '🍟🍟🍟', {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
-            color: '#FFD700'
+            color: '#ffffff'
         });
         currentY += 40;
         
@@ -566,7 +555,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
             fontWeight: 'bold',
-            color: '#FFD700'
+            color: '#ffffff'
         });
         currentY += 30;
         
@@ -575,7 +564,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '32px',
             fontWeight: 'bold',
-            color: '#FFD700'
+            color: '#ffffff'
         });
         currentY += 50;
         
@@ -584,7 +573,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '14px',
             fontWeight: '600',
-            color: '#FFD700'
+            color: '#ffffff'
         });
         currentY += 40;
         
@@ -1656,8 +1645,8 @@ class GameScene extends Phaser.Scene {
         
         // خلفية الإشعار مع حدود
         const notificationBg = this.add.graphics();
-        notificationBg.fillStyle(0x4A148C, 0.95);
-        notificationBg.lineStyle(4, 0xFFD700, 1);
+        notificationBg.fillStyle(0x333333, 0.95);
+        notificationBg.lineStyle(4, 0x555555, 1);
         notificationBg.fillRoundedRect(-220, -60, 440, 120, 20);
         notificationBg.strokeRoundedRect(-220, -60, 440, 120, 20);
         
@@ -1665,7 +1654,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Arial Black',
             fontSize: '22px',
             fontWeight: 'bold',
-            color: '#FFD700',
+            color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 3,
             align: 'center'
@@ -1674,7 +1663,7 @@ class GameScene extends Phaser.Scene {
         const messageText = this.add.text(0, 15, message, {
             fontFamily: 'Arial',
             fontSize: '16px',
-            color: '#FFD700',
+            color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 2,
             align: 'center',
