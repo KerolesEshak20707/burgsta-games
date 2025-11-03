@@ -396,7 +396,9 @@ class GameScene extends Phaser.Scene {
     }
 
     preload() {
-        console.log('🔄 بدء تحميل الصور - الإصدار الجديد v2');
+        console.log('🔄 بدء تحميل الصور - WebView Enhanced v3');
+        console.log('📱 تحسينات خاصة للـ WebView والصور العربية');
+        
         // إضافة مؤشر تحميل بسيط
         const { width, height } = this.cameras.main;
         
@@ -432,21 +434,21 @@ class GameScene extends Phaser.Scene {
         this.load.image('وافل شوكلاته', './images/وافل شوكلاته.png');
         console.log('✅ تم طلب تحميل: وافل شوكلاته');
         
-        // تحميل صورة خصم 5% بالاسم العربي الجديد (بدون %)
-        this.load.image('خصم5', './images/خصم5.png');
-        console.log('✅ تم طلب تحميل: خصم5');
+        // تحميل صورة خصم 5% مع cache busting للـ WebView
+        this.load.image('خصم5', './images/خصم5.png?v=3&t=' + Date.now());
+        console.log('✅ تم طلب تحميل: خصم5 مع cache busting');
         
         // تحميل صورة الموهيتو بالاسم العربي
-        this.load.image('موهيتو', './images/موهيتو.png');
+        this.load.image('موهيتو', './images/موهيتو.png?v=3');
         console.log('✅ تم طلب تحميل: موهيتو');
         
         // تحميل صورة الدليفري بالاسم العربي
-        this.load.image('دليفري', './images/دليفري.png');
+        this.load.image('دليفري', './images/دليفري.png?v=3');
         console.log('✅ تم طلب تحميل: دليفري');
         
-        // تحميل صورة خصم 15% بالاسم العربي الجديد (بدون %)
-        this.load.image('خصم15', './images/خصم15.png');
-        console.log('✅ تم طلب تحميل: خصم15');
+        // تحميل صورة خصم 15% مع cache busting للـ WebView
+        this.load.image('خصم15', './images/خصم15.png?v=3&t=' + Date.now());
+        console.log('✅ تم طلب تحميل: خصم15 مع cache busting');
         
         // تحميل صورة الأورجينال برجر بالاسم العربي
         this.load.image('اورجينال', './images/اورجينال.png');
@@ -460,9 +462,17 @@ class GameScene extends Phaser.Scene {
         // تحميل صورة "حاول وقت لاحق"
         this.load.image('حاول وقت لاحق', './images/حاول وقت لاحق.png');
 
-        // إضافة مستمع للأخطاء لتجاهل الصور المفقودة
+        // إضافة مستمع للأخطاء مع تفاصيل أكثر للـ WebView
         this.load.on('loaderror', (file) => {
-            console.log(`📷 صورة غير متوفرة: ${file.key}.png - ستعمل اللعبة بالنصوص فقط`);
+            console.error(`❌ فشل تحميل الصورة: ${file.key} من ${file.src}`);
+            console.error(`📱 WebView Error: قد تكون مشكلة في الـ cache أو المسار`);
+        });
+        
+        // إضافة مستمع لنجاح التحميل
+        this.load.on('filecomplete', (key, type, data) => {
+            if (type === 'image' && (key === 'خصم5' || key === 'خصم15')) {
+                console.log(`✅ WebView: تم تحميل صورة ${key} بنجاح`);
+            }
         });
     }
 
@@ -2137,8 +2147,9 @@ class GameScene extends Phaser.Scene {
 
         const fileName = imageMap[prizeName];
         if (fileName) {
-            // التحقق من وجود الصورة المحملة
+            // التحقق من وجود الصورة المحملة مع logging خاص للـ WebView
             if (this.textures.exists(fileName)) {
+                console.log(`📱 WebView: إنشاء صورة ${fileName} للجائزة ${prizeName}`);
                 const prizeImage = this.add.image(x, y, fileName);
                 
                 // التحقق من نوع الصورة لضبط النسبة الصحيحة
@@ -2184,8 +2195,26 @@ class GameScene extends Phaser.Scene {
                 prizeImage.setAlpha(1.0); // شفافية كاملة للوضوح
                 // لا نضيف الصورة هنا - ستُضاف في الدالة الرئيسية
                 return prizeImage;
+            } else {
+                console.error(`❌ WebView: الصورة ${fileName} غير محملة للجائزة: ${prizeName}`);
+                console.error(`💡 WebView Tip: تحقق من الـ network cache أو أعد تشغيل التطبيق`);
+                
+                // إنشاء نص بديل في حالة فشل الصورة في WebView
+                const fallbackText = this.add.text(x, y, prizeName.split(' ')[0] + '\n' + (prizeName.includes('5%') ? '5%' : prizeName.includes('15%') ? '15%' : ''), {
+                    fontFamily: 'Cairo, Arial',
+                    fontSize: '18px',
+                    fontWeight: 'bold',
+                    color: '#ffffff',
+                    align: 'center',
+                    backgroundColor: 'rgba(255, 140, 0, 0.8)',
+                    padding: { x: 8, y: 4 }
+                }).setOrigin(0.5);
+                
+                console.log(`🔄 WebView: تم إنشاء نص بديل للجائزة ${prizeName}`);
+                return fallbackText;
             }
         }
+        
         return null;
     }
 }
