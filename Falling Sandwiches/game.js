@@ -31,14 +31,14 @@ const GAME_CONFIG = {
     
     // الألوان (هوية Burgsta الجديدة - أحمر وذهبي)
     colors: {
-        primary: '#333333',        // رمادي داكن للنصوص
-        secondary: '#f5f5f5',      // أوف وايت فاتح
-        dark: '#666666',           // رمادي متوسط  
-        light: '#fafafa',          // أبيض مكسور
-        text: '#444444',           // رمادي داكن للنصوص
-        accent: '#e0e0e0',         // رمادي فاتح للتأكيد
-        danger: '#ff4444',         // أحمر للخطر
-        success: '#4caf50'         // أخضر للنجاح
+        primary: '#c49b41',        // بني ذهبي رئيسي
+        secondary: '#27ae60',      // أخضر جميل
+        dark: '#2c3e50',           // أزرق داكن
+        light: '#f39c12',          // برتقالي فاتح
+        text: '#2c3e50',           // أزرق داكن للنصوص
+        accent: '#e67e22',         // برتقالي للتأكيد
+        danger: '#e74c3c',         // أحمر للخطر
+        success: '#27ae60'         // أخضر للنجاح
     }
 };
 
@@ -240,7 +240,7 @@ class GameScene extends Phaser.Scene {
     
     preload() {
         // تحميل صورة الباسكت
-        this.load.image('basket', 'images/554090850_1223329739812689_6490089936297556677_n.png');
+        this.load.image('basket', 'images/box.png');
         
         // إنشاء الأشكال بدلاً من تحميل صور
         this.createGameAssets();
@@ -428,13 +428,13 @@ class GameScene extends Phaser.Scene {
     }
     
     createBackground() {
-        // خلفية هادئة أوف وايت مع تأثيرات خفيفة
+        // خلفية خضراء جميلة مع تدرجات طبيعية
         const bg = this.add.graphics();
         bg.fillGradientStyle(
-            Phaser.Display.Color.HexStringToColor('#fafafa').color,  // أبيض مكسور
-            Phaser.Display.Color.HexStringToColor('#f5f5f5').color,  // أوف وايت
-            Phaser.Display.Color.HexStringToColor('#f0f0f0').color,  // رمادي فاتح جداً
-            Phaser.Display.Color.HexStringToColor('#fafafa').color,  // أبيض مكسور
+            Phaser.Display.Color.HexStringToColor('#2ecc71').color,  // أخضر فاتح
+            Phaser.Display.Color.HexStringToColor('#27ae60').color,  // أخضر متوسط
+            Phaser.Display.Color.HexStringToColor('#1e8449').color,  // أخضر داكن
+            Phaser.Display.Color.HexStringToColor('#27ae60').color,  // أخضر متوسط
             1
         );
         bg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
@@ -444,10 +444,10 @@ class GameScene extends Phaser.Scene {
     }
     
     createBackgroundElements() {
-        // دوائر زخرفية هادئة
+        // دوائر زخرفية ذهبية
         for (let i = 0; i < 8; i++) {
             const circle = this.add.graphics();
-            circle.lineStyle(2, Phaser.Display.Color.HexStringToColor('#e0e0e0').color, 0.05);
+            circle.lineStyle(2, Phaser.Display.Color.HexStringToColor('#c49b41').color, 0.1);
             const x = Math.random() * GAME_CONFIG.width;
             const y = Math.random() * GAME_CONFIG.height;
             const radius = 20 + Math.random() * 40;
@@ -510,19 +510,17 @@ class GameScene extends Phaser.Scene {
         const panelX = GAME_CONFIG.width - 150;
         let currentY = 20;
         
-        // خلفية اللوحة (أحمر أنيق)
+        // خلفية اللوحة (أزرق شفاف أنيق)
         const panelBg = this.add.graphics();
-        panelBg.fillStyle(0xdc143c, 0.9);
-        panelBg.lineStyle(2, 0xb22222, 1);
+        panelBg.fillStyle(0x2c3e50, 0.15);
         panelBg.fillRoundedRect(panelX - 10, 10, 140, GAME_CONFIG.height - 20, 10);
-        panelBg.strokeRoundedRect(panelX - 10, 10, 140, GAME_CONFIG.height - 20, 10);
         
         // === 1. النقاط ===
         this.ui.scoreText = this.add.text(panelX, currentY, 'النقاط: 0', {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
             fontWeight: '600',
-            color: '#ffffff'
+            color: GAME_CONFIG.colors.primary
         });
         currentY += 35;
         
@@ -531,7 +529,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
             fontWeight: 'bold',
-            color: '#ffffff'
+            color: GAME_CONFIG.colors.primary
         });
         currentY += 35;
         
@@ -539,14 +537,14 @@ class GameScene extends Phaser.Scene {
         this.ui.livesLabel = this.add.text(panelX, currentY, 'أكياس البطاطس:', {
             fontFamily: 'Cairo, Arial',
             fontSize: '14px',
-            color: '#ffffff'
+            color: GAME_CONFIG.colors.primary
         });
         currentY += 25;
         
         this.ui.livesText = this.add.text(panelX, currentY, '🍟🍟🍟', {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
-            color: '#ffffff'
+            color: GAME_CONFIG.colors.primary
         });
         currentY += 40;
         
@@ -555,7 +553,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
             fontWeight: 'bold',
-            color: '#ffffff'
+            color: GAME_CONFIG.colors.accent
         });
         currentY += 30;
         
@@ -564,7 +562,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '32px',
             fontWeight: 'bold',
-            color: '#ffffff'
+            color: GAME_CONFIG.colors.primary
         });
         currentY += 50;
         
@@ -573,7 +571,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Cairo, Arial',
             fontSize: '14px',
             fontWeight: '600',
-            color: '#ffffff'
+            color: GAME_CONFIG.colors.dark
         });
         currentY += 40;
         
