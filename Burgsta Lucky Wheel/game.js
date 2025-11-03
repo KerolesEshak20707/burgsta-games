@@ -434,9 +434,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('وافل شوكلاته', './images/وافل شوكلاته.png');
         console.log('✅ تم طلب تحميل: وافل شوكلاته');
         
-        // تحميل صورة خصم 5% مع cache busting للـ WebView
-        this.load.image('خصم5', './images/خصم5.png?v=3&t=' + Date.now());
-        console.log('✅ تم طلب تحميل: خصم5 مع cache busting');
+        // تحميل صورة خصم 5% بالاسم الجديد offer5
+        this.load.image('offer5', './images/offer5.png');
+        console.log('✅ تم طلب تحميل: offer5 (خصم 5%)');
         
         // تحميل صورة الموهيتو بالاسم العربي
         this.load.image('موهيتو', './images/موهيتو.png?v=3');
@@ -446,9 +446,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('دليفري', './images/دليفري.png?v=3');
         console.log('✅ تم طلب تحميل: دليفري');
         
-        // تحميل صورة خصم 15% مع cache busting للـ WebView
-        this.load.image('خصم15', './images/خصم15.png?v=3&t=' + Date.now());
-        console.log('✅ تم طلب تحميل: خصم15 مع cache busting');
+        // تحميل صورة خصم 15% بالاسم الجديد offer15
+        this.load.image('offer15', './images/offer15.png');
+        console.log('✅ تم طلب تحميل: offer15 (خصم 15%)');
         
         // تحميل صورة الأورجينال برجر بالاسم العربي
         this.load.image('اورجينال', './images/اورجينال.png');
@@ -468,10 +468,10 @@ class GameScene extends Phaser.Scene {
             console.error(`📱 WebView Error: قد تكون مشكلة في الـ cache أو المسار`);
         });
         
-        // إضافة مستمع لنجاح التحميل
+        // إضافة مستمع لنجاح التحميل مع الأسماء الجديدة
         this.load.on('filecomplete', (key, type, data) => {
-            if (type === 'image' && (key === 'خصم5' || key === 'خصم15')) {
-                console.log(`✅ WebView: تم تحميل صورة ${key} بنجاح`);
+            if (type === 'image' && (key === 'offer5' || key === 'offer15')) {
+                console.log(`✅ تم تحميل صورة الخصم ${key} بنجاح - شفافية محفوظة`);
             }
         });
     }
@@ -2132,12 +2132,12 @@ class GameScene extends Phaser.Scene {
 
     // 🖼️ دالة إضافة الصور للجوائز (للاستخدام المستقبلي)
     addPrizeImage(x, y, prizeName, wheelRadius) {
-        // خريطة أسماء الصور للهدايا - تربط اسم الجائزة بالاسم المحمل للصورة
+        // خريطة أسماء الصور للهدايا - محدثة بالأسماء الجديدة
         const imageMap = {
-            'خصم 5% 💰': 'خصم5',
+            'خصم 5% 💰': 'offer5',
             'فرى دليفرى 🛵': 'دليفري',
             'موهيتو فرى 🍹': 'موهيتو',
-            'خصم 15% 💸': 'خصم15',
+            'خصم 15% 💸': 'offer15',
             'كومبو فرى 🍟🧃': 'كومبو فري',
             'وافل شكولاته 🥞': 'وافل شوكلاته',
             'اورجينال برجر 🍔': 'اورجينال',
@@ -2163,9 +2163,13 @@ class GameScene extends Phaser.Scene {
                     const imageWidth = Math.max(110, wheelRadius * 0.48); // أعرض بكثير
                     const imageHeight = Math.max(65, wheelRadius * 0.28); // أقصر من العرض
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
-                } else if (fileName === 'خصم15') {
-                    // لخصم 15%: مربع مناسب لملء الخانة
-                    const imageSize = Math.max(85, wheelRadius * 0.38); // حجم جيد
+                } else if (fileName === 'offer15') {
+                    // لخصم 15%: مربع مناسب مع شفافية صحيحة
+                    const imageSize = Math.max(85, wheelRadius * 0.38);
+                    prizeImage.setDisplaySize(imageSize, imageSize);
+                } else if (fileName === 'offer5') {
+                    // لخصم 5%: مربع مناسب مع شفافية صحيحة  
+                    const imageSize = Math.max(85, wheelRadius * 0.38);
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 } else if (fileName === 'اورجينال') {
                     // للأورجينال برجر: أعرض من الطول ليبدو طبيعياً
@@ -2192,8 +2196,17 @@ class GameScene extends Phaser.Scene {
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 }
                 
+                // ضبط الشفافية والعرض بشكل صحيح
                 prizeImage.setAlpha(1.0); // شفافية كاملة للوضوح
-                // لا نضيف الصورة هنا - ستُضاف في الدالة الرئيسية
+                
+                // إعدادات خاصة لصور الخصم الجديدة
+                if (fileName === 'offer5' || fileName === 'offer15') {
+                    // تأكيد أن الخلفية الشفافة تختفي والصورة تظهر بوضوح
+                    prizeImage.setOrigin(0.5, 0.5); // توسيط مثالي
+                    prizeImage.setTint(0xffffff); // ألوان طبيعية بدون تغيير
+                    console.log(`🎨 ضبط شفافية وعرض الصورة: ${fileName}`);
+                }
+                
                 return prizeImage;
             } else {
                 console.error(`❌ WebView: الصورة ${fileName} غير محملة للجائزة: ${prizeName}`);
