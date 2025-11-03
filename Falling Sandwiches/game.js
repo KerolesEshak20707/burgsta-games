@@ -2,15 +2,9 @@
 
 // إعدادات اللعبة
 const GAME_CONFIG = {
-    // أبعاد اللعبة - تتكيف تلقائياً مع الشاشة 📱
-    width: Math.max(window.innerWidth, 360),  // الحد الأدنى 360px
-    height: Math.max(window.innerHeight, 640), // الحد الأدنى 640px
-    
-    // 📱 دالة مساعدة لحساب منطقة اللعب
-    getGameAreaWidth() {
-        const panelWidth = Math.min(160, this.width * 0.25);
-        return this.width - panelWidth;
-    },
+    // أبعاد اللعبة - ثابتة للـ WebView
+    width: 800,
+    height: 600,
     
     // إعدادات اللاعب
     player: {
@@ -413,7 +407,7 @@ class GameScene extends Phaser.Scene {
         this.setupCollisions();
         
         // ✅ إعداد مراقبة حدود العالم لحذف العناصر
-        const gameAreaWidth = GAME_CONFIG.getGameAreaWidth();
+        const gameAreaWidth = GAME_CONFIG.width - 180;
         this.physics.world.setBounds(0, 0, gameAreaWidth, GAME_CONFIG.height);
         
         this.physics.world.on('worldbounds', (body) => {
@@ -477,7 +471,7 @@ class GameScene extends Phaser.Scene {
     
     createPlayer() {
         // تحديد منطقة اللعب
-        const gameAreaWidth = GAME_CONFIG.getGameAreaWidth();
+        const gameAreaWidth = GAME_CONFIG.width - 180;
         
         // إنشاء اللاعب في وسط منطقة اللعب فقط باستخدام صورة الصندوق
         this.player = this.physics.add.sprite(
@@ -505,12 +499,11 @@ class GameScene extends Phaser.Scene {
     
     createUI() {
         // خط فاصل عمودي بين منطقة اللعب والمعلومات
-        const gameAreaWidth = GAME_CONFIG.getGameAreaWidth();
         const dividerLine = this.add.graphics();
         dividerLine.lineStyle(3, 0xc49b41, 0.8);
         dividerLine.beginPath();
-        dividerLine.moveTo(gameAreaWidth, 0);
-        dividerLine.lineTo(gameAreaWidth, GAME_CONFIG.height);
+        dividerLine.moveTo(GAME_CONFIG.width - 160, 0);
+        dividerLine.lineTo(GAME_CONFIG.width - 160, GAME_CONFIG.height);
         dividerLine.strokePath();
         
         // === لوحة المعلومات اليمنى ===
@@ -518,15 +511,13 @@ class GameScene extends Phaser.Scene {
     }
     
     createRightInfoPanel() {
-        // 📱 حساب موقع اللوحة بناءً على عرض الشاشة
-        const panelWidth = Math.min(160, GAME_CONFIG.width * 0.25); // 25% من الشاشة أو 160px كحد أقصى
-        const panelX = GAME_CONFIG.width - panelWidth + 10;
+        const panelX = GAME_CONFIG.width - 150;
         let currentY = 20;
         
         // خلفية اللوحة
         const panelBg = this.add.graphics();
         panelBg.fillStyle(0x000000, 0.1);
-        panelBg.fillRoundedRect(panelX - 10, 10, panelWidth - 10, GAME_CONFIG.height - 20, 10);
+        panelBg.fillRoundedRect(panelX - 10, 10, 140, GAME_CONFIG.height - 20, 10);
         
         // === 1. النقاط ===
         this.ui.scoreText = this.add.text(panelX, currentY, 'النقاط: 0', {
@@ -1208,7 +1199,7 @@ class GameScene extends Phaser.Scene {
     
     setupControls() {
         // تحديد حدود منطقة اللعب
-        const gameAreaWidth = GAME_CONFIG.getGameAreaWidth(); // منطقة اللعب فقط
+        const gameAreaWidth = GAME_CONFIG.width - 180; // منطقة اللعب فقط
         const minX = 40; // الحد الأدنى (نصف عرض اللاعب)
         const maxX = gameAreaWidth - 40; // الحد الأقصى
         
@@ -2797,8 +2788,8 @@ class GameScene extends Phaser.Scene {
 // إعداد وتشغيل اللعبة - محسّنة للـ WebView
 const gameConfig = {
     type: Phaser.AUTO,
-    width: GAME_CONFIG.width,
-    height: GAME_CONFIG.height,
+    width: 800,
+    height: 600,
     backgroundColor: GAME_CONFIG.colors.secondary,
     parent: 'gameContainer',
     physics: {
@@ -2810,20 +2801,20 @@ const gameConfig = {
     },
     scene: GameScene,
     scale: {
-        mode: Phaser.Scale.RESIZE, // 📱 يتكيف مع حجم الشاشة
+        mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         parent: 'gameContainer',
-        width: '100%',
-        height: '100%',
+        width: 800,
+        height: 600,
         min: {
-            width: 360,  // حد أدنى للموبايل
-            height: 640
+            width: 320,
+            height: 240
         },
         max: {
-            width: window.innerWidth,   // أقصى عرض = عرض الشاشة
-            height: window.innerHeight  // أقصى ارتفاع = ارتفاع الشاشة
+            width: 1200,
+            height: 900
         },
-        expandParent: true, // يملأ الـ container
+        expandParent: false,
         autoRound: true
     },
     render: {
