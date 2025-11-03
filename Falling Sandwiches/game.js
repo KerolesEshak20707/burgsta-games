@@ -562,7 +562,7 @@ class GameScene extends Phaser.Scene {
         currentY += 40;
         
         // === 4. التقدم في البناء ===
-        this.ui.progressTitle = this.add.text(panelX, currentY, '🍔 تقدم البرجر', {
+        this.ui.progressTitle = this.add.text(panelX, currentY, 'تقدم البناء', {
             fontFamily: 'Cairo, Arial',
             fontSize: '16px',
             fontWeight: 'bold',
@@ -590,8 +590,8 @@ class GameScene extends Phaser.Scene {
         
 
         
-        // === 8. مؤشر مستوى المخاطرة 🎯 ===
-        this.ui.riskLevelTitle = this.add.text(panelX, currentY, '🎯 مستوى التحدي', {
+        // === 8. مؤشر مستوى المخاطرة ===
+        this.ui.riskLevelTitle = this.add.text(panelX, currentY, 'مستوى التحدي', {
             fontFamily: 'Cairo, Arial',
             fontSize: '13px',
             fontWeight: 'bold',
@@ -599,7 +599,7 @@ class GameScene extends Phaser.Scene {
         });
         currentY += 25;
         
-        this.ui.riskLevelText = this.add.text(panelX, currentY, 'مبتدئ 🟢', {
+        this.ui.riskLevelText = this.add.text(panelX, currentY, 'مبتدئ', {
             fontFamily: 'Cairo, Arial',
             fontSize: '12px',
             fontWeight: '600',
@@ -2032,98 +2032,86 @@ class GameScene extends Phaser.Scene {
         const centerX = GAME_CONFIG.width / 2;
         const baseY = GAME_CONFIG.height / 2;
 
-        // الجملة الأولى: مبروك وصلت للمستوى الأول - في أعلى الصفحة
-        const titleText = this.add.text(centerX, 100, level.description, {
-            fontSize: '32px',
-            fill: '#ffff00',
-            fontFamily: 'Arial Black',
-            stroke: '#000000',
-            strokeThickness: 6,
-            align: 'center',
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+        // صندوق الحوار الرئيسي
+        const dialogBox = this.add.graphics();
+        dialogBox.fillStyle(0xffffff, 0.95);
+        dialogBox.lineStyle(4, 0xc49b41, 1);
+        dialogBox.fillRoundedRect(centerX - 300, 120, 600, 200, 20);
+        dialogBox.strokeRoundedRect(centerX - 300, 120, 600, 200, 20);
+        dialogBox.setDepth(52);
+
+        // العنوان الرئيسي
+        const titleText = this.add.text(centerX, 160, 'مبروك وصلت لمستوى جديد', {
+            fontSize: '28px',
+            fill: '#c49b41',
+            fontFamily: 'Cairo, Arial',
+            fontWeight: 'bold',
+            align: 'center'
         }).setOrigin(0.5);
         titleText.setDepth(55);
 
-        // الجملة الثانية: خصم 10% - تحت الأولى مباشرة
-        const rewardText = this.add.text(centerX, 150, `🎁 ${level.reward}`, {
+        // رسالة الخصم
+        const rewardText = this.add.text(centerX, 200, `حصلت على خصم ${level.percent}%`, {
             fontSize: '24px',
-            fill: '#00ff00',
-            fontFamily: 'Arial Black',
-            stroke: '#000000',
-            strokeThickness: 5,
-            align: 'center',
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+            fill: '#27ae60',
+            fontFamily: 'Cairo, Arial',
+            fontWeight: 'bold',
+            align: 'center'
         }).setOrigin(0.5);
         rewardText.setDepth(55);
 
-        // إنشاء النص الشامل في طباعة واحدة
-        let infoMessage = `🎯 لديك خياران:\n\n`;
+        // النص التوضيحي
+        let infoMessage = `لديك خياران:\n\n`;
         
         // الخيار الأول: الانسحاب
-        infoMessage += `💰 الخيار الأول - الانسحاب الآمن:\n`;
-        infoMessage += `احصل على ${level.percent}% خصم مضمون الآن\n\n`;
+        infoMessage += `الخيار الأول - انسحب الآن:\n`;
+        infoMessage += `احصل على خصم ${level.percent}% مضمون\n\n`;
         
         // الخيار الثاني: المتابعة
-        infoMessage += `🔥 الخيار الثاني - المتابعة للمغامرة:\n`;
+        infoMessage += `الخيار الثاني - أكمل اللعب:\n`;
         if (level.percent < 100) {
             const nextLevel = level.percent === 10 ? 25 : level.percent === 25 ? 50 : level.percent === 50 ? 75 : 100;
-            infoMessage += `هدف: الوصول للمستوى التالي (${nextLevel}% خصم)\n`;
+            infoMessage += `حاول الوصول لخصم ${nextLevel}%\n`;
         } else {
-            infoMessage += `هذا المستوى الأخير - 100% وجبة مجانية!\n`;
-        }
-        
-        // إضافة معلومة السندويتش الذهبي إذا كان متاحاً
-        if (level.reward.includes('سندويتش ذهبي')) {
-            infoMessage += `🎁 مكافأة فورية: سندويتش ذهبي (+3% خصم)\n`;
-            infoMessage += `⚡ سرعة عالية - تحدي ممتع!\n`;
+            infoMessage += `هذا أعلى مستوى - وجبة مجانية كاملة\n`;
         }
         
         // إضافة تحذير المخاطر للمستويات غير النهائية
         if (level.percent < 100) {
-            infoMessage += `\n⚠️ تحذير هام:\n`;
-            infoMessage += `${level.nextRisk}\n`;
-            infoMessage += `إذا فشلت في الوصول للمستوى التالي = تخسر كل شيء!`;
+            infoMessage += `\nتحذير: إذا لم تصل للمستوى التالي ستخسر الخصم`;
         }
 
-        // النص التفصيلي - بعيداً عن الثلاث جمل الأساسية
-        const questionText = this.add.text(centerX, 400, infoMessage, {
-            fontSize: '14px',
-            fill: '#ffffff',
-            fontFamily: 'Arial',
-            fontWeight: 'bold',
-            stroke: '#000000',
-            strokeThickness: 2,
-            align: 'center',
-            lineSpacing: 5,
-            wordWrap: { width: 600 },
-            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 3, fill: true }
-        }).setOrigin(0.5);
-        questionText.setDepth(55);
-        
-        // الجملة الثالثة: ماذا تقرر؟ - تحت الثانية مباشرة
-        const choiceText = this.add.text(centerX, 200, '🤔 ماذا تقرر؟', {
+        // السؤال
+        const choiceText = this.add.text(centerX, 240, 'ماذا تختار؟', {
             fontSize: '20px',
-            fill: '#ffdd44',
-            fontFamily: 'Arial Black',
-            stroke: '#000000',
-            strokeThickness: 3,
-            align: 'center',
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+            fill: '#333333',
+            fontFamily: 'Cairo, Arial',
+            fontWeight: 'bold',
+            align: 'center'
         }).setOrigin(0.5);
         choiceText.setDepth(55);
 
-
-
-        // عد تنازلي للقرار - في الأسفل أكثر
-        let countdown = 15;
-        const countdownText = this.add.text(centerX, GAME_CONFIG.height - 120, `⏰ الوقت المتبقي: ${countdown} ثانية`, {
-            fontSize: '18px',
-            fill: '#ffaa00',
-            fontFamily: 'Arial Black',
-            stroke: '#000000',
-            strokeThickness: 3,
+        // النص التفصيلي
+        const questionText = this.add.text(centerX, 400, infoMessage, {
+            fontSize: '16px',
+            fill: '#333333',
+            fontFamily: 'Cairo, Arial',
             align: 'center',
-            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
+            lineSpacing: 8,
+            wordWrap: { width: 500 }
+        }).setOrigin(0.5);
+        questionText.setDepth(55);
+
+
+
+        // عد تنازلي للقرار
+        let countdown = 15;
+        const countdownText = this.add.text(centerX, GAME_CONFIG.height - 120, `الوقت المتبقي: ${countdown} ثانية`, {
+            fontSize: '18px',
+            fill: '#e74c3c',
+            fontFamily: 'Cairo, Arial',
+            fontWeight: 'bold',
+            align: 'center'
         }).setOrigin(0.5);
         countdownText.setDepth(55);
 
@@ -2133,7 +2121,7 @@ class GameScene extends Phaser.Scene {
             repeat: 14,
             callback: () => {
                 countdown--;
-                countdownText.setText(`⏰ الوقت المتبقي: ${countdown} ثانية`);
+                countdownText.setText(`الوقت المتبقي: ${countdown} ثانية`);
                 
                 // تغيير لون العد عند قرب الانتهاء
                 if (countdown <= 5) {
@@ -2148,6 +2136,7 @@ class GameScene extends Phaser.Scene {
                     this.continuePlaying(level);
                     // إزالة عناصر الحوار
                     dialogBg.destroy();
+                    dialogBox.destroy();
                     titleText.destroy();
                     rewardText.destroy();
                     questionText.destroy();
@@ -2160,47 +2149,65 @@ class GameScene extends Phaser.Scene {
         });
 
         // أزرار الاختيار في أسفل الشاشة
-        const withdrawBtn = this.add.text(centerX - 150, GAME_CONFIG.height - 80, '💰 انسحب الآن', {
-            fontSize: '20px',
+        const withdrawBtn = this.add.graphics();
+        withdrawBtn.fillStyle(0x27ae60);
+        withdrawBtn.fillRoundedRect(centerX - 200, GAME_CONFIG.height - 100, 120, 40, 10);
+        withdrawBtn.lineStyle(2, 0x1e8449);
+        withdrawBtn.strokeRoundedRect(centerX - 200, GAME_CONFIG.height - 100, 120, 40, 10);
+        withdrawBtn.setDepth(60).setInteractive(new Phaser.Geom.Rectangle(centerX - 200, GAME_CONFIG.height - 100, 120, 40), Phaser.Geom.Rectangle.Contains);
+        
+        const withdrawText = this.add.text(centerX - 140, GAME_CONFIG.height - 80, 'انسحب', {
+            fontSize: '18px',
             fill: '#ffffff',
-            fontFamily: 'Arial Black',
-            stroke: '#000000',
-            strokeThickness: 4,
-            padding: { x: 15, y: 8 },
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
-        }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
-        withdrawBtn.setDepth(60);
+            fontFamily: 'Cairo, Arial',
+            fontWeight: 'bold'
+        }).setOrigin(0.5);
+        withdrawText.setDepth(61);
 
-        const continueBtn = this.add.text(centerX + 150, GAME_CONFIG.height - 80, '🔥 أكمل اللعب', {
-            fontSize: '20px',
+        const continueBtn = this.add.graphics();
+        continueBtn.fillStyle(0xe74c3c);
+        continueBtn.fillRoundedRect(centerX + 80, GAME_CONFIG.height - 100, 120, 40, 10);
+        continueBtn.lineStyle(2, 0xc0392b);
+        continueBtn.strokeRoundedRect(centerX + 80, GAME_CONFIG.height - 100, 120, 40, 10);
+        continueBtn.setDepth(60).setInteractive(new Phaser.Geom.Rectangle(centerX + 80, GAME_CONFIG.height - 100, 120, 40), Phaser.Geom.Rectangle.Contains);
+        
+        const continueText = this.add.text(centerX + 140, GAME_CONFIG.height - 80, 'أكمل', {
+            fontSize: '18px',
             fill: '#ffffff',
-            fontFamily: 'Arial Black',
-            stroke: '#000000',
-            strokeThickness: 4,
-            padding: { x: 15, y: 8 },
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
-        }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
-        continueBtn.setDepth(60);
+            fontFamily: 'Cairo, Arial',
+            fontWeight: 'bold'
+        }).setOrigin(0.5);
+        continueText.setDepth(61);
 
-        // تأثيرات تفاعلية محسنة للأزرار
+        // تأثيرات تفاعلية للأزرار
         withdrawBtn.on('pointerover', () => { 
-            withdrawBtn.setScale(1.15); 
-            withdrawBtn.setFill('#00ff00');
-            if (this.sounds && this.sounds.collect) this.sounds.collect.play(); 
+            withdrawBtn.clear();
+            withdrawBtn.fillStyle(0x2ecc71);
+            withdrawBtn.fillRoundedRect(centerX - 200, GAME_CONFIG.height - 100, 120, 40, 10);
+            withdrawBtn.lineStyle(2, 0x27ae60);
+            withdrawBtn.strokeRoundedRect(centerX - 200, GAME_CONFIG.height - 100, 120, 40, 10);
         });
         withdrawBtn.on('pointerout', () => { 
-            withdrawBtn.setScale(1); 
-            withdrawBtn.setFill('#ffffff');
+            withdrawBtn.clear();
+            withdrawBtn.fillStyle(0x27ae60);
+            withdrawBtn.fillRoundedRect(centerX - 200, GAME_CONFIG.height - 100, 120, 40, 10);
+            withdrawBtn.lineStyle(2, 0x1e8449);
+            withdrawBtn.strokeRoundedRect(centerX - 200, GAME_CONFIG.height - 100, 120, 40, 10);
         });
 
         continueBtn.on('pointerover', () => { 
-            continueBtn.setScale(1.15); 
-            continueBtn.setFill('#ff3300');
-            if (this.sounds && this.sounds.collect) this.sounds.collect.play(); 
+            continueBtn.clear();
+            continueBtn.fillStyle(0xec7063);
+            continueBtn.fillRoundedRect(centerX + 80, GAME_CONFIG.height - 100, 120, 40, 10);
+            continueBtn.lineStyle(2, 0xe74c3c);
+            continueBtn.strokeRoundedRect(centerX + 80, GAME_CONFIG.height - 100, 120, 40, 10);
         });
         continueBtn.on('pointerout', () => { 
-            continueBtn.setScale(1); 
-            continueBtn.setFill('#ffffff');
+            continueBtn.clear();
+            continueBtn.fillStyle(0xe74c3c);
+            continueBtn.fillRoundedRect(centerX + 80, GAME_CONFIG.height - 100, 120, 40, 10);
+            continueBtn.lineStyle(2, 0xc0392b);
+            continueBtn.strokeRoundedRect(centerX + 80, GAME_CONFIG.height - 100, 120, 40, 10);
         });
 
         // معالجة النقر على الأزرار
@@ -2210,13 +2217,16 @@ class GameScene extends Phaser.Scene {
             this.takeReward(level);
             // إزالة عناصر الحوار
             dialogBg.destroy();
+            dialogBox.destroy();
             titleText.destroy();
             rewardText.destroy();
             questionText.destroy();
             choiceText.destroy();
             countdownText.destroy();
             withdrawBtn.destroy();
+            withdrawText.destroy();
             continueBtn.destroy();
+            continueText.destroy();
         });
 
         continueBtn.on('pointerdown', () => {
@@ -2225,20 +2235,23 @@ class GameScene extends Phaser.Scene {
             this.continuePlaying(level);
             // إزالة عناصر الحوار
             dialogBg.destroy();
+            dialogBox.destroy();
             titleText.destroy();
             rewardText.destroy();
             questionText.destroy();
             choiceText.destroy();
             countdownText.destroy();
             withdrawBtn.destroy();
+            withdrawText.destroy();
             continueBtn.destroy();
+            continueText.destroy();
         });
 
         // حفظ مراجع للحوار لحذفه لاحقاً
         this.currentDialog = {
             bg: dialogBg,
-            box: null,
-            texts: [titleText, rewardText, questionText, choiceText, countdownText],
+            box: dialogBox,
+            texts: [titleText, rewardText, questionText, choiceText, countdownText, withdrawText, continueText],
             buttons: [withdrawBtn, continueBtn],
             timer: countdownTimer
         };
@@ -2375,48 +2388,55 @@ class GameScene extends Phaser.Scene {
         this.physics.pause();
         this.gameManager.gameWon = true;
         
-        // خلفية الفوز شفافة
+        // خلفية شفافة
         const winBg = this.add.graphics();
-        winBg.fillStyle(0x27ae60, 0.3);
+        winBg.fillStyle(0x000000, 0.8);
         winBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
         
-        // رسالة التهنئة
-        const congratsText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 100, 
-            `🎉 مبروك! 🎉\n${level.reward}`, {
-            fontSize: '32px',
-            fill: '#ffffff',
-            fontFamily: 'Arial Black',
-            align: 'center',
-            stroke: '#27ae60',
-            strokeThickness: 2
-        }).setOrigin(0.5);
+        // صندوق الرسالة
+        const messageBox = this.add.graphics();
+        messageBox.fillStyle(0xffffff, 0.95);
+        messageBox.lineStyle(4, 0x27ae60, 1);
+        messageBox.fillRoundedRect(GAME_CONFIG.width / 2 - 250, GAME_CONFIG.height / 2 - 120, 500, 240, 20);
+        messageBox.strokeRoundedRect(GAME_CONFIG.width / 2 - 250, GAME_CONFIG.height / 2 - 120, 500, 240, 20);
         
-        // رسالة عرض الخصم
-        const discountText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2, 
-            'أظهر هذه الشاشة في المطعم\nلاستلام خصمك', {
-            fontSize: '20px',
-            fill: '#ffffff',
-            fontFamily: 'Arial',
+        // رسالة التهنئة
+        const congratsText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 60, 
+            'مبروك حصلت على خصم', {
+            fontSize: '32px',
+            fill: '#27ae60',
+            fontFamily: 'Cairo, Arial',
+            fontWeight: 'bold',
             align: 'center'
         }).setOrigin(0.5);
         
-        // رقم الخصم بارز
-        const discountCode = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 80, 
-            `كود الخصم: BURGSTA${level.percent}`, {
-            fontSize: '24px',
-            fill: '#FFD700',
-            fontFamily: 'Arial Black',
-            backgroundColor: '#27ae60',
-            padding: { x: 20, y: 10 }
+        // نسبة الخصم
+        const discountText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 10, 
+            `${level.percent}%`, {
+            fontSize: '48px',
+            fill: '#c49b41',
+            fontFamily: 'Cairo, Arial',
+            fontWeight: 'bold',
+            align: 'center'
+        }).setOrigin(0.5);
+        
+        // رسالة التوجيه
+        const instructionText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 40, 
+            'أظهر هذه الشاشة للكاشير لاستلام خصمك', {
+            fontSize: '18px',
+            fill: '#333333',
+            fontFamily: 'Cairo, Arial',
+            align: 'center'
         }).setOrigin(0.5);
         
         // زر إعادة اللعب
-        const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 150, 
-            '🔄 العب مرة أخرى', {
+        const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 90, 
+            'العب مرة أخرى', {
             fontSize: '18px',
             fill: '#ffffff',
-            fontFamily: 'Arial',
-            backgroundColor: '#8B4513',
+            fontFamily: 'Cairo, Arial',
+            fontWeight: 'bold',
+            backgroundColor: '#c49b41',
             padding: { x: 20, y: 10 }
         }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
         
@@ -2429,10 +2449,10 @@ class GameScene extends Phaser.Scene {
     
     showEncouragementMessage(level) {
         const encourageText = this.add.text(GAME_CONFIG.width / 2, 100, 
-            '🔥 تحدي جديد بدأ! حظاً موفقاً', {
+            'تحدي جديد بدأ - حظاً موفقاً', {
             fontSize: '20px',
             fill: '#e74c3c',
-            fontFamily: 'Arial',
+            fontFamily: 'Cairo, Arial',
             fontWeight: 'bold',
             backgroundColor: '#ffffff',
             padding: { x: 15, y: 8 }
@@ -2516,10 +2536,10 @@ class GameScene extends Phaser.Scene {
     
     showGoodAvoidanceEffect(x, y) {
         // تأثير إيجابي عند تجنب العناصر السيئة
-        const goodText = this.add.text(x, y, '✅ تجنب ذكي!', {
+        const goodText = this.add.text(x, y, 'تجنب ذكي', {
             fontSize: '16px',
             fill: '#27ae60',
-            fontFamily: 'Arial',
+            fontFamily: 'Cairo, Arial',
             fontWeight: 'bold'
         }).setOrigin(0.5);
         
@@ -2536,10 +2556,11 @@ class GameScene extends Phaser.Scene {
     
     showLifeLossEffect(x, y) {
         // تأثير بصري عند فقدان الحياة
-        const lossText = this.add.text(x, y, '💔 -1', {
+        const lossText = this.add.text(x, y, '-1', {
             fontSize: '20px',
             fill: '#e74c3c',
-            fontFamily: 'Arial Black',
+            fontFamily: 'Cairo, Arial',
+            fontWeight: 'bold',
             stroke: '#ffffff',
             strokeThickness: 2
         }).setOrigin(0.5);
@@ -2578,8 +2599,8 @@ class GameScene extends Phaser.Scene {
     
     showMissedSandwichWarning(itemType) {
         const warningMessages = {
-            'good': '⚠️ فوتك سندوتش جيد!',
-            'golden': '💀 فوتك سندوتش ذهبي!'
+            'good': 'فوتك سندويتش جيد',
+            'golden': 'فوتك عنصر ذهبي'
         };
         
         const colors = {
@@ -2631,23 +2652,23 @@ class GameScene extends Phaser.Scene {
         
         switch (currentDifficulty) {
             case 1:
-                levelText = 'مبتدئ 🟢';
+                levelText = 'مبتدئ';
                 levelColor = '#27ae60';
                 break;
             case 2:
-                levelText = 'متوسط 🟡';
+                levelText = 'متوسط';
                 levelColor = '#f39c12';
                 break;
             case 3:
-                levelText = 'صعب 🟠';
+                levelText = 'صعب';
                 levelColor = '#e67e22';
                 break;
             case 4:
-                levelText = 'خطر 🔴';
+                levelText = 'خطر';
                 levelColor = '#e74c3c';
                 break;
             case 5:
-                levelText = 'مستحيل 🔥';
+                levelText = 'مستحيل';
                 levelColor = '#8e44ad';
                 break;
         }
@@ -2678,7 +2699,7 @@ class GameScene extends Phaser.Scene {
         }
         
         if (!nextMilestone) {
-            nextMilestone = 'اكتملت كل المراحل! 🏆';
+            nextMilestone = 'اكتملت كل المراحل';
         }
         
         this.ui.nextMilestoneText.setText(nextMilestone);
