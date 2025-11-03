@@ -476,6 +476,9 @@ class GameScene extends Phaser.Scene {
             'box'
         );
         
+        // تصغير الصندوق ليكون بحجم منطقي مثل الطبق السابق
+        this.player.setScale(0.15); // تصغير الصندوق إلى 15% من حجمه الأصلي
+        
         // تحسينات فيزياء للاستجابة الصاروخية
         this.player.setCollideWorldBounds(true);
         this.player.body.setSize(70, 15); // تقليل منطقة التصادم قليلاً
