@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Burgsta - عجلة الحظ</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23c49b41'/><text x='50' y='60' text-anchor='middle' font-size='40' fill='white'>🍔</text></svg>">
     <link rel="stylesheet" href="styles.css">
@@ -24,7 +27,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            background: linear-gradient(135deg, #0D5016 0%, #126B1B 25%, #0F5718 75%, #0B4014 100%);
+            background: linear-gradient(135deg, #0D5016 0%, #126B1B 25%, #0F5718 75%, #0B4014 100%) !important;
+            background-color: #0D5016 !important;
             font-family: 'Cairo', Arial, sans-serif;
             overflow: hidden;
             position: fixed;
@@ -75,7 +79,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
     <!-- تحميل الملفات محلياً مع رقم إصدار لكسر الكاش -->
-    <script src="helpers.js?v=2"></script>
-    <script src="game.js?v=2"></script>
+    <script src="helpers.js?v=3"></script>
+    <script src="game.js?v=3"></script>
 </body>
 </html>
