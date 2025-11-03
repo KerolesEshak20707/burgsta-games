@@ -720,7 +720,7 @@ class GameScene extends Phaser.Scene {
 
     createWheel(width, height) {
         const centerX = width / 2;
-        const centerY = height / 2 + 20; // نزل العجلة أكثر
+        const centerY = height / 2; // توسيط مثالي للـ WebView
         const radius = Math.min(width, height) * 0.32; // حجم أكبر يتكيف مع الشاشة (كان 180)
         
         this.sectorAngle = 360 / this.prizes.length;
@@ -2203,7 +2203,6 @@ const config = {
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        parent: 'gameContainer',
         width: 800,
         height: 600,
         min: {
