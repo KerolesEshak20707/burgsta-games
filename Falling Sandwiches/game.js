@@ -681,8 +681,9 @@ class GameScene extends Phaser.Scene {
     updateDiscountMeter() {
         const discount = this.gameManager.discount;
         
-        // تحديث النسبة المئوية
-        this.ui.discountPercentText.setText(`${discount}%`);
+        // تحديث النسبة المئوية بصيغة مبسطة (0.1, 0.2, 1.0, إلخ)
+        const displayDiscount = discount.toFixed(1);
+        this.ui.discountPercentText.setText(`${displayDiscount}%`);
         
         // تحديد الجزء الحالي من السندوتش
         let currentPart = 'الطبق';
@@ -1270,8 +1271,8 @@ class GameScene extends Phaser.Scene {
         this.gameManager.score += 10;
         this.gameManager.goodCaught++;
         
-        // تأثير بصري
-        this.showFloatingText('+1%', GAME_CONFIG.colors.success);
+        // تأثير بصري بصيغة مبسطة
+        this.showFloatingText(`+${GAME_CONFIG.discount.goodSandwich.toFixed(1)}%`, GAME_CONFIG.colors.success);
         
         // صوت
         try {
@@ -1288,8 +1289,8 @@ class GameScene extends Phaser.Scene {
         this.gameManager.score += 50;
         this.gameManager.goldenCaught++;
         
-        // تأثير بصري خاص
-        this.showFloatingText('+3%', GAME_CONFIG.colors.accent, 1.5);
+        // تأثير بصري خاص بصيغة مبسطة
+        this.showFloatingText(`+${GAME_CONFIG.discount.goldenSandwich.toFixed(1)}%`, GAME_CONFIG.colors.accent, 1.5);
         this.createSpecialEffect(this.player.x, this.player.y);
         
         // صوت خاص
@@ -1303,12 +1304,14 @@ class GameScene extends Phaser.Scene {
     }
     
     handleBadItem() {
-        this.gameManager.addDiscount(GAME_CONFIG.discount.badItem);
+        // 💥 السندوتش الفاسد يخسرك من الخصم المُجمّع بالفعل!
+        const lostDiscount = Math.abs(GAME_CONFIG.discount.badItem);
+        this.gameManager.addDiscount(-lostDiscount); // خسارة من الخصم المُجمّع
         this.gameManager.loseLife();
         this.gameManager.badCaught++;
         
-        // تأثير بصري سلبي
-        this.showFloatingText('-2%', GAME_CONFIG.colors.danger);
+        // تأثير بصري سلبي محسن
+        this.showFloatingText(`-${lostDiscount.toFixed(1)}%`, GAME_CONFIG.colors.danger);
         this.shakeScreen();
         
         // صوت سلبي
@@ -1381,6 +1384,16 @@ class GameScene extends Phaser.Scene {
         // 🌟 فحص السندوتش الذهبي الخاص
         this.checkSpecialGoldenSandwich();
         
+        // 🕰️ فترات زمنية متغيرة لجعل اللعبة أكثر تشويق وعدم قابلية للتنبؤ
+        const randomDelay = Math.random() * 400; // تأخير عشوائي من 0 إلى 400ms
+        this.time.delayedCall(randomDelay, () => {
+            this.actualSpawnItems();
+        });
+    }
+    
+    actualSpawnItems() {
+        if (this.gameManager.gameOver || this.gameManager.gameWon) return;
+        
         // تحديد منطقة اللعب (الجانب الأيسر فقط - قبل الخط الفاصل)
         const gameAreaWidth = GAME_CONFIG.width - 180; // ترك 180px للوحة البيانات
         
@@ -1405,6 +1418,7 @@ class GameScene extends Phaser.Scene {
             numItems = Math.floor(Math.random() * 10) + 8; // 8-17 سندوتشات (مطر جهنمي! 🌧️💀🔥)
         }
         
+        // 🕰️ إنشاء السندوتشات بفترات زمنية متغيرة لزيادة التشويق
         for (let i = 0; i < numItems; i++) {
             const x = Math.random() * (gameAreaWidth - 50) + 25;
             let itemType, texture;
@@ -1419,8 +1433,11 @@ class GameScene extends Phaser.Scene {
                 texture = 'badItem';
             }
             
-            // إنشاء العنصر المتساقط
-            this.createFallingItem(x, itemType, texture);
+            // ⏰ تأخير عشوائي بين كل سندوتش (من 0 إلى 300ms)
+            const itemDelay = Math.random() * 300;
+            this.time.delayedCall(itemDelay, () => {
+                this.createFallingItem(x, itemType, texture);
+            });
         }
     }
     
