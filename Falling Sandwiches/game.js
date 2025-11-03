@@ -2,9 +2,9 @@
 
 // إعدادات اللعبة
 const GAME_CONFIG = {
-    // أبعاد اللعبة - ثابتة للـ WebView
-    width: 800,
-    height: 600,
+    // أبعاد اللعبة - تتكيف مع حجم الشاشة
+    width: window.innerWidth,
+    height: window.innerHeight,
     
     // إعدادات اللاعب
     player: {
@@ -403,7 +403,7 @@ class GameScene extends Phaser.Scene {
         this.setupCollisions();
         
         // ✅ إعداد مراقبة حدود العالم لحذف العناصر
-        const gameAreaWidth = GAME_CONFIG.width - 180;
+        const gameAreaWidth = GAME_CONFIG.width - 100;
         this.physics.world.setBounds(0, 0, gameAreaWidth, GAME_CONFIG.height);
         
         this.physics.world.on('worldbounds', (body) => {
@@ -468,7 +468,7 @@ class GameScene extends Phaser.Scene {
     
     createPlayer() {
         // تحديد منطقة اللعب
-        const gameAreaWidth = GAME_CONFIG.width - 180;
+        const gameAreaWidth = GAME_CONFIG.width - 100;
         
         // إنشاء اللاعب في وسط منطقة اللعب فقط
         this.player = this.physics.add.sprite(
@@ -508,15 +508,15 @@ class GameScene extends Phaser.Scene {
     }
     
     createRightInfoPanel() {
-        const panelX = GAME_CONFIG.width - 150;
+        const panelX = GAME_CONFIG.width - 90;
         let currentY = 20;
         
-        // خلفية اللوحة بالبيج الفاتح الشفاف
+        // خلفية اللوحة بالبيج الفاتح الشفاف - مضغوطة
         const panelBg = this.add.graphics();
         panelBg.fillStyle(0xf5f1e6, 0.2);
         panelBg.lineStyle(2, 0x8b6914, 0.5);
-        panelBg.fillRoundedRect(panelX - 10, 10, 140, GAME_CONFIG.height - 20, 10);
-        panelBg.strokeRoundedRect(panelX - 10, 10, 140, GAME_CONFIG.height - 20, 10);
+        panelBg.fillRoundedRect(panelX - 5, 10, 80, GAME_CONFIG.height - 20, 10);
+        panelBg.strokeRoundedRect(panelX - 5, 10, 80, GAME_CONFIG.height - 20, 10);
         
         // === 1. النقاط ===
         this.ui.scoreText = this.add.text(panelX, currentY, 'النقاط: 0', {
@@ -527,22 +527,7 @@ class GameScene extends Phaser.Scene {
         });
         currentY += 35;
         
-        // === 2. المستوى ===
-        this.ui.levelText = this.add.text(panelX, currentY, 'المستوى: 1', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            color: GAME_CONFIG.colors.primary
-        });
-        currentY += 35;
-        
-        // === 3. أكياس البطاطس (الأرواح) ===
-        this.ui.livesLabel = this.add.text(panelX, currentY, 'أكياس البطاطس:', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '14px',
-            color: GAME_CONFIG.colors.primary
-        });
-        currentY += 25;
+        // === 2. الأرواح ===
         
         this.ui.livesText = this.add.text(panelX, currentY, '🍟🍟🍟', {
             fontFamily: 'Cairo, Arial',
@@ -551,57 +536,14 @@ class GameScene extends Phaser.Scene {
         });
         currentY += 40;
         
-        // === 4. التقدم في البناء ===
-        this.ui.progressTitle = this.add.text(panelX, currentY, 'تقدم البناء', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            color: GAME_CONFIG.colors.accent
-        });
-        currentY += 30;
-        
-        // === 5. النسبة المئوية الكبيرة ===
+        // === 3. النسبة المئوية ===
         this.ui.discountPercentText = this.add.text(panelX, currentY, '0%', {
             fontFamily: 'Cairo, Arial',
             fontSize: '32px',
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         });
-        currentY += 50;
-        
-        // === 6. الجزء الحالي من السندوتش ===
-        this.ui.currentPartText = this.add.text(panelX, currentY, 'الطبق', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '14px',
-            fontWeight: '600',
-            color: GAME_CONFIG.colors.dark
-        });
         currentY += 40;
-        
-
-        
-        // === 8. مؤشر مستوى المخاطرة ===
-        this.ui.riskLevelTitle = this.add.text(panelX, currentY, 'مستوى التحدي', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '13px',
-            fontWeight: 'bold',
-            color: '#e74c3c'
-        });
-        currentY += 25;
-        
-        this.ui.riskLevelText = this.add.text(panelX, currentY, 'مبتدئ', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '12px',
-            fontWeight: '600',
-            color: '#27ae60'
-        });
-        currentY += 20;
-        
-        this.ui.nextMilestoneText = this.add.text(panelX, currentY, 'القادم: 10%', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '10px',
-            color: GAME_CONFIG.colors.text
-        });
         currentY += 30;
         
         // === 9. السندوتش المبني (في أسفل الصفحة) ===
@@ -1197,7 +1139,7 @@ class GameScene extends Phaser.Scene {
     
     setupControls() {
         // تحديد حدود منطقة اللعب
-        const gameAreaWidth = GAME_CONFIG.width - 180; // منطقة اللعب فقط
+        const gameAreaWidth = GAME_CONFIG.width - 100; // منطقة اللعب فقط
         const minX = 40; // الحد الأدنى (نصف عرض اللاعب)
         const maxX = gameAreaWidth - 40; // الحد الأقصى
         
@@ -1381,7 +1323,7 @@ class GameScene extends Phaser.Scene {
         this.checkSpecialGoldenSandwich();
         
         // تحديد منطقة اللعب (الجانب الأيسر فقط - قبل الخط الفاصل)
-        const gameAreaWidth = GAME_CONFIG.width - 180; // ترك 180px للوحة البيانات
+        const gameAreaWidth = GAME_CONFIG.width - 100; // ترك 100px للوحة البيانات
         
         // تحديد نوع العنصر (بدون سندوتشات ذهبية عادية)
         const currentDifficulty = this.getCurrentDifficultyLevel();
@@ -1437,7 +1379,7 @@ class GameScene extends Phaser.Scene {
     
     launchSpecialGoldenSandwich() {
         // إطلاق السندوتش الذهبي بسرعة جنونية!
-        const gameAreaWidth = GAME_CONFIG.width - 180;
+        const gameAreaWidth = GAME_CONFIG.width - 100;
         const x = Math.random() * (gameAreaWidth - 50) + 25;
         
         // إنشاء السندوتش الذهبي الخاص
@@ -1570,7 +1512,7 @@ class GameScene extends Phaser.Scene {
             goodItem.isBeingAdjusted = true;
             
             // اختر اتجاه الحركة (يمين أو يسار) بناءً على المساحة المتاحة
-            const gameAreaWidth = GAME_CONFIG.width - 180;
+            const gameAreaWidth = GAME_CONFIG.width - 100;
             let targetX = goodItem.x;
             
             if (goodItem.x < gameAreaWidth / 2) {
@@ -1597,21 +1539,17 @@ class GameScene extends Phaser.Scene {
     updateUI() {
         // تحديث النصوص
         this.ui.scoreText.setText(`النقاط: ${this.gameManager.score}`);
-        this.ui.levelText.setText(`المستوى: ${this.gameManager.level}`);
         
-        // تحديث أكياس البطاطس (الأرواح)
+        // تحديث الأرواح (أيقونات فقط)
         const friesLeft = '🍟'.repeat(Math.max(0, this.gameManager.lives));
         const friesLost = '�'.repeat(Math.max(0, Math.min(3, 3 - Math.max(0, this.gameManager.lives || 0))));
         this.ui.livesText.setText(`${friesLeft}${friesLost}`);
         
-        // تحديث التقدم في البناء
+        // تحديث النسبة المئوية
         this.updateDiscountMeter();
         
         // تحديث المستوى
         this.gameManager.updateLevel();
-        
-        // تحديث مؤشر مستوى المخاطرة الحالي 🎯
-        this.updateRiskLevelIndicator();
     }
     
     showAchievement(message) {
@@ -1957,7 +1895,7 @@ class GameScene extends Phaser.Scene {
     update() {
         // تحكم صاروخي بالمفاتيح للاستجابة الفورية
         if (this.player && !this.gameManager.gameOver && !this.gameManager.gameWon) {
-            const gameAreaWidth = GAME_CONFIG.width - 180;
+            const gameAreaWidth = GAME_CONFIG.width - 100;
             const speed = GAME_CONFIG.player.speed;
             
             // حركة يسار ويمين بالمفاتيح
@@ -1970,7 +1908,7 @@ class GameScene extends Phaser.Scene {
         }
         
         // تنظيف العناصر التي تخرج من منطقة اللعب أو الشاشة
-        const gameAreaWidth = GAME_CONFIG.width - 180;
+        const gameAreaWidth = GAME_CONFIG.width - 100;
         
         this.fallingItems.children.entries.forEach(item => {
             // حذف العناصر التي خرجت من الأسفل أو دخلت منطقة البيانات
@@ -2022,12 +1960,17 @@ class GameScene extends Phaser.Scene {
         const centerX = GAME_CONFIG.width / 2;
         const baseY = GAME_CONFIG.height / 2;
 
-        // صندوق الحوار الرئيسي
+        // صندوق الحوار الرئيسي - متجاوب مع حجم الشاشة
+        const dialogWidth = Math.min(600, GAME_CONFIG.width * 0.8);
+        const dialogHeight = Math.min(200, GAME_CONFIG.height * 0.3);
+        const dialogX = centerX - dialogWidth / 2;
+        const dialogY = Math.max(120, GAME_CONFIG.height * 0.15);
+        
         const dialogBox = this.add.graphics();
         dialogBox.fillStyle(0xffffff, 0.95);
         dialogBox.lineStyle(4, 0xFFD700, 1);
-        dialogBox.fillRoundedRect(centerX - 300, 120, 600, 200, 20);
-        dialogBox.strokeRoundedRect(centerX - 300, 120, 600, 200, 20);
+        dialogBox.fillRoundedRect(dialogX, dialogY, dialogWidth, dialogHeight, 20);
+        dialogBox.strokeRoundedRect(dialogX, dialogY, dialogWidth, dialogHeight, 20);
         dialogBox.setDepth(52);
 
         // العنوان الرئيسي
@@ -2295,7 +2238,7 @@ class GameScene extends Phaser.Scene {
         this.time.addEvent({
             delay: 1000, // ثانية واحدة فقط للبدء
             callback: () => {
-                const gameAreaWidth = GAME_CONFIG.width - 180;
+                const gameAreaWidth = GAME_CONFIG.width - 100;
                 const x = Math.random() * (gameAreaWidth - 50) + 25;
                 
                 // إنشاء السندوتش الذهبي
@@ -2630,70 +2573,7 @@ class GameScene extends Phaser.Scene {
         });
     }
     
-    updateRiskLevelIndicator() {
-        if (!this.ui.riskLevelText) return;
-        
-        const currentDifficulty = this.getCurrentDifficultyLevel();
-        const currentDiscount = this.gameManager.discount;
-        
-        // تحديد النص والرموز حسب المستوى
-        let levelText = '';
-        let levelColor = '';
-        
-        switch (currentDifficulty) {
-            case 1:
-                levelText = 'مبتدئ';
-                levelColor = '#27ae60';
-                break;
-            case 2:
-                levelText = 'متوسط';
-                levelColor = '#f39c12';
-                break;
-            case 3:
-                levelText = 'صعب';
-                levelColor = '#e67e22';
-                break;
-            case 4:
-                levelText = 'خطر';
-                levelColor = '#e74c3c';
-                break;
-            case 5:
-                levelText = 'مستحيل';
-                levelColor = '#8e44ad';
-                break;
-        }
-        
-        this.ui.riskLevelText.setText(levelText);
-        this.ui.riskLevelText.setColor(levelColor);
-        
-        // تأثير وميض عند تغيير المستوى
-        if (this.previousDifficulty !== currentDifficulty) {
-            this.tweens.add({
-                targets: this.ui.riskLevelText,
-                scaleX: { from: 1, to: 1.3 },
-                scaleY: { from: 1, to: 1.3 },
-                duration: 300,
-                yoyo: true,
-                ease: 'Power2'
-            });
-            this.previousDifficulty = currentDifficulty;
-        }
-        
-        // تحديد المحطة القادمة
-        let nextMilestone = '';
-        for (const level of RISK_LEVELS) {
-            if (!level.reached && currentDiscount < level.percent) {
-                nextMilestone = `القادم: ${level.percent}%`;
-                break;
-            }
-        }
-        
-        if (!nextMilestone) {
-            nextMilestone = 'اكتملت كل المراحل';
-        }
-        
-        this.ui.nextMilestoneText.setText(nextMilestone);
-    }
+
     
     resetGameCompletely() {
         try {
@@ -2784,8 +2664,8 @@ class GameScene extends Phaser.Scene {
 // إعداد وتشغيل اللعبة - محسّنة للـ WebView
 const gameConfig = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: GAME_CONFIG.width,
+    height: GAME_CONFIG.height,
     backgroundColor: GAME_CONFIG.colors.secondary,
     parent: 'gameContainer',
     physics: {
@@ -2797,11 +2677,11 @@ const gameConfig = {
     },
     scene: GameScene,
     scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         parent: 'gameContainer',
-        width: 800,
-        height: 600,
+        width: GAME_CONFIG.width,
+        height: GAME_CONFIG.height,
         min: {
             width: 320,
             height: 240
