@@ -473,19 +473,19 @@ class GameScene extends Phaser.Scene {
         // تحديد منطقة اللعب
         const gameAreaWidth = GAME_CONFIG.width - 400;
         
-        // إنشاء اللاعب في وسط منطقة اللعب فقط باستخدام صورة الصندوق
+        // إنشاء اللاعب في موضع أعلى ليظهر بوضوح في دقة 4K
         this.player = this.physics.add.sprite(
             gameAreaWidth / 2, 
-            GAME_CONFIG.height - 50, 
+            GAME_CONFIG.height - 300, // رفع البوكس لأعلى بـ250 بكسل
             'box'
         );
         
-        // تكبير الصندوق ليتناسب مع دقة 4K
-        this.player.setScale(0.5); // تكبير الصندوق إلى 50% ليكون واضح في 4K
+        // تكبير الصندوق أكثر ليتناسب مع دقة 4K
+        this.player.setScale(0.8); // تكبير الصندوق إلى 80% ليكون واضح جداً في 4K
         
         // تحسينات فيزياء للاستجابة الصاروخية
         this.player.setCollideWorldBounds(true);
-        this.player.body.setSize(70, 15); // تقليل منطقة التصادم قليلاً
+        this.player.body.setSize(120, 25); // منطقة تصادم أكبر تتناسب مع الحجم الجديد
         this.player.setGravityY(-400); // إلغاء تأثير الجاذبية على اللاعب
         this.player.body.setDrag(0); // إزالة أي مقاومة
         this.player.body.setMaxVelocity(0); // إيقاف السرعة التلقائية
@@ -1497,7 +1497,7 @@ class GameScene extends Phaser.Scene {
             repeat: -1,
             callback: () => {
                 if (goldenItem && goldenItem.active && !goldenItem.isCollected && !goldenItem.hasDropped) {
-                    if (goldenItem.y >= GAME_CONFIG.height - 20) {
+                    if (goldenItem.y >= GAME_CONFIG.height - 250) { // تحديث الحد ليتناسب مع موضع البوكس الجديد
                         goldenItem.hasDropped = true;
                         this.handleItemDropped(goldenItem);
                         if (goldenItem.dropChecker) {
@@ -1552,8 +1552,8 @@ class GameScene extends Phaser.Scene {
                         this.checkAndAdjustGoodItemPosition(item);
                     }
                     
-                    // إذا وصل العنصر إلى أسفل الشاشة
-                    if (item.y >= GAME_CONFIG.height - 20) {
+                    // إذا وصل العنصر إلى منطقة أسفل البوكس (تحت الموضع الجديد)
+                    if (item.y >= GAME_CONFIG.height - 250) { // تحديث الحد ليتناسب مع موضع البوكس الجديد
                         item.hasDropped = true;
                         this.handleItemDropped(item);
                         if (item.dropChecker) {
@@ -2351,7 +2351,7 @@ class GameScene extends Phaser.Scene {
                     repeat: -1,
                     callback: () => {
                         if (goldenItem && goldenItem.active && !goldenItem.isCollected && !goldenItem.hasDropped) {
-                            if (goldenItem.y >= GAME_CONFIG.height - 20) {
+                            if (goldenItem.y >= GAME_CONFIG.height - 250) { // تحديث الحد ليتناسب مع موضع البوكس الجديد
                                 goldenItem.hasDropped = true;
                                 this.handleItemDropped(goldenItem);
                                 if (goldenItem.dropChecker) {
