@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Burgsta - عجلة الحظ</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23c49b41'/><text x='50' y='60' text-anchor='middle' font-size='40' fill='white'>🍔</text></svg>">
-    <link rel="stylesheet" href="styles.css">
+    <!-- <link rel="stylesheet" href="styles.css"> معطل للـ WebView -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
         
@@ -50,9 +50,22 @@
             max-height: 100% !important;
             width: auto !important;
             height: auto !important;
-            object-fit: contain;
-            margin: auto !important;
+            object-fit: contain !important;
+            margin: 0 auto !important;
             display: block !important;
+            position: relative !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+        }
+        
+        /* إعادة تعيين أي تأثيرات من styles.css */
+        #gameContainer {
+            text-align: center !important;
+        }
+        
+        /* منع أي تأثيرات خارجية */
+        #gameContainer * {
+            box-sizing: border-box !important;
         }
         
         .loading {
