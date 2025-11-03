@@ -434,9 +434,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('وافل شوكلاته', './images/وافل شوكلاته.png');
         console.log('✅ تم طلب تحميل: وافل شوكلاته');
         
-        // تحميل صورة خصم 5% بالاسم الجديد offer5
-        this.load.image('offer5', './images/offer5.png');
-        console.log('✅ تم طلب تحميل: offer5 (خصم 5%)');
+        // تحميل صورة خصم 5% بالصورة الجديدة pngegg1
+        this.load.image('offer5', './images/pngegg1.png');
+        console.log('✅ تم طلب تحميل: pngegg1 (خصم 5%)');
         
         // تحميل صورة الموهيتو بالاسم العربي
         this.load.image('موهيتو', './images/موهيتو.png?v=3');
