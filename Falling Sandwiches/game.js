@@ -2,9 +2,9 @@
 
 // إعدادات اللعبة
 const GAME_CONFIG = {
-    // أبعاد اللعبة
-    width: window.innerWidth,
-    height: window.innerHeight,
+    // أبعاد اللعبة - ثابتة للـ WebView
+    width: 800,
+    height: 600,
     
     // إعدادات اللاعب
     player: {
@@ -239,32 +239,16 @@ class GameScene extends Phaser.Scene {
     }
     
     preload() {
-        // إنشاء الأشكال بدلاً من تحميل صور
+        // تحميل صورة الصندوق للاعب
+        this.load.image('box', 'images/box.png');
+        
+        // إنشاء باقي الأشكال
         this.createGameAssets();
     }
     
     createGameAssets() {
         // إنشاء أشكال ملونة وجذابة للعناصر المختلفة
-        
-        // اللاعب (طبق جميل)
-        const playerGraphics = this.add.graphics();
-        // خلفية الطبق (ذهبية)
-        playerGraphics.fillStyle(0xc49b41);
-        playerGraphics.fillRoundedRect(0, 0, 80, 20, 10);
-        // حافة الطبق (ذهبي فاتح)
-        playerGraphics.fillStyle(0xd4af37);
-        playerGraphics.fillRoundedRect(3, 3, 74, 14, 7);
-        // وسط الطبق (أبيض كريمي)
-        playerGraphics.fillStyle(0xfff9e6);
-        playerGraphics.fillRoundedRect(6, 6, 68, 8, 4);
-        // خطوط زخرفية
-        playerGraphics.lineStyle(1, 0xc49b41);
-        playerGraphics.beginPath();
-        playerGraphics.moveTo(10, 10);
-        playerGraphics.lineTo(70, 10);
-        playerGraphics.strokePath();
-        playerGraphics.generateTexture('player', 80, 20);
-        playerGraphics.destroy();
+        // ملاحظة: اللاعب الآن يستخدم صورة box.png
         
         // سندوتش جيد (برجر شهي)
         const goodSandwichGraphics = this.add.graphics();
@@ -485,11 +469,11 @@ class GameScene extends Phaser.Scene {
         // تحديد منطقة اللعب
         const gameAreaWidth = GAME_CONFIG.width - 180;
         
-        // إنشاء اللاعب في وسط منطقة اللعب فقط
+        // إنشاء اللاعب في وسط منطقة اللعب فقط باستخدام صورة الصندوق
         this.player = this.physics.add.sprite(
             gameAreaWidth / 2, 
             GAME_CONFIG.height - 50, 
-            'player'
+            'box'
         );
         
         // تحسينات فيزياء للاستجابة الصاروخية
@@ -2032,9 +2016,9 @@ class GameScene extends Phaser.Scene {
         const centerX = GAME_CONFIG.width / 2;
         const baseY = GAME_CONFIG.height / 2;
 
-        // رسالة مبروك مبسطة
-        const titleText = this.add.text(centerX, 150, '🎉 مبروك!', {
-            fontSize: '40px',
+        // الجملة الأولى: مبروك وصلت للمستوى الأول - في أعلى الصفحة
+        const titleText = this.add.text(centerX, 100, level.description, {
+            fontSize: '32px',
             fill: '#ffff00',
             fontFamily: 'Arial Black',
             stroke: '#000000',
@@ -2044,9 +2028,65 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
         titleText.setDepth(55);
 
-        // رسالة ماذا تقرر مبسطة
-        const choiceText = this.add.text(centerX, 220, 'ماذا تقرر؟', {
-            fontSize: '28px',
+        // الجملة الثانية: خصم 10% - تحت الأولى مباشرة
+        const rewardText = this.add.text(centerX, 150, `🎁 ${level.reward}`, {
+            fontSize: '24px',
+            fill: '#00ff00',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 5,
+            align: 'center',
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+        }).setOrigin(0.5);
+        rewardText.setDepth(55);
+
+        // إنشاء النص الشامل في طباعة واحدة
+        let infoMessage = `🎯 لديك خياران:\n\n`;
+        
+        // الخيار الأول: الانسحاب
+        infoMessage += `💰 الخيار الأول - الانسحاب الآمن:\n`;
+        infoMessage += `احصل على ${level.percent}% خصم مضمون الآن\n\n`;
+        
+        // الخيار الثاني: المتابعة
+        infoMessage += `🔥 الخيار الثاني - المتابعة للمغامرة:\n`;
+        if (level.percent < 100) {
+            const nextLevel = level.percent === 10 ? 25 : level.percent === 25 ? 50 : level.percent === 50 ? 75 : 100;
+            infoMessage += `هدف: الوصول للمستوى التالي (${nextLevel}% خصم)\n`;
+        } else {
+            infoMessage += `هذا المستوى الأخير - 100% وجبة مجانية!\n`;
+        }
+        
+        // إضافة معلومة السندويتش الذهبي إذا كان متاحاً
+        if (level.reward.includes('سندويتش ذهبي')) {
+            infoMessage += `🎁 مكافأة فورية: سندويتش ذهبي (+3% خصم)\n`;
+            infoMessage += `⚡ سرعة عالية - تحدي ممتع!\n`;
+        }
+        
+        // إضافة تحذير المخاطر للمستويات غير النهائية
+        if (level.percent < 100) {
+            infoMessage += `\n⚠️ تحذير هام:\n`;
+            infoMessage += `${level.nextRisk}\n`;
+            infoMessage += `إذا فشلت في الوصول للمستوى التالي = تخسر كل شيء!`;
+        }
+
+        // النص التفصيلي - بعيداً عن الثلاث جمل الأساسية
+        const questionText = this.add.text(centerX, 400, infoMessage, {
+            fontSize: '14px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            fontWeight: 'bold',
+            stroke: '#000000',
+            strokeThickness: 2,
+            align: 'center',
+            lineSpacing: 5,
+            wordWrap: { width: 600 },
+            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 3, fill: true }
+        }).setOrigin(0.5);
+        questionText.setDepth(55);
+        
+        // الجملة الثالثة: ماذا تقرر؟ - تحت الثانية مباشرة
+        const choiceText = this.add.text(centerX, 200, '🤔 ماذا تقرر؟', {
+            fontSize: '20px',
             fill: '#ffdd44',
             fontFamily: 'Arial Black',
             stroke: '#000000',
@@ -2093,6 +2133,8 @@ class GameScene extends Phaser.Scene {
                     // إزالة عناصر الحوار
                     dialogBg.destroy();
                     titleText.destroy();
+                    rewardText.destroy();
+                    questionText.destroy();
                     choiceText.destroy();
                     countdownText.destroy();
                     withdrawBtn.destroy();
@@ -2153,6 +2195,8 @@ class GameScene extends Phaser.Scene {
             // إزالة عناصر الحوار
             dialogBg.destroy();
             titleText.destroy();
+            rewardText.destroy();
+            questionText.destroy();
             choiceText.destroy();
             countdownText.destroy();
             withdrawBtn.destroy();
@@ -2166,6 +2210,8 @@ class GameScene extends Phaser.Scene {
             // إزالة عناصر الحوار
             dialogBg.destroy();
             titleText.destroy();
+            rewardText.destroy();
+            questionText.destroy();
             choiceText.destroy();
             countdownText.destroy();
             withdrawBtn.destroy();
@@ -2176,7 +2222,7 @@ class GameScene extends Phaser.Scene {
         this.currentDialog = {
             bg: dialogBg,
             box: null,
-            texts: [titleText, choiceText, countdownText],
+            texts: [titleText, rewardText, questionText, choiceText, countdownText],
             buttons: [withdrawBtn, continueBtn],
             timer: countdownTimer
         };
@@ -2708,11 +2754,11 @@ class GameScene extends Phaser.Scene {
     }
 }
 
-// إعداد وتشغيل اللعبة
+// إعداد وتشغيل اللعبة - محسّنة للـ WebView
 const gameConfig = {
     type: Phaser.AUTO,
-    width: GAME_CONFIG.width,
-    height: GAME_CONFIG.height,
+    width: 800,
+    height: 600,
     backgroundColor: GAME_CONFIG.colors.secondary,
     parent: 'gameContainer',
     physics: {
@@ -2724,12 +2770,30 @@ const gameConfig = {
     },
     scene: GameScene,
     scale: {
-        mode: Phaser.Scale.RESIZE,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        parent: 'gameContainer',
+        width: 800,
+        height: 600,
+        min: {
+            width: 320,
+            height: 240
+        },
+        max: {
+            width: 1200,
+            height: 900
+        },
+        expandParent: false,
+        autoRound: true
+    },
+    render: {
+        antialias: true,
+        pixelArt: false,
+        roundPixels: true
     }
 };
 
-// تشغيل اللعبة عند تحميل الصفحة
+// تشغيل اللعبة عند تحميل الصفحة 
 window.addEventListener('load', () => {
     const game = new Phaser.Game(gameConfig);
     window.game = game;
