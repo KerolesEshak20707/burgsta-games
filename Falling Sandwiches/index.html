@@ -2,7 +2,10 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Burgsta - السندوتشات المتساقطة</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23c49b41'/><text x='50' y='60' text-anchor='middle' font-size='40' fill='white'>🍔</text></svg>">
     <style>
@@ -59,13 +62,33 @@
         
         /* تأكد من أن Canvas يحترم حدود الـ WebView وفي الوسط */
         #gameContainer canvas {
+            width: 100vw !important;
+            height: 100vh !important;
             max-width: 100% !important;
             max-height: 100% !important;
-            width: auto !important;
-            height: auto !important;
-            object-fit: contain;
-            margin: auto !important;
+            object-fit: cover !important;
+            margin: 0 !important;
             display: block !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+        
+        /* إعدادات خاصة للموبايل */
+        @media screen and (max-width: 768px) {
+            body {
+                -webkit-overflow-scrolling: touch;
+                -webkit-user-select: none;
+                user-select: none;
+                -webkit-touch-callout: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            #gameContainer {
+                width: 100vw;
+                height: 100vh;
+                overflow: hidden;
+            }
         }
         
         .loading {
