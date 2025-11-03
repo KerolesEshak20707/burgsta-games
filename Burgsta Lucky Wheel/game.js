@@ -446,9 +446,9 @@ class GameScene extends Phaser.Scene {
         this.load.image('دليفري', './images/دليفري.png?v=3');
         console.log('✅ تم طلب تحميل: دليفري');
         
-        // تحميل صورة خصم 15% بالاسم الجديد offer15
-        this.load.image('offer15', './images/offer15.png');
-        console.log('✅ تم طلب تحميل: offer15 (خصم 15%)');
+        // تحميل صورة خصم 15% بالصورة الجديدة pngegg2
+        this.load.image('offer15', './images/pngegg2.png');
+        console.log('✅ تم طلب تحميل: pngegg2 (خصم 15%)');
         
         // تحميل صورة الأورجينال برجر بالاسم العربي
         this.load.image('اورجينال', './images/اورجينال.png');
