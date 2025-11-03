@@ -32,12 +32,12 @@ const GAME_CONFIG = {
     // الألوان (هوية Burgsta الجديدة - أحمر وذهبي)
     colors: {
         primary: '#FFD700',        // ذهبي رئيسي
-        secondary: '#8B0000',      // أحمر داكن
-        dark: '#B22222',           // أحمر متوسط  
-        light: '#FFF8DC',          // ذهبي فاتح
+        secondary: '#4A148C',      // بنفسجي داكن
+        dark: '#7B1FA2',           // بنفسجي متوسط  
+        light: '#F3E5F5',          // بنفسجي فاتح جداً
         text: '#FFD700',           // ذهبي للنصوص
-        accent: '#FFA500',         // برتقالي ذهبي
-        danger: '#8B0000',         // أحمر للخطر
+        accent: '#9C27B0',         // بنفسجي فاتح
+        danger: '#4A148C',         // بنفسجي داكن للخطر
         success: '#FFD700'         // ذهبي للنجاح
     }
 };
@@ -248,8 +248,8 @@ class GameScene extends Phaser.Scene {
         
         // اللاعب (طبق جميل)
         const playerGraphics = this.add.graphics();
-        // خلفية الطبق (أحمر داكن)
-        playerGraphics.fillStyle(0x8B0000);
+        // خلفية الطبق (بنفسجي داكن)
+        playerGraphics.fillStyle(0x4A148C);
         playerGraphics.fillRoundedRect(0, 0, 80, 20, 10);
         // حافة الطبق (ذهبي)
         playerGraphics.fillStyle(0xFFD700);
@@ -444,13 +444,13 @@ class GameScene extends Phaser.Scene {
     }
     
     createBackground() {
-        // خلفية متدرجة حمراء مع تأثيرات
+        // خلفية متدرجة بنفسجية أنيقة مع تأثيرات
         const bg = this.add.graphics();
         bg.fillGradientStyle(
-            Phaser.Display.Color.HexStringToColor('#8B0000').color,  // أحمر داكن
-            Phaser.Display.Color.HexStringToColor('#DC143C').color,  // أحمر زاهي
-            Phaser.Display.Color.HexStringToColor('#B22222').color,  // أحمر متوسط
-            Phaser.Display.Color.HexStringToColor('#8B0000').color,  // أحمر داكن
+            Phaser.Display.Color.HexStringToColor('#4A148C').color,  // بنفسجي داكن
+            Phaser.Display.Color.HexStringToColor('#7B1FA2').color,  // بنفسجي متوسط
+            Phaser.Display.Color.HexStringToColor('#9C27B0').color,  // بنفسجي فاتح
+            Phaser.Display.Color.HexStringToColor('#4A148C').color,  // بنفسجي داكن
             1
         );
         bg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
@@ -1656,7 +1656,7 @@ class GameScene extends Phaser.Scene {
         
         // خلفية الإشعار مع حدود
         const notificationBg = this.add.graphics();
-        notificationBg.fillStyle(0x8B0000, 0.95);
+        notificationBg.fillStyle(0x4A148C, 0.95);
         notificationBg.lineStyle(4, 0xFFD700, 1);
         notificationBg.fillRoundedRect(-220, -60, 440, 120, 20);
         notificationBg.strokeRoundedRect(-220, -60, 440, 120, 20);
@@ -1768,7 +1768,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Arial',
             fontSize: '20px',
             fontWeight: 'bold',
-            color: '#8B0000',
+            color: '#7B1FA2',
             align: 'center',
             lineSpacing: 8,
             wordWrap: { width: 400 }
@@ -2053,7 +2053,7 @@ class GameScene extends Phaser.Scene {
         // رسالة الخصم
         const rewardText = this.add.text(centerX, 200, `حصلت على خصم ${level.percent}%`, {
             fontSize: '24px',
-            fill: '#8B0000',
+            fill: '#9C27B0',
             fontFamily: 'Cairo, Arial',
             fontWeight: 'bold',
             align: 'center'
