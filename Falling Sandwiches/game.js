@@ -12,13 +12,13 @@ const GAME_CONFIG = {
         size: 80
     },
     
-    // إعدادات السندوتشات - صعوبة جهنمية 🔥🔥
+    // إعدادات السندوتشات - متوازنة مع الأحجام الكبيرة 🔥🔥
     items: {
-        baseSpeed: 150,        // سريع من البداية!
-        speedIncrement: 25,    // زيادة سرعة قاتلة
-        baseSpawnRate: 800,    // كثافة عالية من البداية
-        spawnRateDecrement: 60, // تسارع جنوني في الظهور
-        minSpawnRate: 150      // جحيم حقيقي! 
+        baseSpeed: 120,        // سرعة مناسبة للعناصر الكبيرة
+        speedIncrement: 20,    // زيادة تدريجية
+        baseSpawnRate: 1200,   // كثافة أقل للعناصر الكبيرة
+        spawnRateDecrement: 80, // تسارع تدريجي
+        minSpawnRate: 300      // حد أدنى مناسب
     },
     
     // نظام الخصم - صعوبة عالية جداً 🔥
@@ -254,131 +254,131 @@ class GameScene extends Phaser.Scene {
         // إنشاء أشكال ملونة وجذابة للعناصر المختلفة
         // ملاحظة: اللاعب الآن يستخدم صورة box.png
         
-        // سندوتش جيد (برجر شهي)
+        // سندوتش جيد (برجر شهي) - حجم كبير للشاشة 4K
         const goodSandwichGraphics = this.add.graphics();
-        // الخبز العلوي (بني ذهبي)
+        // الخبز العلوي (بني ذهبي) - مكبر 3 مرات
         goodSandwichGraphics.fillStyle(0xd2691e);
-        goodSandwichGraphics.fillRoundedRect(0, 0, 40, 12, 6);
-        // بذور السمسم
+        goodSandwichGraphics.fillRoundedRect(0, 0, 120, 36, 18);
+        // بذور السمسم - أكبر وأكثر وضوحاً
         goodSandwichGraphics.fillStyle(0xffffff);
-        goodSandwichGraphics.fillCircle(10, 6, 1);
-        goodSandwichGraphics.fillCircle(18, 4, 1);
-        goodSandwichGraphics.fillCircle(30, 5, 1);
-        // الخس (أخضر)
+        goodSandwichGraphics.fillCircle(30, 18, 3);
+        goodSandwichGraphics.fillCircle(54, 12, 3);
+        goodSandwichGraphics.fillCircle(90, 15, 3);
+        // الخس (أخضر) - أكبر
         goodSandwichGraphics.fillStyle(0x228b22);
-        goodSandwichGraphics.fillRect(3, 12, 34, 3);
-        // اللحم (بني)
+        goodSandwichGraphics.fillRect(9, 36, 102, 9);
+        // اللحم (بني) - أكبر
         goodSandwichGraphics.fillStyle(0x8b4513);
-        goodSandwichGraphics.fillRect(5, 15, 30, 4);
-        // الجبن (أصفر)
+        goodSandwichGraphics.fillRect(15, 45, 90, 12);
+        // الجبن (أصفر) - أكبر
         goodSandwichGraphics.fillStyle(0xffd700);
-        goodSandwichGraphics.fillRect(4, 19, 32, 2);
-        // الخبز السفلي (بني فاتح)
+        goodSandwichGraphics.fillRect(12, 57, 96, 6);
+        // الخبز السفلي (بني فاتح) - أكبر
         goodSandwichGraphics.fillStyle(0xdaa520);
-        goodSandwichGraphics.fillRoundedRect(2, 21, 36, 9, 4);
-        goodSandwichGraphics.generateTexture('goodSandwich', 40, 30);
+        goodSandwichGraphics.fillRoundedRect(6, 63, 108, 27, 12);
+        goodSandwichGraphics.generateTexture('goodSandwich', 120, 90); // حجم كبير 3x
         goodSandwichGraphics.destroy();
         
-        // سندوتش ذهبي (برجر فاخر)
+        // سندوتش ذهبي (برجر فاخر) - حجم كبير للشاشة 4K
         const goldenSandwichGraphics = this.add.graphics();
-        // إشعاع ذهبي في الخلفية
+        // إشعاع ذهبي في الخلفية - أكبر
         goldenSandwichGraphics.fillStyle(0xffd700, 0.3);
-        goldenSandwichGraphics.fillCircle(22, 17, 25);
-        // الخبز العلوي (ذهبي لامع)
+        goldenSandwichGraphics.fillCircle(66, 51, 75);
+        // الخبز العلوي (ذهبي لامع) - مكبر 3 مرات
         goldenSandwichGraphics.fillStyle(0xffd700);
-        goldenSandwichGraphics.fillRoundedRect(5, 2, 35, 12, 6);
-        // تأثير لمعان
+        goldenSandwichGraphics.fillRoundedRect(15, 6, 105, 36, 18);
+        // تأثير لمعان - أكبر
         goldenSandwichGraphics.fillStyle(0xffffe0);
-        goldenSandwichGraphics.fillRoundedRect(7, 4, 15, 4, 2);
-        // بذور ذهبية
+        goldenSandwichGraphics.fillRoundedRect(21, 12, 45, 12, 6);
+        // بذور ذهبية - أكبر وأكثر وضوحاً
         goldenSandwichGraphics.fillStyle(0xffa500);
-        goldenSandwichGraphics.fillCircle(12, 8, 1);
-        goldenSandwichGraphics.fillCircle(20, 6, 1);
-        goldenSandwichGraphics.fillCircle(28, 7, 1);
-        // الخس الذهبي
+        goldenSandwichGraphics.fillCircle(36, 24, 3);
+        goldenSandwichGraphics.fillCircle(60, 18, 3);
+        goldenSandwichGraphics.fillCircle(84, 21, 3);
+        // الخس الذهبي - أكبر
         goldenSandwichGraphics.fillStyle(0x32cd32);
-        goldenSandwichGraphics.fillRect(6, 14, 33, 3);
-        // اللحم المميز
+        goldenSandwichGraphics.fillRect(18, 42, 99, 9);
+        // اللحم المميز - أكبر
         goldenSandwichGraphics.fillStyle(0xa0522d);
-        goldenSandwichGraphics.fillRect(7, 17, 31, 5);
-        // الجبن الذهبي
+        goldenSandwichGraphics.fillRect(21, 51, 93, 15);
+        // الجبن الذهبي - أكبر
         goldenSandwichGraphics.fillStyle(0xffd700);
-        goldenSandwichGraphics.fillRect(6, 22, 33, 3);
-        // الخبز السفلي
+        goldenSandwichGraphics.fillRect(18, 66, 99, 9);
+        // الخبز السفلي - أكبر
         goldenSandwichGraphics.fillStyle(0xdaa520);
-        goldenSandwichGraphics.fillRoundedRect(4, 25, 37, 10, 5);
-        // حدود ذهبية
-        goldenSandwichGraphics.lineStyle(2, 0xffd700);
-        goldenSandwichGraphics.strokeRoundedRect(3, 1, 39, 34, 8);
-        goldenSandwichGraphics.generateTexture('goldenSandwich', 45, 35);
+        goldenSandwichGraphics.fillRoundedRect(12, 75, 111, 30, 15);
+        // حدود ذهبية - أثخن
+        goldenSandwichGraphics.lineStyle(6, 0xffd700);
+        goldenSandwichGraphics.strokeRoundedRect(9, 3, 117, 102, 24);
+        goldenSandwichGraphics.generateTexture('goldenSandwich', 135, 105); // حجم كبير 3x
         goldenSandwichGraphics.destroy();
         
-        // عنصر سيئ (سندوتش فاسد ومقزز)
+        // عنصر سيئ (سندوتش فاسد ومقزز) - حجم كبير للشاشة 4K
         const badItemGraphics = this.add.graphics();
-        // الخبز العلوي الفاسد (رمادي مخضر مقزز)
+        // الخبز العلوي الفاسد (رمادي مخضر مقزز) - مكبر 3 مرات
         badItemGraphics.fillStyle(0x556b2f);
-        badItemGraphics.fillRoundedRect(0, 0, 40, 12, 6);
-        // بقع عفن على الخبز
+        badItemGraphics.fillRoundedRect(0, 0, 120, 36, 18);
+        // بقع عفن على الخبز - أكبر وأكثر وضوحاً
         badItemGraphics.fillStyle(0x2f4f2f);
-        badItemGraphics.fillCircle(8, 6, 2);
-        badItemGraphics.fillCircle(25, 4, 1.5);
-        badItemGraphics.fillCircle(32, 7, 1);
-        // بذور متعفنة (سوداء)
+        badItemGraphics.fillCircle(24, 18, 6);
+        badItemGraphics.fillCircle(75, 12, 4.5);
+        badItemGraphics.fillCircle(96, 21, 3);
+        // بذور متعفنة (سوداء) - أكبر
         badItemGraphics.fillStyle(0x000000);
-        badItemGraphics.fillCircle(12, 6, 1);
-        badItemGraphics.fillCircle(20, 4, 1);
-        badItemGraphics.fillCircle(28, 5, 1);
-        // الخس الذابل (بني مصفر)
+        badItemGraphics.fillCircle(36, 18, 3);
+        badItemGraphics.fillCircle(60, 12, 3);
+        badItemGraphics.fillCircle(84, 15, 3);
+        // الخس الذابل (بني مصفر) - أكبر
         badItemGraphics.fillStyle(0x8b7355);
-        badItemGraphics.fillRect(3, 12, 34, 3);
-        // بقع على الخس
+        badItemGraphics.fillRect(9, 36, 102, 9);
+        // بقع على الخس - أكبر
         badItemGraphics.fillStyle(0x654321);
-        badItemGraphics.fillRect(8, 12, 6, 1);
-        badItemGraphics.fillRect(20, 13, 8, 1);
-        // اللحم الفاسد (أخضر مقزز)
+        badItemGraphics.fillRect(24, 36, 18, 3);
+        badItemGraphics.fillRect(60, 39, 24, 3);
+        // اللحم الفاسد (أخضر مقزز) - أكبر
         badItemGraphics.fillStyle(0x6b8e23);
-        badItemGraphics.fillRect(5, 15, 30, 4);
-        // بقع فساد على اللحم
+        badItemGraphics.fillRect(15, 45, 90, 12);
+        // بقع فساد على اللحم - أكبر
         badItemGraphics.fillStyle(0x2e8b57);
-        badItemGraphics.fillRect(10, 16, 4, 1);
-        badItemGraphics.fillRect(22, 15, 6, 2);
-        // الجبن المتعفن (أصفر مخضر)
+        badItemGraphics.fillRect(30, 48, 12, 3);
+        badItemGraphics.fillRect(66, 45, 18, 6);
+        // الجبن المتعفن (أصفر مخضر) - أكبر
         badItemGraphics.fillStyle(0x9acd32);
-        badItemGraphics.fillRect(4, 19, 32, 2);
-        // بقع عفن على الجبن
+        badItemGraphics.fillRect(12, 57, 96, 6);
+        // بقع عفن على الجبن - أكبر
         badItemGraphics.fillStyle(0x556b2f);
-        badItemGraphics.fillRect(12, 19, 3, 1);
-        badItemGraphics.fillRect(26, 20, 4, 1);
-        // الخبز السفلي الفاسد (بني داكن)
+        badItemGraphics.fillRect(36, 57, 9, 3);
+        badItemGraphics.fillRect(78, 60, 12, 3);
+        // الخبز السفلي الفاسد (بني داكن) - أكبر
         badItemGraphics.fillStyle(0x8b4513);
-        badItemGraphics.fillRoundedRect(2, 21, 36, 9, 4);
-        // شقوق في الخبز السفلي
-        badItemGraphics.lineStyle(1, 0x654321);
+        badItemGraphics.fillRoundedRect(6, 63, 108, 27, 12);
+        // شقوق في الخبز السفلي - أكبر
+        badItemGraphics.lineStyle(3, 0x654321);
         badItemGraphics.beginPath();
-        badItemGraphics.moveTo(8, 25);
-        badItemGraphics.lineTo(15, 27);
-        badItemGraphics.moveTo(22, 24);
-        badItemGraphics.lineTo(30, 26);
+        badItemGraphics.moveTo(24, 75);
+        badItemGraphics.lineTo(45, 81);
+        badItemGraphics.moveTo(66, 72);
+        badItemGraphics.lineTo(90, 78);
         badItemGraphics.strokePath();
-        // ذباب صغير حول السندوتش (نقاط سوداء متحركة)
+        // ذباب صغير حول السندوتش (نقاط سوداء متحركة) - أكبر
         badItemGraphics.fillStyle(0x000000);
-        badItemGraphics.fillCircle(-2, 8, 0.5);
-        badItemGraphics.fillCircle(42, 15, 0.5);
-        badItemGraphics.fillCircle(38, 5, 0.5);
-        // هالة خضراء مقززة حول السندوتش
+        badItemGraphics.fillCircle(-6, 24, 1.5);
+        badItemGraphics.fillCircle(126, 45, 1.5);
+        badItemGraphics.fillCircle(114, 15, 1.5);
+        // هالة خضراء مقززة حول السندوتش - أكبر
         badItemGraphics.fillStyle(0x228b22, 0.1);
-        badItemGraphics.fillCircle(20, 15, 25);
-        // خطوط رائحة كريهة
-        badItemGraphics.lineStyle(1, 0x696969, 0.3);
+        badItemGraphics.fillCircle(60, 45, 75);
+        // خطوط رائحة كريهة - أكبر
+        badItemGraphics.lineStyle(3, 0x696969, 0.3);
         badItemGraphics.beginPath();
-        badItemGraphics.moveTo(15, 0);
-        badItemGraphics.lineTo(13, -5);
-        badItemGraphics.moveTo(20, -2);
-        badItemGraphics.lineTo(18, -7);
-        badItemGraphics.moveTo(25, 0);
-        badItemGraphics.lineTo(27, -5);
+        badItemGraphics.moveTo(45, 0);
+        badItemGraphics.lineTo(39, -15);
+        badItemGraphics.moveTo(60, -6);
+        badItemGraphics.lineTo(54, -21);
+        badItemGraphics.moveTo(75, 0);
+        badItemGraphics.lineTo(81, -15);
         badItemGraphics.strokePath();
-        badItemGraphics.generateTexture('badItem', 40, 30);
+        badItemGraphics.generateTexture('badItem', 120, 90); // حجم كبير 3x
         badItemGraphics.destroy();
     }
     
@@ -480,8 +480,8 @@ class GameScene extends Phaser.Scene {
             'box'
         );
         
-        // تصغير الصندوق ليكون بحجم منطقي مثل الطبق السابق
-        this.player.setScale(0.15); // تصغير الصندوق إلى 15% من حجمه الأصلي
+        // تكبير الصندوق ليتناسب مع دقة 4K
+        this.player.setScale(0.5); // تكبير الصندوق إلى 50% ليكون واضح في 4K
         
         // تحسينات فيزياء للاستجابة الصاروخية
         this.player.setCollideWorldBounds(true);
@@ -1409,18 +1409,18 @@ class GameScene extends Phaser.Scene {
         const badChance = Math.min(0.85, 0.60 + (currentDifficulty * 0.08)); // من 60% إلى 85% سيئة! 🔥
         const goodChance = 1 - badChance; // قليل جداً من العناصر الجيدة
         
-        // إنتاج سندوتشات بكثافة جهنمية 🔥💀
+        // إنتاج سندوتشات متوازنة مع الأحجام الكبيرة 🔥💀
         let numItems;
         if (this.gameManager.discount < 3) {
-            numItems = Math.floor(Math.random() * 3) + 2; // 2-4 سندوتشات (صعب من البداية!)
+            numItems = Math.floor(Math.random() * 2) + 2; // 2-3 سندوتشات (مناسب للأحجام الكبيرة!)
         } else if (this.gameManager.discount < 5) {
-            numItems = Math.floor(Math.random() * 4) + 3; // 3-6 سندوتشات (جحيم!)
+            numItems = Math.floor(Math.random() * 2) + 3; // 3-4 سندوتشات 
         } else if (this.gameManager.discount < 10) {
-            numItems = Math.floor(Math.random() * 6) + 4; // 4-9 سندوتشات (مستحيل تقريباً!)
+            numItems = Math.floor(Math.random() * 3) + 3; // 3-5 سندوتشات 
         } else if (this.gameManager.discount < 15) {
-            numItems = Math.floor(Math.random() * 8) + 6; // 6-13 سندوتشات (جحيم حقيقي! 🔥🔥)
+            numItems = Math.floor(Math.random() * 3) + 4; // 4-6 سندوتشات 
         } else {
-            numItems = Math.floor(Math.random() * 10) + 8; // 8-17 سندوتشات (مطر جهنمي! 🌧️💀🔥)
+            numItems = Math.floor(Math.random() * 4) + 5; // 5-8 سندوتشات (متوازن مع الأحجام الكبيرة)
         }
         
         // 🕰️ إنشاء السندوتشات بفترات زمنية متغيرة لزيادة التشويق
@@ -1473,8 +1473,8 @@ class GameScene extends Phaser.Scene {
         const crazySpeed = this.gameManager.getCurrentItemSpeed() * 3;
         goldenItem.setVelocityY(crazySpeed);
         
-        // تأثيرات بصرية مميزة
-        goldenItem.setScale(1.3); // أكبر من العادي
+        // تأثيرات بصرية مميزة - حجم أكبر للشاشة 4K
+        goldenItem.setScale(1.8); // أكبر بكثير للظهور الواضح في 4K
         goldenItem.setTint(0xffd700); // لون ذهبي مشرق
         
         // تأثير إشعاع ذهبي
@@ -2327,8 +2327,8 @@ class GameScene extends Phaser.Scene {
                 const crazySpeed = this.gameManager.getCurrentItemSpeed() * speedMultiplier;
                 goldenItem.setVelocityY(crazySpeed);
                 
-                // تأثيرات بصرية حسب المستوى
-                goldenItem.setScale(1.2 + (level.difficulty * 0.1)); // يكبر كل مستوى
+                // تأثيرات بصرية حسب المستوى - أكبر للشاشة 4K
+                goldenItem.setScale(1.6 + (level.difficulty * 0.15)); // يكبر أكثر كل مستوى للشاشة 4K
                 goldenItem.setTint(0xffd700);
                 
                 // تأثير إشعاع متسارع حسب المستوى
