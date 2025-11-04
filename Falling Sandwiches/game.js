@@ -246,38 +246,17 @@ class GameScene extends Phaser.Scene {
         // تحميل صورة الصندوق للاعب
         this.load.image('box', 'images/box.png');
         
-        // إنشاء باقي الأشكال
+        // تحميل صور الساندوتشات الحقيقية
+        this.load.image('goodSandwich', 'images/اورجينال.png');
+        this.load.image('badItem', 'images/boom.png');
+        
+        // إنشاء باقي الأشكال (الساندوتش الذهبي فقط)
         this.createGameAssets();
     }
     
     createGameAssets() {
-        // إنشاء أشكال ملونة وجذابة للعناصر المختلفة
-        // ملاحظة: اللاعب الآن يستخدم صورة box.png
-        
-        // سندوتش جيد (برجر شهي) - حجم كبير للشاشة 4K
-        const goodSandwichGraphics = this.add.graphics();
-        // الخبز العلوي (بني ذهبي) - مكبر 3 مرات
-        goodSandwichGraphics.fillStyle(0xd2691e);
-        goodSandwichGraphics.fillRoundedRect(0, 0, 120, 36, 18);
-        // بذور السمسم - أكبر وأكثر وضوحاً
-        goodSandwichGraphics.fillStyle(0xffffff);
-        goodSandwichGraphics.fillCircle(30, 18, 3);
-        goodSandwichGraphics.fillCircle(54, 12, 3);
-        goodSandwichGraphics.fillCircle(90, 15, 3);
-        // الخس (أخضر) - أكبر
-        goodSandwichGraphics.fillStyle(0x228b22);
-        goodSandwichGraphics.fillRect(9, 36, 102, 9);
-        // اللحم (بني) - أكبر
-        goodSandwichGraphics.fillStyle(0x8b4513);
-        goodSandwichGraphics.fillRect(15, 45, 90, 12);
-        // الجبن (أصفر) - أكبر
-        goodSandwichGraphics.fillStyle(0xffd700);
-        goodSandwichGraphics.fillRect(12, 57, 96, 6);
-        // الخبز السفلي (بني فاتح) - أكبر
-        goodSandwichGraphics.fillStyle(0xdaa520);
-        goodSandwichGraphics.fillRoundedRect(6, 63, 108, 27, 12);
-        goodSandwichGraphics.generateTexture('goodSandwich', 120, 90); // حجم كبير 3x
-        goodSandwichGraphics.destroy();
+        // إنشاء الساندوتش الذهبي فقط (باقي الساندوتشات تستخدم صور حقيقية)
+        // ملاحظة: اللاعب والساندوتشات الجيدة/السيئة تستخدم صور png
         
         // سندوتش ذهبي (برجر فاخر) - حجم كبير للشاشة 4K
         const goldenSandwichGraphics = this.add.graphics();
@@ -312,74 +291,7 @@ class GameScene extends Phaser.Scene {
         goldenSandwichGraphics.strokeRoundedRect(9, 3, 117, 102, 24);
         goldenSandwichGraphics.generateTexture('goldenSandwich', 135, 105); // حجم كبير 3x
         goldenSandwichGraphics.destroy();
-        
-        // عنصر سيئ (سندوتش فاسد ومقزز) - حجم كبير للشاشة 4K
-        const badItemGraphics = this.add.graphics();
-        // الخبز العلوي الفاسد (رمادي مخضر مقزز) - مكبر 3 مرات
-        badItemGraphics.fillStyle(0x556b2f);
-        badItemGraphics.fillRoundedRect(0, 0, 120, 36, 18);
-        // بقع عفن على الخبز - أكبر وأكثر وضوحاً
-        badItemGraphics.fillStyle(0x2f4f2f);
-        badItemGraphics.fillCircle(24, 18, 6);
-        badItemGraphics.fillCircle(75, 12, 4.5);
-        badItemGraphics.fillCircle(96, 21, 3);
-        // بذور متعفنة (سوداء) - أكبر
-        badItemGraphics.fillStyle(0x000000);
-        badItemGraphics.fillCircle(36, 18, 3);
-        badItemGraphics.fillCircle(60, 12, 3);
-        badItemGraphics.fillCircle(84, 15, 3);
-        // الخس الذابل (بني مصفر) - أكبر
-        badItemGraphics.fillStyle(0x8b7355);
-        badItemGraphics.fillRect(9, 36, 102, 9);
-        // بقع على الخس - أكبر
-        badItemGraphics.fillStyle(0x654321);
-        badItemGraphics.fillRect(24, 36, 18, 3);
-        badItemGraphics.fillRect(60, 39, 24, 3);
-        // اللحم الفاسد (أخضر مقزز) - أكبر
-        badItemGraphics.fillStyle(0x6b8e23);
-        badItemGraphics.fillRect(15, 45, 90, 12);
-        // بقع فساد على اللحم - أكبر
-        badItemGraphics.fillStyle(0x2e8b57);
-        badItemGraphics.fillRect(30, 48, 12, 3);
-        badItemGraphics.fillRect(66, 45, 18, 6);
-        // الجبن المتعفن (أصفر مخضر) - أكبر
-        badItemGraphics.fillStyle(0x9acd32);
-        badItemGraphics.fillRect(12, 57, 96, 6);
-        // بقع عفن على الجبن - أكبر
-        badItemGraphics.fillStyle(0x556b2f);
-        badItemGraphics.fillRect(36, 57, 9, 3);
-        badItemGraphics.fillRect(78, 60, 12, 3);
-        // الخبز السفلي الفاسد (بني داكن) - أكبر
-        badItemGraphics.fillStyle(0x8b4513);
-        badItemGraphics.fillRoundedRect(6, 63, 108, 27, 12);
-        // شقوق في الخبز السفلي - أكبر
-        badItemGraphics.lineStyle(3, 0x654321);
-        badItemGraphics.beginPath();
-        badItemGraphics.moveTo(24, 75);
-        badItemGraphics.lineTo(45, 81);
-        badItemGraphics.moveTo(66, 72);
-        badItemGraphics.lineTo(90, 78);
-        badItemGraphics.strokePath();
-        // ذباب صغير حول السندوتش (نقاط سوداء متحركة) - أكبر
-        badItemGraphics.fillStyle(0x000000);
-        badItemGraphics.fillCircle(-6, 24, 1.5);
-        badItemGraphics.fillCircle(126, 45, 1.5);
-        badItemGraphics.fillCircle(114, 15, 1.5);
-        // هالة خضراء مقززة حول السندوتش - أكبر
-        badItemGraphics.fillStyle(0x228b22, 0.1);
-        badItemGraphics.fillCircle(60, 45, 75);
-        // خطوط رائحة كريهة - أكبر
-        badItemGraphics.lineStyle(3, 0x696969, 0.3);
-        badItemGraphics.beginPath();
-        badItemGraphics.moveTo(45, 0);
-        badItemGraphics.lineTo(39, -15);
-        badItemGraphics.moveTo(60, -6);
-        badItemGraphics.lineTo(54, -21);
-        badItemGraphics.moveTo(75, 0);
-        badItemGraphics.lineTo(81, -15);
-        badItemGraphics.strokePath();
-        badItemGraphics.generateTexture('badItem', 120, 90); // حجم كبير 3x
-        badItemGraphics.destroy();
+
     }
     
     create() {
