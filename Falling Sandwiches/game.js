@@ -1385,8 +1385,8 @@ class GameScene extends Phaser.Scene {
         const crazySpeed = this.gameManager.getCurrentItemSpeed() * 3;
         goldenItem.setVelocityY(crazySpeed);
         
-        // تأثيرات بصرية مميزة - حجم يتناسب مع البوكس الكبير
-        goldenItem.setScale(2.2); // أكبر بكثير ليتناسب مع البوكس الجديد
+        // تأثيرات بصرية مميزة - حجم مناسب
+        goldenItem.setScale(0.8); // حجم مناسب مع البوكس
         goldenItem.setTint(0xffd700); // لون ذهبي مشرق
         
         // تأثير إشعاع ذهبي
@@ -1431,12 +1431,15 @@ class GameScene extends Phaser.Scene {
         const item = this.physics.add.sprite(x, -30, texture);
         item.itemType = itemType;
         
-        // 🎯 حل مشكلة الطبقات: السندويتشات الجيدة تظهر فوق السيئة دائماً
+        // تصغير الصور لتناسب اللعبة
         if (itemType === 'good') {
+            item.setScale(0.2); // تصغير الساندوتش الجيد
             item.setDepth(20); // السندويتشات الجيدة في المقدمة
         } else if (itemType === 'golden') {
+            item.setScale(2.2); // الذهبية كبيرة كما هي
             item.setDepth(25); // الذهبية فوق كل شيء
         } else {
+            item.setScale(0.15); // تصغير القنبلة أكثر
             item.setDepth(10); // السيئة في الخلف
         }
         
