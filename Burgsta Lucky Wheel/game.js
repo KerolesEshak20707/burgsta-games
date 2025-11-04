@@ -495,18 +495,18 @@ class GameScene extends Phaser.Scene {
         // تمت إزالة مؤشر التحديث المؤقت لعدم التأثير على واجهة المستخدم النهائية
 
         // شعار المطعم في الأعلى مع تأثير إضاءة
-        const restaurantName = this.add.text(width / 2, 80, 'BURGSTA', {
+        const restaurantName = this.add.text(width / 2, 240, 'BURGSTA', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '48px',
+            fontSize: '144px', // تكبير الخط 3 مرات للدقة 4K
             fontWeight: 'bold',
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
-            strokeThickness: 2,
+            strokeThickness: 6, // تكبير السمك أيضاً
             shadow: {
-                offsetX: 2,
-                offsetY: 2,
+                offsetX: 6,
+                offsetY: 6,
                 color: 'rgba(0,0,0,0.3)',
-                blur: 5,
+                blur: 15,
                 fill: true
             }
         }).setOrigin(0.5);
@@ -730,8 +730,8 @@ class GameScene extends Phaser.Scene {
 
     createWheel(width, height) {
         const centerX = width / 2;
-        const centerY = height / 2 + 20; // نزل العجلة أكثر
-        const radius = Math.min(width, height) * 0.32; // حجم أكبر يتكيف مع الشاشة (كان 180)
+        const centerY = height / 2 + 60; // نزل العجلة أكثر للدقة 4K
+        const radius = Math.min(width, height) * 0.25; // حجم متناسب مع الدقة 4K
         
         this.sectorAngle = 360 / this.prizes.length;
         
@@ -807,8 +807,8 @@ class GameScene extends Phaser.Scene {
             const textX = Math.cos(textAngle) * textRadius;
             const textY = Math.sin(textAngle) * textRadius;
             
-            // حساب حجم الخط بناءً على حجم العجلة
-            const fontSize = Math.max(16, Math.min(24, radius / 12));
+            // حساب حجم الخط بناءً على حجم العجلة للدقة 4K
+            const fontSize = Math.max(48, Math.min(72, radius / 8)); // تكبير الخط للدقة 4K
             
             // إضافة صورة الجائزة إذا كانت متوفرة (خاصة للوافل)
             const prizeImageResult = this.addPrizeImage(textX, textY - fontSize * 0.3, this.prizes[i], radius);
@@ -937,8 +937,8 @@ class GameScene extends Phaser.Scene {
 
     createPlayButton(width, height) {
         const buttonX = width / 2;
-        const buttonY = height / 2 + 20; // نفس مكان العجلة الجديد
-        const buttonSize = Math.max(70, Math.min(100, Math.min(width, height) * 0.08)); // أكبر وتكيفي
+        const buttonY = height / 2 + 60; // نفس مكان العجلة الجديد للدقة 4K
+        const buttonSize = Math.max(150, Math.min(200, Math.min(width, height) * 0.06)); // أكبر للدقة 4K
         
         // ظل الزر
         const buttonShadow = this.add.graphics();
@@ -1054,8 +1054,8 @@ class GameScene extends Phaser.Scene {
             this.audioInitialized = true;
         }
 
-        // مدة الدوران الإجمالية (عشوائية قليلًا لخلط الإحساس)
-        const spinDuration = Phaser.Math.Between(4200, 5200);
+        // مدة الدوران الإجمالية (10 ثواني مع تنويع بسيط)
+        const spinDuration = Phaser.Math.Between(9500, 10500); // حوالي 10 ثواني
 
         // 🎯 نظام اختيار آمن ومتزامن - يمنع التضارب من الأساس
         let selectedPrize;
@@ -1121,9 +1121,9 @@ class GameScene extends Phaser.Scene {
         this.startDynamicWheelSounds(spinDuration, rounds);
 
         // تأثير بصري أثناء الدوران
-        const spinningIndicator = this.add.text(width / 2, height / 2 + 150, 'جاري السحب...', {
+        const spinningIndicator = this.add.text(width / 2, height / 2 + 450, 'جاري السحب...', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '20px',
+            fontSize: '60px', // تكبير للدقة 4K
             color: gameManager.colors.primary,
             alpha: 0.8
         }).setOrigin(0.5);
@@ -1376,18 +1376,18 @@ class GameScene extends Phaser.Scene {
         innerBorder.setDepth(203);
         
         // نص التهنئة مع تأثيرات
-        const congratsText = this.add.text(width / 2, height / 2 - 100, '🎉 مبروك! 🎉', {
+        const congratsText = this.add.text(width / 2, height / 2 - 300, '🎉 مبروك! 🎉', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '36px',
+            fontSize: '108px', // تكبير للدقة 4K
             fontWeight: 'bold',
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
-            strokeThickness: 2,
+            strokeThickness: 6, // تكبير السمك
             shadow: {
-                offsetX: 3,
-                offsetY: 3,
+                offsetX: 9,
+                offsetY: 9,
                 color: 'rgba(0,0,0,0.3)',
-                blur: 5,
+                blur: 15,
                 fill: true
             }
         }).setOrigin(0.5).setDepth(204);
@@ -1403,32 +1403,32 @@ class GameScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
         
-        this.add.text(width / 2, height / 2 - 40, 'لقد فزت بـ', {
+        this.add.text(width / 2, height / 2 - 120, 'لقد فزت بـ', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '22px',
+            fontSize: '66px', // تكبير للدقة 4K
             fontWeight: '500',
             color: gameManager.colors.text,
             shadow: {
-                offsetX: 1,
-                offsetY: 1,
+                offsetX: 3,
+                offsetY: 3,
                 color: 'rgba(0,0,0,0.2)',
-                blur: 2,
+                blur: 6,
                 fill: true
             }
         }).setOrigin(0.5).setDepth(205);
         
         const prizeText = this.add.text(width / 2, height / 2, prize, {
             fontFamily: 'Cairo, Arabic',
-            fontSize: '30px',
+            fontSize: '90px', // تكبير للدقة 4K
             fontWeight: 'bold',
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
-            strokeThickness: 1,
+            strokeThickness: 3, // تكبير السمك
             shadow: {
-                offsetX: 2,
-                offsetY: 2,
+                offsetX: 6,
+                offsetY: 6,
                 color: 'rgba(0,0,0,0.4)',
-                blur: 4,
+                blur: 12,
                 fill: true
             }
         }).setOrigin(0.5).setDepth(206);
@@ -1443,24 +1443,24 @@ class GameScene extends Phaser.Scene {
             ease: 'Power2.easeInOut'
         });
         
-        this.add.text(width / 2, height / 2 + 50, 'اتجه للكاشير لاستلام جائزتك', {
+        this.add.text(width / 2, height / 2 + 150, 'اتجه للكاشير لاستلام جائزتك', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '18px',
+            fontSize: '54px', // تكبير للدقة 4K
             fontWeight: '400',
             color: gameManager.colors.text,
             align: 'center',
             backgroundColor: 'rgba(255,255,255,0.8)',
-            padding: { x: 15, y: 8 }
+            padding: { x: 45, y: 24 } // تكبير الحشو
         }).setOrigin(0.5).setDepth(207);
 
         // 👆 رسالة النقر للمتابعة
-        const clickToContinueText = this.add.text(width / 2, height / 2 + 100, '👆 اضغط في أي مكان للمتابعة', {
+        const clickToContinueText = this.add.text(width / 2, height / 2 + 300, '👆 اضغط في أي مكان للمتابعة', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '16px',
+            fontSize: '48px', // تكبير للدقة 4K
             fontWeight: '400',
             color: gameManager.colors.primary,
             backgroundColor: 'rgba(196, 155, 65, 0.2)',
-            padding: { x: 20, y: 10 }
+            padding: { x: 60, y: 30 } // تكبير الحشو
         }).setOrigin(0.5).setDepth(208);
 
         // تأثير وميض لرسالة النقر
@@ -1514,25 +1514,25 @@ class GameScene extends Phaser.Scene {
         messageBox.setDepth(202);
 
         // نص "حاول في وقت لاحق"
-        const messageText = this.add.text(width / 2, height / 2 - 40, '⏰ حاول في وقت لاحق', {
+        const messageText = this.add.text(width / 2, height / 2 - 120, '⏰ حاول في وقت لاحق', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '28px',
+            fontSize: '84px', // تكبير للدقة 4K
             fontWeight: 'bold',
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
-            strokeThickness: 2
+            strokeThickness: 6 // تكبير السمك
         }).setOrigin(0.5).setDepth(203);
 
 
 
         // 👆 رسالة النقر للمتابعة
-        const clickToContinueText = this.add.text(width / 2, height / 2 + 50, '👆 اضغط في أي مكان للمتابعة', {
+        const clickToContinueText = this.add.text(width / 2, height / 2 + 150, '👆 اضغط في أي مكان للمتابعة', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '16px',
+            fontSize: '48px', // تكبير للدقة 4K
             fontWeight: '400',
             color: gameManager.colors.primary,
             backgroundColor: 'rgba(196, 155, 65, 0.2)',
-            padding: { x: 20, y: 10 }
+            padding: { x: 60, y: 30 } // تكبير الحشو
         }).setOrigin(0.5).setDepth(205);
 
         // تأثير نبضة للنص الرئيسي
@@ -2009,9 +2009,9 @@ class GameScene extends Phaser.Scene {
     createSoundToggle(width, height) {
         // زر تبديل الصوت في الزاوية العلوية اليمنى
         const soundButton = this.add.graphics();
-        const buttonX = width - 60;
-        const buttonY = 50;
-        const buttonSize = 40;
+        const buttonX = width - 180; // تعديل الموضع للدقة 4K
+        const buttonY = 150; // تعديل الموضع للدقة 4K
+        const buttonSize = 120; // تكبير الزر للدقة 4K
         
         // رسم الزر
         const drawSoundButton = (enabled) => {
@@ -2026,7 +2026,7 @@ class GameScene extends Phaser.Scene {
         
         // أيقونة الصوت
         const soundIcon = this.add.text(buttonX, buttonY, this.soundEnabled ? '🔊' : '🔇', {
-            fontSize: '20px'
+            fontSize: '60px' // تكبير الأيقونة للدقة 4K
         }).setOrigin(0.5);
         
         // منطقة التفاعل
@@ -2151,47 +2151,47 @@ class GameScene extends Phaser.Scene {
             if (this.textures.exists(fileName)) {
                 const prizeImage = this.add.image(x, y, fileName);
                 
-                // التحقق من نوع الصورة لضبط النسبة الصحيحة
+                // التحقق من نوع الصورة لضبط النسبة الصحيحة - مكبرة للدقة 4K
                 if (fileName === 'موهيتو') {
-                    // للموهيتو: نحافظ على النسبة الطبيعية للكوب (أطول من العرض) - أكبر
-                    const imageWidth = Math.max(65, wheelRadius * 0.35); // أعرض
-                    const imageHeight = Math.max(90, wheelRadius * 0.45); // أطول للكوب
+                    // للموهيتو: نحافظ على النسبة الطبيعية للكوب (أطول من العرض) - مكبر للدقة 4K
+                    const imageWidth = Math.max(195, wheelRadius * 0.35); // تكبير 3 مرات
+                    const imageHeight = Math.max(270, wheelRadius * 0.45); // تكبير 3 مرات
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else if (fileName === 'دليفري') {
-                    // للدليفري: أعرض من الطول بكثير لأن الصورة الأصلية بالعرض
-                    const imageWidth = Math.max(110, wheelRadius * 0.48); // أعرض بكثير
-                    const imageHeight = Math.max(65, wheelRadius * 0.28); // أقصر من العرض
+                    // للدليفري: أعرض من الطول بكثير لأن الصورة الأصلية بالعرض - مكبر للدقة 4K
+                    const imageWidth = Math.max(330, wheelRadius * 0.48); // تكبير 3 مرات
+                    const imageHeight = Math.max(195, wheelRadius * 0.28); // تكبير 3 مرات
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else if (fileName === 'offer15') {
-                    // لخصم 15%: مربع مناسب لملء الخانة
-                    const imageSize = Math.max(85, wheelRadius * 0.38); // حجم جيد
+                    // لخصم 15%: مربع مناسب لملء الخانة - مكبر للدقة 4K
+                    const imageSize = Math.max(255, wheelRadius * 0.38); // تكبير 3 مرات
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 } else if (fileName === 'offer5') {
-                    // لخصم 5%: مربع مناسب لملء الخانة
-                    const imageSize = Math.max(85, wheelRadius * 0.38); // حجم جيد
+                    // لخصم 5%: مربع مناسب لملء الخانة - مكبر للدقة 4K
+                    const imageSize = Math.max(255, wheelRadius * 0.38); // تكبير 3 مرات
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 } else if (fileName === 'اورجينال') {
-                    // للأورجينال برجر: أعرض من الطول ليبدو طبيعياً
-                    const imageWidth = Math.max(95, wheelRadius * 0.42); // أعرض
-                    const imageHeight = Math.max(75, wheelRadius * 0.32); // أقصر نسبياً
+                    // للأورجينال برجر: أعرض من الطول ليبدو طبيعياً - مكبر للدقة 4K
+                    const imageWidth = Math.max(285, wheelRadius * 0.42); // تكبير 3 مرات
+                    const imageHeight = Math.max(225, wheelRadius * 0.32); // تكبير 3 مرات
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else if (fileName === 'تشكن لافا') {
-                    // لتشكن لافا: أعرض من الطول بكثير ليبدو كساندوتش مسطح
-                    const imageWidth = Math.max(110, wheelRadius * 0.48); // أعرض بكثير
-                    const imageHeight = Math.max(65, wheelRadius * 0.28); // أقصر بكثير
+                    // لتشكن لافا: أعرض من الطول بكثير ليبدو كساندوتش مسطح - مكبر للدقة 4K
+                    const imageWidth = Math.max(330, wheelRadius * 0.48); // تكبير 3 مرات
+                    const imageHeight = Math.max(195, wheelRadius * 0.28); // تكبير 3 مرات
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else if (fileName === 'كومبو فري') {
-                    // للكومبو: حجم متوسط مناسب
-                    const imageSize = Math.max(85, wheelRadius * 0.36);
+                    // للكومبو: حجم متوسط مناسب - مكبر للدقة 4K
+                    const imageSize = Math.max(255, wheelRadius * 0.36); // تكبير 3 مرات
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 } else if (fileName === 'حاول وقت لاحق') {
-                    // لحاول وقت لاحق: صورة صغيرة داخل القطاع الأسود
-                    const imageWidth = Math.max(40, wheelRadius * 0.20); // عرض أصغر ليبقى في الحدود
-                    const imageHeight = Math.max(60, wheelRadius * 0.30); // طول مناسب ليبقى في الحدود
+                    // لحاول وقت لاحق: صورة صغيرة داخل القطاع الأسود - مكبر للدقة 4K
+                    const imageWidth = Math.max(120, wheelRadius * 0.20); // تكبير 3 مرات
+                    const imageHeight = Math.max(180, wheelRadius * 0.30); // تكبير 3 مرات
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else {
-                    // للصور الأخرى: مربع عادي
-                    const imageSize = Math.max(75, wheelRadius * 0.32);
+                    // للصور الأخرى: مربع عادي - مكبر للدقة 4K
+                    const imageSize = Math.max(225, wheelRadius * 0.32); // تكبير 3 مرات
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 }
                 
@@ -2213,8 +2213,8 @@ const gameManager = new GameManager();
 
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: 3840,
+    height: 2160,
     backgroundColor: '#0D5016', // أخضر كازينو داكن
     parent: 'gameContainer',
     scene: [GameScene],
@@ -2222,15 +2222,15 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         parent: 'gameContainer',
-        width: 800,
-        height: 600,
+        width: 3840,
+        height: 2160,
         min: {
-            width: 320,
-            height: 240
+            width: 800,
+            height: 600
         },
         max: {
-            width: 1200,
-            height: 900
+            width: 3840,
+            height: 2160
         },
         expandParent: false,
         autoRound: true
