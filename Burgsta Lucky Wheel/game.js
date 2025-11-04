@@ -1499,22 +1499,26 @@ class GameScene extends Phaser.Scene {
             .setInteractive()
             .setDepth(200);
         
-        // ظل الصندوق
-        const messageShadow = this.add.graphics();
-        messageShadow.fillStyle(0x000000, 0.4);
-        messageShadow.fillRoundedRect(width / 2 - 195, height / 2 - 115, 400, 230, 25);
-        messageShadow.setDepth(201);
-        
-        // صندوق الرسالة
-        const messageBox = this.add.graphics();
-        messageBox.fillGradientStyle(0xfaf6e8, 0xf5f1e6, 0xe8dcc0, 0xf0e6d2, 1);
-        messageBox.lineStyle(6, 0xc49b41);
-        messageBox.fillRoundedRect(width / 2 - 200, height / 2 - 120, 400, 230, 25);
-        messageBox.strokeRoundedRect(width / 2 - 200, height / 2 - 120, 400, 230, 25);
-        messageBox.setDepth(202);
+    // ظل الصندوق (مكبر ليتناسب مع النص الكبير في 4K)
+    const messageShadow = this.add.graphics();
+    messageShadow.fillStyle(0x000000, 0.4);
+    // صندوق أكبر: العرض والارتفاع مرفوعان ليتناسبا مع الخط الكبير
+    const tryLaterBoxW = 1200;
+    const tryLaterBoxH = 480;
+    messageShadow.fillRoundedRect(width / 2 - tryLaterBoxW / 2, height / 2 - tryLaterBoxH / 2, tryLaterBoxW, tryLaterBoxH, 30);
+    messageShadow.setDepth(201);
+
+    // صندوق الرسالة
+    const messageBox = this.add.graphics();
+    messageBox.fillGradientStyle(0xfaf6e8, 0xf5f1e6, 0xe8dcc0, 0xf0e6d2, 1);
+    messageBox.lineStyle(6, 0xc49b41);
+    messageBox.fillRoundedRect(width / 2 - tryLaterBoxW / 2, height / 2 - tryLaterBoxH / 2, tryLaterBoxW, tryLaterBoxH, 30);
+    messageBox.strokeRoundedRect(width / 2 - tryLaterBoxW / 2, height / 2 - tryLaterBoxH / 2, tryLaterBoxW, tryLaterBoxH, 30);
+    messageBox.setDepth(202);
 
         // نص "حاول في وقت لاحق"
-        const messageText = this.add.text(width / 2, height / 2 - 120, '⏰ حاول في وقت لاحق', {
+        // وضع النص داخل الصندوق الأكبر (موضع أعلى قليلاً ليظهر متناغمًا)
+        const messageText = this.add.text(width / 2, height / 2 - 60, '⏰ حاول في وقت لاحق', {
             fontFamily: 'Cairo, Arial',
             fontSize: '84px', // تكبير للدقة 4K
             fontWeight: 'bold',
@@ -1571,17 +1575,20 @@ class GameScene extends Phaser.Scene {
         // ظل الصندوق
         const messageShadow = this.add.graphics();
         messageShadow.fillStyle(0x000000, 0.4);
-        messageShadow.fillRoundedRect(width / 2 - 195, height / 2 - 95, 400, 200, 25);
+        // صندوق أكبر ليتناسب مع نص أكبر
+        const tlBoxW = 900;
+        const tlBoxH = 360;
+        messageShadow.fillRoundedRect(width / 2 - tlBoxW / 2, height / 2 - tlBoxH / 2, tlBoxW, tlBoxH, 25);
         
         // صندوق الرسالة
         const messageBox = this.add.graphics();
         messageBox.fillGradientStyle(0xfaf6e8, 0xf5f1e6, 0xe8dcc0, 0xf0e6d2, 1);
         messageBox.lineStyle(6, 0xc49b41);
-        messageBox.fillRoundedRect(width / 2 - 200, height / 2 - 100, 400, 200, 25);
-        messageBox.strokeRoundedRect(width / 2 - 200, height / 2 - 100, 400, 200, 25);
+        messageBox.fillRoundedRect(width / 2 - tlBoxW / 2, height / 2 - tlBoxH / 2, tlBoxW, tlBoxH, 25);
+        messageBox.strokeRoundedRect(width / 2 - tlBoxW / 2, height / 2 - tlBoxH / 2, tlBoxW, tlBoxH, 25);
 
         // نص "حاول في وقت لاحق"
-        const messageText = this.add.text(width / 2, height / 2 - 20, '⏰ حاول في وقت لاحق', {
+        const messageText = this.add.text(width / 2, height / 2 - 40, '⏰ حاول في وقت لاحق', {
             fontFamily: 'Cairo, Arial',
             fontSize: '28px',
             fontWeight: 'bold',
