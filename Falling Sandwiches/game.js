@@ -588,7 +588,7 @@ class GameScene extends Phaser.Scene {
             fontWeight: 'bold',
             color: '#e74c3c'
         });
-        currentY += 25;
+        currentY += 50; // مسافة أكبر بين العنوان والنص
         
         this.ui.riskLevelText = this.add.text(panelX, currentY, 'مبتدئ 🟢', {
             fontFamily: 'Cairo, Arial',
@@ -596,7 +596,7 @@ class GameScene extends Phaser.Scene {
             fontWeight: '600',
             color: '#27ae60'
         });
-        currentY += 60;
+        currentY += 80; // مسافة أكبر قبل "القادم"
         
         this.ui.nextMilestoneText = this.add.text(panelX, currentY, 'القادم: 10%', {
             fontFamily: 'Cairo, Arial',
@@ -615,64 +615,64 @@ class GameScene extends Phaser.Scene {
     }
     
     createDiscountMeter() {
-        // موقع بناء السندوتش (أعلى اليمين)
-        const sandwichX = GAME_CONFIG.width - 70;
-        const sandwichY = 90;
+        // موقع بناء السندوتش (أعلى اليمين) - حجم أكبر للشاشة 4K
+        const sandwichX = GAME_CONFIG.width - 150; // موقع أبعد لاستيعاب الحجم الأكبر
+        const sandwichY = 120; // موقع أسفل قليلاً
         
-        // خلفية شفافة للسندوتش
+        // خلفية شفافة للسندوتش - حجم أكبر
         this.ui.sandwichBg = this.add.graphics();
         this.ui.sandwichBg.fillStyle(0x000000, 0.1);
-        this.ui.sandwichBg.fillRoundedRect(sandwichX - 10, sandwichY - 10, 80, 220, 10);
+        this.ui.sandwichBg.fillRoundedRect(sandwichX - 20, sandwichY - 20, 160, 420, 20); // مضاعف الحجم
         
-        // إطار ذهبي حول منطقة السندوتش
-        this.ui.sandwichBg.lineStyle(2, 0xc49b41);
-        this.ui.sandwichBg.strokeRoundedRect(sandwichX - 10, sandwichY - 10, 80, 220, 10);
+        // إطار ذهبي حول منطقة السندوتش - أثخن
+        this.ui.sandwichBg.lineStyle(4, 0xc49b41);
+        this.ui.sandwichBg.strokeRoundedRect(sandwichX - 20, sandwichY - 20, 160, 420, 20);
         
-        // عنوان السندوتش
-        this.ui.sandwichTitle = this.add.text(sandwichX + 30, sandwichY - 30, 'برجر برجستا', {
+        // عنوان السندوتش - حجم وموضع أكبر
+        this.ui.sandwichTitle = this.add.text(sandwichX + 60, sandwichY - 60, 'برجر برجستا', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '42px', // خط كبير لعنوان السندوتش
+            fontSize: '64px', // خط أكبر لعنوان السندوتش للشاشة 4K
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         }).setOrigin(0.5, 0);
         
-        // مستويات الجوائز مع أيقونات
-        this.ui.reward30Icon = this.add.text(sandwichX - 25, sandwichY + 150, '🍟 30%', {
+        // مستويات الجوائز مع أيقونات - مواضع أكبر
+        this.ui.reward30Icon = this.add.text(sandwichX - 50, sandwichY + 300, '🍟 30%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '36px', // خط كبير للجوائز
+            fontSize: '54px', // خط أكبر للجوائز للشاشة 4K
             color: GAME_CONFIG.colors.dark
         }).setOrigin(1, 0.5);
         
-        this.ui.reward60Icon = this.add.text(sandwichX - 25, sandwichY + 90, '🍔 60%', {
+        this.ui.reward60Icon = this.add.text(sandwichX - 50, sandwichY + 180, '🍔 60%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '36px', // خط كبير للجوائز
+            fontSize: '54px', // خط أكبر للجوائز للشاشة 4K
             color: GAME_CONFIG.colors.dark
         }).setOrigin(1, 0.5);
         
-        this.ui.reward100Icon = this.add.text(sandwichX - 25, sandwichY + 30, '🎉 100%', {
+        this.ui.reward100Icon = this.add.text(sandwichX - 50, sandwichY + 60, '🎉 100%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '36px', // خط كبير للجوائز
+            fontSize: '54px', // خط أكبر للجوائز للشاشة 4K
             color: GAME_CONFIG.colors.dark
         }).setOrigin(1, 0.5);
         
-        // خطوط مستويات الجوائز
-        this.ui.sandwichBg.lineStyle(1, 0x8b6914, 0.5);
+        // خطوط مستويات الجوائز - أثخن وأكبر
+        this.ui.sandwichBg.lineStyle(2, 0x8b6914, 0.5);
         this.ui.sandwichBg.beginPath();
-        this.ui.sandwichBg.moveTo(sandwichX - 5, sandwichY + 150);
-        this.ui.sandwichBg.lineTo(sandwichX + 65, sandwichY + 150);
-        this.ui.sandwichBg.moveTo(sandwichX - 5, sandwichY + 90);
-        this.ui.sandwichBg.lineTo(sandwichX + 65, sandwichY + 90);
-        this.ui.sandwichBg.moveTo(sandwichX - 5, sandwichY + 30);
-        this.ui.sandwichBg.lineTo(sandwichX + 65, sandwichY + 30);
+        this.ui.sandwichBg.moveTo(sandwichX - 10, sandwichY + 300);
+        this.ui.sandwichBg.lineTo(sandwichX + 130, sandwichY + 300);
+        this.ui.sandwichBg.moveTo(sandwichX - 10, sandwichY + 180);
+        this.ui.sandwichBg.lineTo(sandwichX + 130, sandwichY + 180);
+        this.ui.sandwichBg.moveTo(sandwichX - 10, sandwichY + 60);
+        this.ui.sandwichBg.lineTo(sandwichX + 130, sandwichY + 60);
         this.ui.sandwichBg.strokePath();
         
         // مكونات السندوتش (ستظهر تدريجياً)
         this.ui.sandwichLayers = this.add.graphics();
         
-        // نص النسبة المئوية
-        this.ui.discountPercentText = this.add.text(sandwichX + 30, sandwichY + 190, '0%', {
+        // نص النسبة المئوية - حجم وموضع أكبر
+        this.ui.discountPercentText = this.add.text(sandwichX + 60, sandwichY + 380, '0%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '54px', // خط كبير جداً للنسبة المئوية
+            fontSize: '84px', // خط أكبر جداً للنسبة المئوية للشاشة 4K
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         }).setOrigin(0.5, 0);
@@ -729,28 +729,28 @@ class GameScene extends Phaser.Scene {
             return;
         }
         
-        // موقع السندوتش في وسط الجزء الأيمن من أسفل الصفحة
-        const rightPanelWidth = 160; // عرض الجزء الأيمن
-        const x = GAME_CONFIG.width - (rightPanelWidth / 2) - 30; // وسط الجزء الأيمن
-        const y = GAME_CONFIG.height - 15;
+        // موقع السندوتش في وسط الجزء الأيمن من أسفل الصفحة - حجم أكبر للشاشة 4K
+        const rightPanelWidth = 400; // عرض الجزء الأيمن الجديد
+        const x = GAME_CONFIG.width - (rightPanelWidth / 2) - 60; // وسط الجزء الأيمن مع هامش أكبر
+        const y = GAME_CONFIG.height - 100; // أعلى قليلاً ليتسع الحجم الأكبر
         
         // مسح السندوتش السابق
         this.ui.miniSandwichLayers.clear();
         
         let currentY = y; // البداية من الأسفل
         
-        // رسم برجر واقعي متدرج
-        const burgerWidth = 80;  // عرض ثابت للبرجر
-        const burgerCenterX = x + 25;  // مركز البرجر
+        // رسم برجر واقعي متدرج - حجم أكبر للشاشة 4K
+        const burgerWidth = 160;  // عرض مضاعف للبرجر للشاشة 4K
+        const burgerCenterX = x + 50;  // مركز البرجر مع تعديل للحجم الأكبر
         
-        // 1. الطبق - قاعدة عريضة
+        // 1. الطبق - قاعدة عريضة أكبر
         this.ui.miniSandwichLayers.fillStyle(0xf5f5f5);
-        this.ui.miniSandwichLayers.fillEllipse(burgerCenterX, currentY + 4, 95, 8);
-        this.ui.miniSandwichLayers.lineStyle(1, 0xd0d0d0);
-        this.ui.miniSandwichLayers.strokeEllipse(burgerCenterX, currentY + 4, 95, 8);
-        // ظل الطبق
+        this.ui.miniSandwichLayers.fillEllipse(burgerCenterX, currentY + 8, 190, 16); // حجم مضاعف
+        this.ui.miniSandwichLayers.lineStyle(2, 0xd0d0d0);
+        this.ui.miniSandwichLayers.strokeEllipse(burgerCenterX, currentY + 8, 190, 16);
+        // ظل الطبق أكبر
         this.ui.miniSandwichLayers.fillStyle(0xe8e8e8);
-        this.ui.miniSandwichLayers.fillEllipse(burgerCenterX, currentY + 6, 85, 4);
+        this.ui.miniSandwichLayers.fillEllipse(burgerCenterX, currentY + 12, 170, 8);
         
         // 2. الخبز السفلي (5%) - قاعدة البرجر
         if (discount >= 5) {
@@ -1473,8 +1473,8 @@ class GameScene extends Phaser.Scene {
         const crazySpeed = this.gameManager.getCurrentItemSpeed() * 3;
         goldenItem.setVelocityY(crazySpeed);
         
-        // تأثيرات بصرية مميزة - حجم أكبر للشاشة 4K
-        goldenItem.setScale(1.8); // أكبر بكثير للظهور الواضح في 4K
+        // تأثيرات بصرية مميزة - حجم يتناسب مع البوكس الكبير
+        goldenItem.setScale(2.2); // أكبر بكثير ليتناسب مع البوكس الجديد
         goldenItem.setTint(0xffd700); // لون ذهبي مشرق
         
         // تأثير إشعاع ذهبي
@@ -2327,8 +2327,8 @@ class GameScene extends Phaser.Scene {
                 const crazySpeed = this.gameManager.getCurrentItemSpeed() * speedMultiplier;
                 goldenItem.setVelocityY(crazySpeed);
                 
-                // تأثيرات بصرية حسب المستوى - أكبر للشاشة 4K
-                goldenItem.setScale(1.6 + (level.difficulty * 0.15)); // يكبر أكثر كل مستوى للشاشة 4K
+                // تأثيرات بصرية حسب المستوى - يتناسب مع البوكس الكبير
+                goldenItem.setScale(2.0 + (level.difficulty * 0.2)); // أكبر بكثير ليتناسب مع البوكس الجديد
                 goldenItem.setTint(0xffd700);
                 
                 // تأثير إشعاع متسارع حسب المستوى
