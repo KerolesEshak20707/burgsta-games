@@ -1433,13 +1433,13 @@ class GameScene extends Phaser.Scene {
         
         // تصغير الصور لتناسب اللعبة
         if (itemType === 'good') {
-            item.setScale(0.2); // تصغير الساندوتش الجيد
+            item.setScale(0.25); // تكبير الساندوتش الجيد قليلاً
             item.setDepth(20); // السندويتشات الجيدة في المقدمة
         } else if (itemType === 'golden') {
             item.setScale(2.2); // الذهبية كبيرة كما هي
             item.setDepth(25); // الذهبية فوق كل شيء
         } else {
-            item.setScale(0.15); // تصغير القنبلة أكثر
+            item.setScale(0.12); // تصغير القنبلة أكثر
             item.setDepth(10); // السيئة في الخلف
         }
         
