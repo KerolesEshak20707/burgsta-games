@@ -1753,7 +1753,7 @@ class GameScene extends Phaser.Scene {
         // إزالة صندوق الخسارة الملون - النصوص فقط فوق اللعبة مباشرة
         
         // نصوص الخسارة
-        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 80, 'انتهت اللعبة', {
+        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 300, 'انتهت اللعبة', {
             fontFamily: 'Cairo, Arial',
             fontSize: '96px', // تكبير الخط 3 مرات
             fontWeight: 'bold',
@@ -1766,13 +1766,14 @@ class GameScene extends Phaser.Scene {
         // عند الخسارة، لا يحصل اللاعب على أي خصم لأنه لم ينسحب
         // الخصم يُحصل عليه فقط عند الانسحاب الآمن أو الفوز الكامل
         
-        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 20, finalMessage, {
+        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 150, finalMessage, {
             fontFamily: 'Cairo, Arial',
             fontSize: '60px', // تكبير الخط 3 مرات
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 6, // تكبير السمك أيضاً
-            align: 'center'
+            align: 'center',
+            wordWrap: { width: GAME_CONFIG.width - 200 } // إضافة word wrap
         }).setOrigin(0.5);
         
         // إحصائيات نهائية
@@ -1783,18 +1784,18 @@ class GameScene extends Phaser.Scene {
             `السندوتشات المفقودة: ${this.gameManager.sandwichesMissed}`
         ];
         
-        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 40, finalStats.join('\n'), {
+        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 50, finalStats.join('\n'), {
             fontFamily: 'Cairo, Arial',
             fontSize: '48px', // تكبير الخط 3 مرات
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 4, // تكبير السمك أيضاً
             align: 'center',
-            lineSpacing: 15 // تكبير المسافات بين الأسطر
+            lineSpacing: 30 // مسافات أكبر بين الأسطر
         }).setOrigin(0.5);
         
         // زر إعادة اللعب
-        const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 120, 'حاول مرة أخرى', {
+        const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 300, 'حاول مرة أخرى', {
             fontFamily: 'Cairo, Arial',
             fontSize: '60px', // تكبير الخط 3 مرات
             fontWeight: 'bold',
