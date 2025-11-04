@@ -1747,8 +1747,9 @@ class GameScene extends Phaser.Scene {
         
         // خلفية الخسارة شفافة
         const gameOverBg = this.add.graphics();
-        gameOverBg.fillStyle(0x000000, 0.2);
+        gameOverBg.fillStyle(0x000000, 0.7); // خلفية أغمق لوضوح أكبر
         gameOverBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
+        gameOverBg.setDepth(99); // طبقة عالية تحت النصوص مباشرة
         
         // إزالة صندوق الخسارة الملون - النصوص فقط فوق اللعبة مباشرة
         
@@ -1760,7 +1761,7 @@ class GameScene extends Phaser.Scene {
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 8 // تكبير السمك أيضاً
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(100); // طبقة عالية فوق كل العناصر
         
         let finalMessage = 'لم تحصل على أي خصم - لأنك لم تنسحب في الوقت المناسب!';
         // عند الخسارة، لا يحصل اللاعب على أي خصم لأنه لم ينسحب
@@ -1774,7 +1775,7 @@ class GameScene extends Phaser.Scene {
             strokeThickness: 6, // تكبير السمك أيضاً
             align: 'center',
             wordWrap: { width: GAME_CONFIG.width - 200 } // إضافة word wrap
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(100); // طبقة عالية فوق كل العناصر
         
         // إحصائيات نهائية
         const finalStats = [
@@ -1792,7 +1793,7 @@ class GameScene extends Phaser.Scene {
             strokeThickness: 4, // تكبير السمك أيضاً
             align: 'center',
             lineSpacing: 30 // مسافات أكبر بين الأسطر
-        }).setOrigin(0.5);
+        }).setOrigin(0.5).setDepth(100); // طبقة عالية فوق كل العناصر
         
         // زر إعادة اللعب
         const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 300, 'حاول مرة أخرى', {
@@ -1804,7 +1805,7 @@ class GameScene extends Phaser.Scene {
             strokeThickness: 6, // تكبير السمك أيضاً
             backgroundColor: GAME_CONFIG.colors.primary,
             padding: { x: 40, y: 20 } // تكبير الحشو أيضاً
-        }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
+        }).setOrigin(0.5).setInteractive({ cursor: 'pointer' }).setDepth(100); // طبقة عالية فوق كل العناصر
         
         restartBtn.on('pointerdown', () => {
             this.resetGameCompletely();
