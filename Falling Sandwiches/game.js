@@ -45,11 +45,20 @@ const GAME_CONFIG = {
 // نظام المراحل والمخاطرة - مثل "من سيربح المليون" 🎯
 const RISK_LEVELS = [
     { 
+        percent: 5, 
+        message: "خصم 5%", 
+        difficulty: 0.5,
+        reached: false,
+        description: "🎯 مبروك! وصلت للمستوى الأول",
+        reward: "خصم 5% + وضع السهولة (التقاط ذكي + سرعة أبطأ) + ساندوتش مجاني!",
+        nextRisk: "ستحصل على وضع خاص سهل جداً..."
+    },
+    { 
         percent: 10, 
         message: "خصم 10%", 
         difficulty: 1,
         reached: false,
-        description: "🎉 مبروك! وصلت للمستوى الأول",
+        description: "🎉 مبروك! وصلت للمستوى الثاني",
         reward: "خصم 10% على طلبك + 🥇 سندويتش ذهبي سريع!",
         nextRisk: "الصعوبة ستزيد قليلاً..."
     },
@@ -105,6 +114,7 @@ class GameManager {
         
         // السندوتش الذهبي الخاص للمخاطرة 🌟
         this.riskGoldenSandwiches = {
+            5: false,   // هل تم إطلاق سندوتش 5%؟
             10: false,  // هل تم إطلاق سندوتش 10%؟
             25: false,  // هل تم إطلاق سندوتش 25%؟
             50: false,  // هل تم إطلاق سندوتش 50%؟
@@ -1193,6 +1203,14 @@ class GameScene extends Phaser.Scene {
     }
     
     collectItem(player, item) {
+        // فحص إضافي للنطاق الموسع في الوضع الذكي
+        if (this.smartCatchEnabled) {
+            const distance = Phaser.Math.Distance.Between(player.x, player.y, item.x, item.y);
+            if (distance > 150) { // خارج النطاق الموسع
+                return; // لا نجمع العنصر
+            }
+        }
+        
         // وضع علامة على أن العنصر تم جمعه
         item.isCollected = true;
         
@@ -1999,6 +2017,18 @@ class GameScene extends Phaser.Scene {
             }
         }
         
+        // فحص النطاق الموسع للتقاط ذكي في مستوى 5%
+        if (this.smartCatchEnabled && this.player) {
+            this.fallingItems.children.entries.forEach(item => {
+                if (!item.isCollected) {
+                    const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, item.x, item.y);
+                    if (distance < 120) { // نطاق موسع للتقاط
+                        this.collectItem(this.player, item);
+                    }
+                }
+            });
+        }
+        
         // تنظيف العناصر التي تخرج من منطقة اللعب أو الشاشة
         const gameAreaWidth = GAME_CONFIG.width - 400;
         
@@ -2086,7 +2116,7 @@ class GameScene extends Phaser.Scene {
         // الخيار الثاني: المتابعة
         infoMessage += `🔥 الخيار الثاني - المتابعة للمغامرة:\n`;
         if (level.percent < 100) {
-            const nextLevel = level.percent === 10 ? 25 : level.percent === 25 ? 50 : level.percent === 50 ? 75 : 100;
+            const nextLevel = level.percent === 5 ? 10 : level.percent === 10 ? 25 : level.percent === 25 ? 50 : level.percent === 50 ? 75 : 100;
             infoMessage += `هدف: الوصول للمستوى التالي (${nextLevel}% خصم)\n`;
         } else {
             infoMessage += `هذا المستوى الأخير - 100% وجبة مجانية!\n`;
@@ -2381,7 +2411,24 @@ class GameScene extends Phaser.Scene {
     }
     
     increaseDifficulty(difficulty) {
-        // زيادة سرعة السقوط
+        // معالجة خاصة لمستوى 5% - سهولة وكرم!
+        if (difficulty === 0.5) { // مستوى 5%
+            console.log('🎁 مستوى 5% - وضع السهولة والكرم!');
+            
+            // تبطيء السرعة بدلاً من تسريعها (أسهل!)
+            const currentDelay = this.spawnTimer.delay;
+            this.spawnTimer.delay = Math.max(800, currentDelay + 300); // فترة أطول بين الساندوتشات
+            
+            // تفعيل صندوق التقاط ذكي - نطاق أوسع
+            this.enableSmartCatchBox();
+            
+            // رسالة تشجيعية
+            this.showMessage('🎁 وضع السهولة مُفعل! التقاط أسهل + سرعة أبطأ', 3000, '#00ff00');
+            
+            return; // لا نزيد الصعوبة في مستوى 5%
+        }
+        
+        // باقي المستويات - صعوبة عادية
         const speedMultiplier = 1 + (difficulty * 0.3);
         
         // تقليل زمن الظهور (سرعة أكبر في الظهور)
@@ -2392,6 +2439,54 @@ class GameScene extends Phaser.Scene {
         // هذا سيتم تطبيقه في دالة spawnItem
         
         console.log(`🔥 الصعوبة زادت! المستوى: ${difficulty}`);
+    }
+    
+    enableSmartCatchBox() {
+        // تفعيل نظام التقاط ذكي - نطاق أوسع لالتقاط الساندوتشات
+        this.smartCatchEnabled = true;
+        
+        // إظهار مؤثر بصري للنطاق الموسع
+        if (this.smartCatchIndicator) {
+            this.smartCatchIndicator.destroy();
+        }
+        
+        // مؤشر بصري للنطاق الموسع حول اللاعب
+        this.smartCatchIndicator = this.add.graphics();
+        this.smartCatchIndicator.lineStyle(4, 0x00ff00, 0.6);
+        this.smartCatchIndicator.strokeRect(
+            this.player.x - 100, 
+            this.player.y - 50, 
+            200, 
+            100
+        );
+        this.smartCatchIndicator.setDepth(10);
+        
+        // تحديث موقع المؤشر مع اللاعب
+        this.updateSmartCatchIndicator();
+        
+        console.log('🧲 تم تفعيل الصندوق الذكي - نطاق التقاط أوسع!');
+    }
+    
+    updateSmartCatchIndicator() {
+        if (this.smartCatchEnabled && this.smartCatchIndicator) {
+            // تحديث موقع المؤشر كل إطار
+            this.time.addEvent({
+                delay: 16, // 60 FPS
+                repeat: -1,
+                callback: () => {
+                    if (this.smartCatchIndicator && this.player) {
+                        this.smartCatchIndicator.clear();
+                        this.smartCatchIndicator.lineStyle(4, 0x00ff00, 0.4);
+                        this.smartCatchIndicator.strokeRect(
+                            this.player.x - 100, 
+                            this.player.y - 50, 
+                            200, 
+                            100
+                        );
+                    }
+                }
+            });
+        }
     }
     
     showRewardScreen(level) {
