@@ -1753,25 +1753,25 @@ class GameScene extends Phaser.Scene {
         // إزالة صندوق الخسارة الملون - النصوص فقط فوق اللعبة مباشرة
         
         // نصوص الخسارة
-        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 80, '😔 انتهت اللعبة', {
+        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 80, 'انتهت اللعبة', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '32px',
+            fontSize: '96px', // تكبير الخط 3 مرات
             fontWeight: 'bold',
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 4
+            strokeThickness: 8 // تكبير السمك أيضاً
         }).setOrigin(0.5);
         
-        let finalMessage = '💔 لم تحصل على أي خصم - لأنك لم تنسحب في الوقت المناسب!';
+        let finalMessage = 'لم تحصل على أي خصم - لأنك لم تنسحب في الوقت المناسب!';
         // عند الخسارة، لا يحصل اللاعب على أي خصم لأنه لم ينسحب
         // الخصم يُحصل عليه فقط عند الانسحاب الآمن أو الفوز الكامل
         
         this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 20, finalMessage, {
             fontFamily: 'Cairo, Arial',
-            fontSize: '20px',
+            fontSize: '60px', // تكبير الخط 3 مرات
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 3,
+            strokeThickness: 6, // تكبير السمك أيضاً
             align: 'center'
         }).setOrigin(0.5);
         
@@ -1780,29 +1780,29 @@ class GameScene extends Phaser.Scene {
             `الخصم النهائي: ${this.gameManager.discount}%`,
             `النقاط: ${this.gameManager.score}`,
             `المستوى: ${this.gameManager.level}`,
-            `💔 السندوتشات المفقودة: ${this.gameManager.sandwichesMissed}`
+            `السندوتشات المفقودة: ${this.gameManager.sandwichesMissed}`
         ];
         
         this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 40, finalStats.join('\n'), {
             fontFamily: 'Cairo, Arial',
-            fontSize: '16px',
+            fontSize: '48px', // تكبير الخط 3 مرات
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 2,
+            strokeThickness: 4, // تكبير السمك أيضاً
             align: 'center',
-            lineSpacing: 5
+            lineSpacing: 15 // تكبير المسافات بين الأسطر
         }).setOrigin(0.5);
         
         // زر إعادة اللعب
-        const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 120, '🔄 حاول مرة أخرى', {
+        const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 120, 'حاول مرة أخرى', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '20px',
+            fontSize: '60px', // تكبير الخط 3 مرات
             fontWeight: 'bold',
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 3,
+            strokeThickness: 6, // تكبير السمك أيضاً
             backgroundColor: GAME_CONFIG.colors.primary,
-            padding: { x: 20, y: 10 }
+            padding: { x: 40, y: 20 } // تكبير الحشو أيضاً
         }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
         
         restartBtn.on('pointerdown', () => {
