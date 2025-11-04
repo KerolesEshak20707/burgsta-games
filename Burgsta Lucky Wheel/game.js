@@ -1355,28 +1355,30 @@ class GameScene extends Phaser.Scene {
             .setInteractive()
             .setDepth(200); // عمق أعلى من الزر
         
-        // ظل الصندوق
+        // ظل الصندوق (مكبر للدقة 4K)
         const messageShadow = this.add.graphics();
         messageShadow.fillStyle(0x000000, 0.4);
-        messageShadow.fillRoundedRect(width / 2 - 195, height / 2 - 165, 400, 330, 25);
+        const winBoxW = 1400;  // عرض أكبر
+        const winBoxH = 800;   // ارتفاع أكبر
+        messageShadow.fillRoundedRect(width / 2 - winBoxW / 2 - 15, height / 2 - winBoxH / 2 - 15, winBoxW + 30, winBoxH + 30, 30);
         messageShadow.setDepth(201);
         
         // صندوق الرسالة مع تدرج
         const messageBox = this.add.graphics();
         messageBox.fillGradientStyle(0xfaf6e8, 0xf5f1e6, 0xe8dcc0, 0xf0e6d2, 1);
         messageBox.lineStyle(6, 0xc49b41);
-        messageBox.fillRoundedRect(width / 2 - 200, height / 2 - 170, 400, 330, 25);
-        messageBox.strokeRoundedRect(width / 2 - 200, height / 2 - 170, 400, 330, 25);
+        messageBox.fillRoundedRect(width / 2 - winBoxW / 2, height / 2 - winBoxH / 2, winBoxW, winBoxH, 30);
+        messageBox.strokeRoundedRect(width / 2 - winBoxW / 2, height / 2 - winBoxH / 2, winBoxW, winBoxH, 30);
         messageBox.setDepth(202);
 
         // حدود داخلية ذهبية
         const innerBorder = this.add.graphics();
-        innerBorder.lineStyle(2, 0xd4af37, 0.8);
-        innerBorder.strokeRoundedRect(width / 2 - 185, height / 2 - 155, 370, 300, 20);
+        innerBorder.lineStyle(6, 0xd4af37, 0.8); // خط أثخن
+        innerBorder.strokeRoundedRect(width / 2 - winBoxW / 2 + 20, height / 2 - winBoxH / 2 + 20, winBoxW - 40, winBoxH - 40, 25);
         innerBorder.setDepth(203);
         
-        // نص التهنئة مع تأثيرات
-        const congratsText = this.add.text(width / 2, height / 2 - 300, '🎉 مبروك! 🎉', {
+        // نص التهنئة مع تأثيرات (موضع أعلى داخل الصندوق الكبير)
+        const congratsText = this.add.text(width / 2, height / 2 - 250, '🎉 مبروك! 🎉', {
             fontFamily: 'Cairo, Arial',
             fontSize: '108px', // تكبير للدقة 4K
             fontWeight: 'bold',
@@ -1403,7 +1405,7 @@ class GameScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
         
-        this.add.text(width / 2, height / 2 - 120, 'لقد فزت بـ', {
+        this.add.text(width / 2, height / 2 - 80, 'لقد فزت بـ', {
             fontFamily: 'Cairo, Arial',
             fontSize: '66px', // تكبير للدقة 4K
             fontWeight: '500',
@@ -1443,7 +1445,7 @@ class GameScene extends Phaser.Scene {
             ease: 'Power2.easeInOut'
         });
         
-        this.add.text(width / 2, height / 2 + 150, 'اتجه للكاشير لاستلام جائزتك', {
+        this.add.text(width / 2, height / 2 + 120, 'اتجه للكاشير لاستلام جائزتك', {
             fontFamily: 'Cairo, Arial',
             fontSize: '54px', // تكبير للدقة 4K
             fontWeight: '400',
@@ -1454,7 +1456,7 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5).setDepth(207);
 
         // 👆 رسالة النقر للمتابعة
-        const clickToContinueText = this.add.text(width / 2, height / 2 + 300, '👆 اضغط في أي مكان للمتابعة', {
+        const clickToContinueText = this.add.text(width / 2, height / 2 + 250, '👆 اضغط في أي مكان للمتابعة', {
             fontFamily: 'Cairo, Arial',
             fontSize: '48px', // تكبير للدقة 4K
             fontWeight: '400',
