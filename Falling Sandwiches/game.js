@@ -111,6 +111,9 @@ class GameManager {
             75: false   // هل تم إطلاق سندوتش 75%؟
         };
         
+        // 🎁 نظام الساندوتش المجاني الكامل (جديد!)
+        this.initializeFreeSandwichSystem();
+        
         // إحصائيات
         this.goodCaught = 0;
         this.badCaught = 0;
@@ -120,6 +123,51 @@ class GameManager {
         // أصوات اللعبة
         this.sounds = {};
         this.soundEnabled = true;
+    }
+    
+    initializeFreeSandwichSystem() {
+        // نظام الساندوتش المجاني - مرتان يومياً فقط
+        const today = new Date().toDateString();
+        const savedData = localStorage.getItem('burgstaFreeSandwichData');
+        
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            if (data.date === today) {
+                // نفس اليوم - استخدم البيانات المحفوظة
+                this.freeSandwichesUsed = data.used || 0;
+            } else {
+                // يوم جديد - إعادة تعيين
+                this.freeSandwichesUsed = 0;
+                this.saveFreeSandwichData(today);
+            }
+        } else {
+            // أول مرة
+            this.freeSandwichesUsed = 0;
+            this.saveFreeSandwichData(today);
+        }
+        
+        this.maxFreeSandwichesPerDay = 2; // مرتان فقط يومياً
+    }
+    
+    saveFreeSandwichData(date) {
+        const data = {
+            date: date,
+            used: this.freeSandwichesUsed
+        };
+        localStorage.setItem('burgstaFreeSandwichData', JSON.stringify(data));
+    }
+    
+    canGetFreeSandwich() {
+        return this.freeSandwichesUsed < this.maxFreeSandwichesPerDay;
+    }
+    
+    useFreeSandwich() {
+        if (this.canGetFreeSandwich()) {
+            this.freeSandwichesUsed++;
+            this.saveFreeSandwichData(new Date().toDateString());
+            return true;
+        }
+        return false;
     }
     
     addDiscount(amount) {
@@ -191,10 +239,9 @@ class GameManager {
         } else if (this.discount >= 10) {
             speedMultiplier = 3.0; // صعوبة قاتلة! 🔥
         } else if (this.discount >= 5) {
-            speedMultiplier = 2.0; // سريع جداً
-        } else if (this.discount >= 3) {
-            speedMultiplier = 1.5; // بداية التحدي
+            speedMultiplier = 1.5; // بداية التحدي مؤجلة إلى 5%
         }
+        // إزالة الصعوبة من 3% - اللعبة أسهل في البداية
         
         return GAME_CONFIG.items.baseSpeed * speedMultiplier;
     }
@@ -210,10 +257,9 @@ class GameManager {
         } else if (this.discount >= 10) {
             spawnMultiplier = 0.4;  // ظهور قاتل! ⚡💀
         } else if (this.discount >= 5) {
-            spawnMultiplier = 0.6;  // ظهور سريع جداً
-        } else if (this.discount >= 3) {
-            spawnMultiplier = 0.8;  // بداية الجحيم
+            spawnMultiplier = 0.8;  // بداية الصعوبة مؤجلة إلى 5%
         }
+        // إزالة الزيادة من 3% - معدل عادي حتى 5%
         
         const rate = GAME_CONFIG.items.baseSpawnRate * spawnMultiplier;
         return Math.max(rate, GAME_CONFIG.items.minSpawnRate);
@@ -1158,6 +1204,12 @@ class GameScene extends Phaser.Scene {
         // إزالة العنصر
         item.destroy();
         
+        // فحص إذا كان ساندوتش مجاني خاص
+        if (item.isFreeSandwich) {
+            this.handleFreeSandwich(item);
+            return;
+        }
+        
         // معالجة حسب نوع العنصر
         switch (item.itemType) {
             case 'good':
@@ -1193,6 +1245,42 @@ class GameScene extends Phaser.Scene {
             }
         } catch (error) {
             // تجاهل أخطاء الأصوات
+        }
+    }
+    
+    handleFreeSandwich(item) {
+        // فحص إذا كان مسموح الإمساك به اليوم
+        if (!item.canBeCaught) {
+            // الساندوتش سريع جداً - لا يمكن الإمساك به
+            this.showMessage('💨 سريع جداً! لقد استنفدت محاولاتك اليوم', 2000, '#ff6600');
+            return;
+        }
+        
+        // نجح في الإمساك بالساندوتش المجاني!
+        if (this.gameManager.useFreeSandwich()) {
+            // ساندوتش مجاني كامل - 100% خصم!
+            this.gameManager.discount = 100;
+            this.gameManager.gameWon = true;
+            
+            // إيقاف اللعبة
+            this.spawnTimer.paused = true;
+            this.physics.pause();
+            
+            // تأثيرات بصرية خاصة
+            this.showFloatingText('🎉 ساندوتش مجاني 100%! 🎉', '#ffd700');
+            
+            // صوت مميز
+            if (this.sounds && this.sounds.golden) {
+                this.sounds.golden.play();
+            }
+            
+            // إظهار شاشة الفوز بعد ثانيتين
+            this.time.addEvent({
+                delay: 2000,
+                callback: () => {
+                    this.showWinScreen();
+                }
+            });
         }
     }
     
@@ -2194,6 +2282,11 @@ class GameScene extends Phaser.Scene {
         // اللاعب اختار المواصلة والمخاطرة
         this.gameManager.isInRiskMode = false;
         
+        // الساندوتش المجاني ينزل في كل جيم عند 5% أو أكثر، لكن بسرعة متغيرة
+        if (level.percent >= 5) {
+            this.triggerFreeSandwichEvent();
+        }
+        
         // زيادة الصعوبة حسب المستوى
         this.increaseDifficulty(level.difficulty);
         
@@ -2699,6 +2792,252 @@ class GameScene extends Phaser.Scene {
         } catch (error) {
             console.error('❌ خطأ أثناء تهيئة اللعبة:', error);
         }
+    }
+    
+    // ===== نظام الساندوتش المجاني النادر 🎁 =====
+    
+    triggerFreeSandwichEvent() {
+        // استخدام الساندوتش المجاني
+        if (!this.gameManager.useFreeSandwich()) {
+            return; // لم تعد هناك ساندوتشات مجانية متاحة
+        }
+        
+        // إيقاف اللعبة مؤقتاً لإظهار الحدث الخاص
+        this.spawnTimer.paused = true;
+        this.physics.pause();
+        
+        // تشغيل صوت خاص للحدث النادر
+        this.sounds.golden.play();
+        
+        // عرض رسالة الساندوتش المجاني
+        this.showFreeSandwichMessage();
+        
+        // إطلاق ساندوتش مجاني سريع ونادر
+        this.time.addEvent({
+            delay: 2000, // بعد ثانيتين من الرسالة
+            callback: () => {
+                this.launchFreeSandwich();
+                // استئناف اللعبة
+                this.spawnTimer.paused = false;
+                this.physics.resume();
+            }
+        });
+    }
+    
+    showFreeSandwichMessage() {
+        const centerX = GAME_CONFIG.width / 2;
+        const centerY = GAME_CONFIG.height / 2;
+        
+        // خلفية متوهجة خاصة
+        const specialBg = this.add.graphics();
+        specialBg.fillGradientStyle(0xFFD700, 0xFFD700, 0xFF6B35, 0xFF6B35, 0.9);
+        specialBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
+        specialBg.setDepth(70);
+        
+        // نص الحدث الخاص
+        const eventText = this.add.text(centerX, centerY - 100, '🎉 حدث نادر جداً! 🎉', {
+            fontSize: '60px',
+            fill: '#FFFFFF',
+            fontFamily: 'Arial Black',
+            stroke: '#FFD700',
+            strokeThickness: 8,
+            align: 'center',
+            shadow: { offsetX: 4, offsetY: 4, color: '#000000', blur: 8, fill: true }
+        }).setOrigin(0.5);
+        eventText.setDepth(75);
+        
+        // نص الساندوتش المجاني
+        const freeText = this.add.text(centerX, centerY, '🥪 ساندوتش مجاني كامل! 🥪', {
+            fontSize: '40px',
+            fill: '#00FF00',
+            fontFamily: 'Arial Black',
+            stroke: '#000000',
+            strokeThickness: 6,
+            align: 'center',
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 6, fill: true }
+        }).setOrigin(0.5);
+        freeText.setDepth(75);
+        
+        // نص توضيحي
+        const infoText = this.add.text(centerX, centerY + 80, 'احصل على خصم 100% فوراً!\nهذا الحدث نادر جداً - مرتان فقط يومياً', {
+            fontSize: '24px',
+            fill: '#FFFF00',
+            fontFamily: 'Arial',
+            fontWeight: 'bold',
+            stroke: '#000000',
+            strokeThickness: 4,
+            align: 'center',
+            lineSpacing: 10,
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+        }).setOrigin(0.5);
+        infoText.setDepth(75);
+        
+        // تأثيرات بصرية متحركة
+        this.tweens.add({
+            targets: eventText,
+            scaleX: 1.2,
+            scaleY: 1.2,
+            duration: 500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+        
+        // إزالة الرسالة بعد ثانيتين
+        this.time.addEvent({
+            delay: 2000,
+            callback: () => {
+                specialBg.destroy();
+                eventText.destroy();
+                freeText.destroy();
+                infoText.destroy();
+            }
+        });
+    }
+    
+    launchFreeSandwich() {
+        // إنشاء ساندوتش مجاني خاص بتأثيرات بصرية مميزة
+        const x = Phaser.Math.Between(100, GAME_CONFIG.width - 100);
+        
+        const freeSandwich = this.physics.add.sprite(x, -100, 'sandwich1');
+        freeSandwich.setDisplaySize(120, 120); // حجم أكبر قليلاً
+        freeSandwich.setVelocity(0, 300); // سرعة متوسطة
+        freeSandwich.setDepth(25);
+        
+        // تأثير توهج ذهبي خاص
+        freeSandwich.setTint(0xFFD700);
+        
+        // تأثير دوران مميز
+        this.tweens.add({
+            targets: freeSandwich,
+            rotation: Math.PI * 2,
+            duration: 1000,
+            repeat: -1,
+            ease: 'Linear'
+        });
+        
+        // تأثير نبضات الحجم
+        this.tweens.add({
+            targets: freeSandwich,
+            scaleX: 1.3,
+            scaleY: 1.3,
+            duration: 800,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+        
+        // جعل الساندوتش يتفاعل مع اللاعب
+        this.physics.add.overlap(this.player, freeSandwich, () => {
+            // الساندوتش المجاني يعطي خصم 100% فوراً!
+            this.gameManager.discount = 100;
+            this.updateUI();
+            
+            // تأثيرات خاصة للساندوتش المجاني
+            freeSandwich.destroy();
+            this.sounds.golden.play();
+            this.createParticleEffect(freeSandwich.x, freeSandwich.y, 0xFFD700, 20);
+            
+            // رسالة تهنئة خاصة
+            this.showMessage('🎉 ساندوتش مجاني! خصم 100%! 🎉', 3000, 0xFFD700);
+            
+            // إنهاء اللعبة بالفوز الفوري
+            this.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    this.endGame(true, '🎁 فزت بساندوتش مجاني كامل!');
+                }
+            });
+        });
+        
+        // إزالة الساندوتش إذا خرج من الشاشة
+        freeSandwich.setCollideWorldBounds(false);
+        this.time.addEvent({
+            delay: 8000, // 8 ثوان للوصول
+            callback: () => {
+                if (freeSandwich && freeSandwich.active) {
+                    freeSandwich.destroy();
+                }
+            }
+        });
+        
+        // إضافة الساندوتش لمجموعة العناصر النشطة
+        if (!this.activeFoodItems) {
+            this.activeFoodItems = this.physics.add.group();
+        }
+        this.activeFoodItems.add(freeSandwich);
+    }
+    
+    triggerFreeSandwichEvent() {
+        // تحديد السرعة بناءً على المحاولات المتبقية اليوم
+        const canCatch = this.gameManager.canGetFreeSandwich(); // هل يمكن الإمساك به؟
+        
+        // سرعة السقوط: إذا لم يعد مسموح له = سرعة فائقة، وإلا سرعة عادية  
+        const dropSpeed = canCatch ? 800 : 2000; // السرعة الفائقة تجعل الإمساك مستحيل تقريباً
+        
+        // إظهار رسالة حسب الحالة
+        if (canCatch) {
+            this.showMessage('🎁 ساندوتش مجاني 100%! أمسك به بسرعة!', 2500, '#00ff00');
+        } else {
+            this.showMessage(`⚡ ساندوتش مجاني لكن سريع جداً! (${this.gameManager.freeSandwichesUsed}/2 محاولات مستخدمة اليوم)`, 3000, '#ffaa00');
+        }
+        
+        // إنشاء الساندوتش المجاني الخاص
+        const freeSandwich = this.physics.add.sprite(
+            Phaser.Math.Between(100, GAME_CONFIG.width - 100),
+            -50,
+            'sandwich1'
+        );
+        
+        // مظهر خاص للساندوتش المجاني
+        freeSandwich.setDisplaySize(120, 120); // حجم أكبر قليلاً
+        freeSandwich.setTint(0xffd700); // لون ذهبي
+        freeSandwich.isFreeSandwich = true;
+        freeSandwich.canBeCaught = canCatch;
+        
+        // إضافة تأثيرات بصرية
+        freeSandwich.setAlpha(0.9);
+        
+        // تأثير دوران
+        this.tweens.add({
+            targets: freeSandwich,
+            rotation: Math.PI * 2,
+            duration: 1000,
+            repeat: -1
+        });
+        
+        // تأثير نبضة في الحجم
+        this.tweens.add({
+            targets: freeSandwich,
+            scaleX: 1.2,
+            scaleY: 1.2,
+            duration: 500,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+        
+        // فيزياء السقوط
+        freeSandwich.setVelocityY(dropSpeed);
+        freeSandwich.setVelocityX(Phaser.Math.Between(-100, 100)); // حركة جانبية خفيفة
+        
+        // إضافة للمجموعة
+        this.sandwiches.add(freeSandwich);
+        
+        // تشغيل صوت خاص
+        if (this.sounds.golden) {
+            this.sounds.golden.play();
+        }
+        
+        // إزالة تلقائية إذا خرج من الشاشة
+        this.time.addEvent({
+            delay: 5000,
+            callback: () => {
+                if (freeSandwich && freeSandwich.active) {
+                    freeSandwich.destroy();
+                }
+            }
+        });
     }
 }
 
