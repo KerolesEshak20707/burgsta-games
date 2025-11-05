@@ -21,11 +21,11 @@ const GAME_CONFIG = {
         minSpawnRate: 800      // حد أدنى أسرع
     },
     
-    // نظام الخصم - صعوبة عالية جداً 🔥
+    // نظام الخصم - للمحترفين فقط! 🔥
     discount: {
-        goodSandwich: 0.3,  // +0.3% لكل سندوتش جيد (صعب جداً!)
-        goldenSandwich: 1.5,  // +1.5% للسندوتش الذهبي (نادر)
-        badItem: -1.5,      // -1.5% للعناصر السيئة (عقاب قاسي)
+        goodSandwich: 0.2,  // +0.2% لكل سندوتش جيد (أصعب!)
+        goldenSandwich: 1.2,  // +1.2% للسندوتش الذهبي (أقل)
+        badItem: -2.0,      // -2.0% للعناصر السيئة (عقاب أقسى!)
         maxDiscount: 100
     },
     
@@ -291,15 +291,15 @@ class GameManager {
         let speedMultiplier = 1;
         
         if (this.discount >= 25) {
-            speedMultiplier = 6.0; // مستحيل تقريباً! 🔥🔥🔥
+            speedMultiplier = 8.0; // كابوس مطلق! ���
         } else if (this.discount >= 15) {
-            speedMultiplier = 4.5; // جحيم حقيقي! 🔥🔥
+            speedMultiplier = 6.0; // هجوم ساحق للخبراء! 🔥🔥🔥
         } else if (this.discount >= 10) {
-            speedMultiplier = 3.0; // صعوبة قاتلة! 🔥
+            speedMultiplier = 4.0; // للمحترفين فقط! 🔥🔥
         } else if (this.discount >= 5) {
-            speedMultiplier = 1.2; // زيادة بسيطة فقط عند 5%
+            speedMultiplier = 2.5; // بداية الاحتراف! 🔥
         } else {
-            speedMultiplier = 0.6; // أبطأ بكثير قبل 5% - سهولة فائقة!
+            speedMultiplier = 0.8; // تحضير للاحتراف
         }
         
         return GAME_CONFIG.items.baseSpeed * speedMultiplier;
@@ -310,13 +310,13 @@ class GameManager {
         let spawnMultiplier = 1;
         
         if (this.discount >= 25) {
-            spawnMultiplier = 0.3; // كثيف بس مش جنون �
+            spawnMultiplier = 0.15; // كثيف بس مش جنون �
         } else if (this.discount >= 15) {
-            spawnMultiplier = 0.4; // متوسط السرعة 
+            spawnMultiplier = 0.25; // متوسط السرعة 
         } else if (this.discount >= 10) {
-            spawnMultiplier = 0.6;  // بداية التسريع
+            spawnMultiplier = 0.4;  // بداية التسريع
         } else if (this.discount >= 5) {
-            spawnMultiplier = 0.8;  // نفس المعدل حتى 10% - مرحلة تدريبية
+            spawnMultiplier = 0.6;  // نفس المعدل حتى 10% - مرحلة تدريبية
         } else {
             spawnMultiplier = 1.0;  // ثانية ونص - بداية سريعة بدون ملل!
         }
@@ -1776,13 +1776,13 @@ class GameScene extends Phaser.Scene {
         let badChance;
         
         if (this.gameManager.discount < 5) {
-            badChance = 0.35; // 35% سيئة - زيادة كما طلبت
+            badChance = 0.40; // 40% سيئة - تحضير للاحتراف
         } else if (this.gameManager.discount < 10) {
-            badChance = 0.55; // 55% سيئة 
+            badChance = 0.65; // 65% سيئة - بداية الاحتراف!
         } else if (this.gameManager.discount < 15) {
-            badChance = 0.70; // 70% سيئة
+            badChance = 0.80; // 80% سيئة - للمحترفين فقط!
         } else {
-            badChance = 0.80; // 80% سيئة في المراحل الصعبة
+            badChance = 0.95; // 95% سيئة - هجوم ساحق للخبراء!
         }
         
         // إنتاج عنصر واحد فقط في كل مرة - بدون انتظار!
