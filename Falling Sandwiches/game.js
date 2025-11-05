@@ -157,6 +157,54 @@ class GameManager {
         }
         
         this.maxFreeSandwichesPerDay = 2; // مرتان فقط يومياً
+        
+        // تهيئة نظام السندوتش الذهبي
+        this.initializeGoldenSandwichSystem();
+    }
+    
+    initializeGoldenSandwichSystem() {
+        // نظام السندوتش الذهبي - مرتان يومياً فقط قابل للإمساك
+        const today = new Date().toDateString();
+        const savedData = localStorage.getItem('burgstaGoldenSandwichData');
+        
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            if (data.date === today) {
+                // نفس اليوم - استخدم البيانات المحفوظة
+                this.goldenSandwichesUsed = data.used || 0;
+            } else {
+                // يوم جديد - إعادة تعيين
+                this.goldenSandwichesUsed = 0;
+                this.saveGoldenSandwichData(today);
+            }
+        } else {
+            // أول مرة
+            this.goldenSandwichesUsed = 0;
+            this.saveGoldenSandwichData(today);
+        }
+        
+        this.maxGoldenSandwichesPerDay = 2; // مرتان فقط يومياً قابل للإمساك
+    }
+    
+    saveGoldenSandwichData(date) {
+        const data = {
+            date: date,
+            used: this.goldenSandwichesUsed
+        };
+        localStorage.setItem('burgstaGoldenSandwichData', JSON.stringify(data));
+    }
+    
+    canCatchGoldenSandwich() {
+        return this.goldenSandwichesUsed < this.maxGoldenSandwichesPerDay;
+    }
+    
+    useGoldenSandwich() {
+        if (this.canCatchGoldenSandwich()) {
+            this.goldenSandwichesUsed++;
+            this.saveGoldenSandwichData(new Date().toDateString());
+            return true;
+        }
+        return false;
     }
     
     saveFreeSandwichData(date) {
@@ -1228,6 +1276,12 @@ class GameScene extends Phaser.Scene {
             return;
         }
         
+        // فحص إذا كان ساندوتش ذهبي خاص
+        if (item.isGoldenSandwich) {
+            this.handleSpecialGoldenSandwich(item);
+            return;
+        }
+        
         // معالجة حسب نوع العنصر
         switch (item.itemType) {
             case 'good':
@@ -1299,6 +1353,36 @@ class GameScene extends Phaser.Scene {
                     this.showWinScreen();
                 }
             });
+        }
+    }
+    
+    handleSpecialGoldenSandwich(item) {
+        // فحص إذا كان قابل للإمساك اليوم
+        if (!item.canBeCaught) {
+            // السندوتش سريع جداً - لا يمكن الإمساك به
+            this.showMessage('⚡ سريع جداً! لقد استنفدت فرصك الذهبية اليوم', 2000, '#ff6600');
+            return;
+        }
+        
+        // نجح في الإمساك بالسندوتش الذهبي!
+        if (this.gameManager.useGoldenSandwich()) {
+            // مكافأة السندوتش الذهبي المضاعفة!
+            const goldenBonus = GAME_CONFIG.discount.goldenSandwich * 2; // مضاعف!
+            this.gameManager.addDiscount(goldenBonus);
+            this.gameManager.score += 100; // نقاط مضاعفة
+            this.gameManager.goldenCaught++;
+            
+            // تأثيرات بصرية خاصة
+            this.showFloatingText(`🏆 +${goldenBonus.toFixed(1)}% ذهبي! 🏆`, '#ffd700', 2.0);
+            this.createSpecialEffect(this.player.x, this.player.y);
+            
+            // صوت مميز
+            if (this.sounds && this.sounds.golden) {
+                this.sounds.golden.play();
+            }
+            
+            // رسالة نجاح
+            this.showMessage(`🎯 حظ سعيد! سندوتش ذهبي (${this.gameManager.goldenSandwichesUsed}/2 اليوم)`, 3000, '#00ff00');
         }
     }
     
@@ -2335,15 +2419,13 @@ class GameScene extends Phaser.Scene {
     }
     
     launchRiskGoldenSandwich(level) {
-        // فحص إذا كان السندوتش الذهبي لهذا المستوى تم إطلاقه من قبل
-        if (this.gameManager.riskGoldenSandwiches[level.percent]) {
-            return; // لا نطلق نفس السندوتش مرتين
-        }
+        // السندوتش الذهبي ينزل في كل جيم، لكن بفرص إمساك مختلفة
+        console.log('🏆 إطلاق السندوتش الذهبي - كل جيم!');
         
-        // تسجيل أن السندوتش تم إطلاقه
-        this.gameManager.riskGoldenSandwiches[level.percent] = true;
+        // تحديد إذا كان قابل للإمساك اليوم (مرتين يومياً فقط)
+        const canCatch = this.gameManager.canCatchGoldenSandwich();
         
-        // إطلاق السندوتش الذهبي فوراً بسرعة متناسبة مع مستوى المخاطرة
+        // إطلاق السندوتش الذهبي فوراً
         this.time.addEvent({
             delay: 1000, // ثانية واحدة فقط للبدء
             callback: () => {
@@ -2353,36 +2435,45 @@ class GameScene extends Phaser.Scene {
                 // إنشاء السندوتش الذهبي
                 const goldenItem = this.physics.add.sprite(x, -30, 'goldenSandwich');
                 goldenItem.itemType = 'golden';
+                goldenItem.isGoldenSandwich = true;
+                goldenItem.canBeCaught = canCatch;
                 
-                // السرعة تزيد حسب مستوى المخاطرة!
-                let speedMultiplier;
-                switch(level.percent) {
-                    case 10: speedMultiplier = 2.5; break;    // سريع جداً
-                    case 25: speedMultiplier = 3.5; break;    // أسرع جداً  
-                    case 50: speedMultiplier = 4.5; break;    // جنوني
-                    case 75: speedMultiplier = 6.0; break;    // صاروخ!
-                    default: speedMultiplier = 2.0; break;
+                // السرعة: فائقة جداً دائماً، لكن أبطأ قليلاً إذا كان قابل للإمساك
+                const baseSpeed = this.gameManager.getCurrentItemSpeed() * 4; // سرعة فائقة أساسية
+                const finalSpeed = canCatch ? baseSpeed * 0.7 : baseSpeed * 1.3; // أبطأ قليلاً إذا قابل للإمساك
+                goldenItem.setVelocityY(finalSpeed);
+                
+                // تأثيرات بصرية حسب إمكانية الإمساك
+                goldenItem.setScale(2.2);
+                if (canCatch) {
+                    // قابل للإمساك - توهج أخضر
+                    goldenItem.setTint(0x00ff00);
+                    this.showMessage('🍯 سندوتش ذهبي قابل للإمساك! 🍯', 2000, '#00ff00');
+                } else {
+                    // سريع جداً - توهج أحمر
+                    goldenItem.setTint(0xff0000);
+                    this.showMessage('⚡ سندوتش ذهبي سريع! (استنفدت فرصك اليوم)', 2500, '#ff6600');
                 }
                 
-                const crazySpeed = this.gameManager.getCurrentItemSpeed() * speedMultiplier;
-                goldenItem.setVelocityY(crazySpeed);
-                
-                // تأثيرات بصرية حسب المستوى - يتناسب مع البوكس الكبير
-                goldenItem.setScale(2.0 + (level.difficulty * 0.2)); // أكبر بكثير ليتناسب مع البوكس الجديد
-                goldenItem.setTint(0xffd700);
-                
-                // تأثير إشعاع متسارع حسب المستوى
+                // تأثير وميض مميز
                 this.tweens.add({
                     targets: goldenItem,
-                    alpha: 0.5,
-                    duration: Math.max(100, 300 - (level.difficulty * 40)), // وميض أسرع كل مستوى
+                    alpha: 0.3,
+                    duration: canCatch ? 200 : 100, // وميض أبطأ إذا قابل للإمساك
                     yoyo: true,
                     repeat: -1
                 });
                 
-                // نظام التتبع المعتاد
-                goldenItem.setCollideWorldBounds(true);
-                goldenItem.body.onWorldBounds = true;
+                // تأثير دوران
+                this.tweens.add({
+                    targets: goldenItem,
+                    rotation: Math.PI * 2,
+                    duration: canCatch ? 800 : 300, // دوران أبطأ إذا قابل للإمساك
+                    repeat: -1
+                });
+                
+                // إضافة للمجموعة
+                this.fallingItems.add(goldenItem);
                 goldenItem.hasDropped = false;
                 goldenItem.isCollected = false;
                 
