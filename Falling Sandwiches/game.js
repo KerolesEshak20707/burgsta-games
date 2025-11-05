@@ -23,9 +23,9 @@ const GAME_CONFIG = {
     
     // نظام الخصم - للمحترفين فقط! 🔥
     discount: {
-        goodSandwich: 0.2,  // +0.2% لكل سندوتش جيد (أصعب!)
-        goldenSandwich: 1.2,  // +1.2% للسندوتش الذهبي (أقل)
-        badItem: -2.0,      // -2.0% للعناصر السيئة (عقاب أقسى!)
+        goodSandwich: 0.3,  // +0.3% لكل سندوتش جيد (طبيعي!)
+        goldenSandwich: 1.5,  // +1.5% للسندوتش الذهبي (طبيعي!)
+        badItem: -1.5,      // -1.5% للعناصر السيئة (عقاب طبيعي!)
         maxDiscount: 100
     },
     
@@ -50,8 +50,8 @@ const RISK_LEVELS = [
         difficulty: 0.5,
         reached: false,
         description: "مبروك! وصلت للمستوى الأول",
-        reward: "خصم 5% + وضع السهولة (التقاط ذكي + سرعة أبطأ) + فرصة ساندوتش ذهبي خاص قد يمنحك وجبة مجانية",
-        nextRisk: "ستحصل على وضع خاص سهل جداً..."
+        reward: "خصم 5% + فرصة ساندوتش ذهبي خاص قد يمنحك وجبة مجانية + عودة للصعوبة الطبيعية",
+        nextRisk: "ستعود اللعبة للصعوبة الطبيعية..."
     },
     { 
         percent: 10, 
@@ -296,10 +296,12 @@ class GameManager {
             speedMultiplier = 6.0; // هجوم ساحق للخبراء! 🔥🔥🔥
         } else if (this.discount >= 10) {
             speedMultiplier = 4.0; // للمحترفين فقط! 🔥🔥
-        } else if (this.discount >= 5) {
+        } else if (this.discount === 5) {
+            speedMultiplier = 1.0; // سرعة طبيعية كلاسيكية عند 5% بالضبط!
+        } else if (this.discount > 5) {
             speedMultiplier = 2.5; // بداية الاحتراف! 🔥
         } else {
-            speedMultiplier = 0.8; // تحضير للاحتراف
+            speedMultiplier = 0.8; // أبطأ قليلاً للمبتدئين
         }
         
         return GAME_CONFIG.items.baseSpeed * speedMultiplier;
@@ -315,7 +317,9 @@ class GameManager {
             spawnMultiplier = 0.25; // متوسط السرعة 
         } else if (this.discount >= 10) {
             spawnMultiplier = 0.4;  // بداية التسريع
-        } else if (this.discount >= 5) {
+        } else if (this.discount === 5) {
+            spawnMultiplier = 1.0;  // معدل طبيعي كلاسيكي عند 5% بالضبط!
+        } else if (this.discount > 5) {
             spawnMultiplier = 0.6;  // نفس المعدل حتى 10% - مرحلة تدريبية
         } else {
             spawnMultiplier = 1.0;  // ثانية ونص - بداية سريعة بدون ملل!
@@ -1253,15 +1257,13 @@ class GameScene extends Phaser.Scene {
     }
     
     collectItem(player, item) {
-        // صندوق ذكي دائماً - نطاق توليرانس أوسع للالتقاط
+        // صندوق ذكي - نطاق توليرانس أوسع للالتقاط فقط إذا كان مفعل
         const distance = Phaser.Math.Distance.Between(player.x, player.y, item.x, item.y);
-        let maxDistance = 100; // نطاق عادي
+        let maxDistance = 100; // نطاق عادي طبيعي
         
-        // نطاق أوسع قبل الوصول لـ 5% - سهولة فائقة
-        if (this.gameManager.discount < 5) {
-            maxDistance = 180; // نطاق واسع جداً قبل 5%
-        } else if (this.smartCatchEnabled) {
-            maxDistance = 150; // نطاق موسع في الوضع الخاص
+        // نطاق موسع فقط إذا كان وضع السهولة مفعل (لن يحدث بعد 5%)
+        if (this.smartCatchEnabled) {
+            maxDistance = 150; // نطاق موسع في وضع السهولة فقط
         }
         
         if (distance > maxDistance) {
@@ -1776,7 +1778,9 @@ class GameScene extends Phaser.Scene {
         let badChance;
         
         if (this.gameManager.discount < 5) {
-            badChance = 0.40; // 40% سيئة - تحضير للاحتراف
+            badChance = 0.25; // 25% سيئة - طبيعي وممتع
+        } else if (this.gameManager.discount === 5) {
+            badChance = 0.30; // 30% سيئة - صعوبة طبيعية كلاسيكية عند 5%
         } else if (this.gameManager.discount < 10) {
             badChance = 0.65; // 65% سيئة - بداية الاحتراف!
         } else if (this.gameManager.discount < 15) {
@@ -2949,24 +2953,19 @@ class GameScene extends Phaser.Scene {
     }
     
     increaseDifficulty(difficulty) {
-        // معالجة خاصة لمستوى 5% - سهولة وكرم!
+        // معالجة خاصة لمستوى 5% - العودة للصعوبة الطبيعية!
         if (difficulty === 0.5) { // مستوى 5%
-            console.log('🎁 مستوى 5% - وضع السهولة والكرم!');
+            // إيقاف أي وضع سهولة مفعل مسبقاً
+            this.disableSmartCatchBox();
             
-            // تبطيء السرعة بدلاً من تسريعها (أسهل!)
-            const currentDelay = this.spawnTimer.delay;
-            this.spawnTimer.delay = Math.max(800, currentDelay + 300); // فترة أطول بين الساندوتشات
+            // العودة للإعدادات الطبيعية الكلاسيكية
+            this.spawnTimer.delay = GAME_CONFIG.items.baseSpawnRate; // العودة للسرعة الأصلية (1500ms)
             
-            // تفعيل صندوق التقاط ذكي - نطاق أوسع
-            this.enableSmartCatchBox();
-            
-            // رسالة تشجيعية
-            this.showMessage('🎁 وضع السهولة مُفعل! التقاط أسهل + سرعة أبطأ', 3000, '#00ff00');
-            
+            console.log('🎯 تم إيقاف وضع السهولة - عودة للصعوبة الطبيعية');
             return; // لا نزيد الصعوبة في مستوى 5%
         }
         
-        // باقي المستويات - صعوبة عادية
+        // باقي المستويات - صعوبة عادية متدرجة
         const speedMultiplier = 1 + (difficulty * 0.3);
         
         // تقليل زمن الظهور (سرعة أكبر في الظهور)
@@ -3002,7 +3001,26 @@ class GameScene extends Phaser.Scene {
         // تحديث موقع المؤشر مع اللاعب
         this.updateSmartCatchIndicator();
         
-        console.log('🧲 تم تفعيل الصندوق الذكي - نطاق التقاط أوسع!');
+        // الصندوق الذكي مفعل بصمت
+    }
+    
+    disableSmartCatchBox() {
+        // إيقاف نظام التقاط الذكي
+        this.smartCatchEnabled = false;
+        
+        // إزالة المؤشر البصري إن وجد
+        if (this.smartCatchIndicator) {
+            this.smartCatchIndicator.destroy();
+            this.smartCatchIndicator = null;
+        }
+        
+        // إزالة أي مؤقتات مرتبطة بالتحديث
+        if (this.smartCatchTimer) {
+            this.smartCatchTimer.destroy();
+            this.smartCatchTimer = null;
+        }
+        
+        console.log('❌ تم إيقاف وضع التقاط الذكي');
     }
     
     updateSmartCatchIndicator() {
@@ -3424,13 +3442,16 @@ class GameScene extends Phaser.Scene {
             // تهيئة مستوى الصعوبة
             this.previousDifficulty = 1;
             
+            // إيقاف وضع السهولة - تبدأ اللعبة بالصعوبة الطبيعية
+            this.smartCatchEnabled = false;
+            
             // التأكد من حالة gameManager
             if (this.gameManager) {
                 this.gameManager.isInRiskMode = false;
                 this.gameManager.currentRiskLevel = null;
             }
             
-            console.log('🎮 تم تهيئة اللعبة للبداية');
+            console.log('🎮 تم تهيئة اللعبة للبداية - وضع طبيعي');
         } catch (error) {
             console.error('❌ خطأ أثناء تهيئة اللعبة:', error);
         }
