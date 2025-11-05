@@ -287,7 +287,7 @@ class GameManager {
     }
     
     getCurrentItemSpeed() {
-        // منحنى صعوبة تدريجي منطقي - لا جمب مفاجئ! 🎯
+        // سرعة تدريجية للمحترفين من البداية! 🔥
         let speedMultiplier = 1.0;
         
         if (this.discount >= 25) {
@@ -295,11 +295,11 @@ class GameManager {
         } else if (this.discount >= 15) {
             speedMultiplier = 4.2; // مجنون 🔥🔥
         } else if (this.discount >= 10) {
-            speedMultiplier = 2.5; // صعب جداً 🔥
+            speedMultiplier = 2.8; // صعب جداً 🔥
         } else if (this.discount >= 5) {
-            speedMultiplier = 1.7; // متوسط - بداية التحدي الحقيقي
+            speedMultiplier = 2.0; // سريع - تحدي حقيقي
         } else {
-            speedMultiplier = 1.0; // سهل للبداية (0-5%)
+            speedMultiplier = 1.4; // أسرع من البداية - للمحترفين!
         }
         
         return GAME_CONFIG.items.baseSpeed * speedMultiplier;
@@ -317,9 +317,9 @@ class GameManager {
         } else if (this.discount >= 10) {
             spawnMultiplier = 0.4;  // سريع �
         } else if (this.discount >= 5) {
-            spawnMultiplier = 0.7;  // أسرع قليلاً - بداية التحدي
+            spawnMultiplier = 0.5;  // سريع - تحدي حقيقي
         } else {
-            spawnMultiplier = 1.0;  // طبيعي للبداية (0-5%)
+            spawnMultiplier = 0.7;  // أسرع من البداية - للمحترفين!
         }
         
         const rate = GAME_CONFIG.items.baseSpawnRate * spawnMultiplier;
@@ -1254,17 +1254,12 @@ class GameScene extends Phaser.Scene {
     }
     
     collectItem(player, item) {
-        // صندوق ذكي - نطاق توليرانس أوسع للالتقاط فقط إذا كان مفعل
+        // نطاق التقاط دقيق للمحترفين فقط - لا سهولة! 🔥
         const distance = Phaser.Math.Distance.Between(player.x, player.y, item.x, item.y);
-        let maxDistance = 100; // نطاق عادي طبيعي
-        
-        // نطاق موسع فقط إذا كان وضع السهولة مفعل (لن يحدث بعد 5%)
-        if (this.smartCatchEnabled) {
-            maxDistance = 150; // نطاق موسع في وضع السهولة فقط
-        }
+        const maxDistance = 100; // نطاق ثابت - مهارة حقيقية مطلوبة!
         
         if (distance > maxDistance) {
-            return; // خارج النطاق المسموح
+            return; // خارج النطاق - لا مساعدة!
         }
         
         // وضع علامة على أن العنصر تم جمعه
@@ -1774,15 +1769,15 @@ class GameScene extends Phaser.Scene {
         // احتماليات صعبة جداً - خصم حقيقي يستحق التحدي! 💰
         let badChance;
         
-        // منحنى قنابل تدريجي منطقي 🎯
+        // صعوبة تدريجية للمحترفين من البداية! 🔥
         if (this.gameManager.discount < 5) {
-            badChance = 0.25; // 25% قنابل - سهل للبداية
+            badChance = 0.45; // 45% قنابل - تحدي من البداية!
         } else if (this.gameManager.discount < 10) {
-            badChance = 0.55; // 55% قنابل - متوسط بعد 5%
+            badChance = 0.60; // 60% قنابل - صعب حقيقي
         } else if (this.gameManager.discount < 15) {
-            badChance = 0.75; // 75% قنابل - صعب جداً! 🔥
+            badChance = 0.75; // 75% قنابل - للمحترفين فقط! 🔥
         } else if (this.gameManager.discount < 25) {
-            badChance = 0.85; // 85% قنابل - للمحترفين فقط! 🔥🔥
+            badChance = 0.85; // 85% قنابل - شديد الصعوبة! 🔥🔥
         } else {
             badChance = 0.95; // 95% قنابل - شبه مستحيل! 💀
         }
@@ -2403,17 +2398,7 @@ class GameScene extends Phaser.Scene {
         
 
         
-        // فحص النطاق الموسع للتقاط ذكي في مستوى 5%
-        if (this.smartCatchEnabled && this.player) {
-            this.fallingItems.children.entries.forEach(item => {
-                if (!item.isCollected) {
-                    const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, item.x, item.y);
-                    if (distance < 120) { // نطاق موسع للتقاط
-                        this.collectItem(this.player, item);
-                    }
-                }
-            });
-        }
+        // لا توجد مساعدة - مهارة خالصة مطلوبة! 🔥
         
         // تنظيف العناصر التي تخرج من منطقة اللعب أو الشاشة
         const gameAreaWidth = GAME_CONFIG.width - 400;
@@ -2432,12 +2417,6 @@ class GameScene extends Phaser.Scene {
     checkRiskLevels() {
         // إذا كنا في وضع المخاطرة، لا نفحص مرة أخرى
         if (this.gameManager.isInRiskMode) return;
-        
-        // تعطيل smartCatch بعد 5% - لا سهولة بعد الآن! 🔥
-        if (this.gameManager.discount >= 5 && this.smartCatchEnabled) {
-            this.disableSmartCatchBox();
-            console.log('🚫 تم تعطيل وضع السهولة - التحدي الحقيقي يبدأ الآن!');
-        }
         
         // فحص كل مستوى لمعرفة إذا تم الوصول إليه
         for (const level of RISK_LEVELS) {
@@ -2957,97 +2936,11 @@ class GameScene extends Phaser.Scene {
     }
     
     increaseDifficulty(difficulty) {
-        // معالجة خاصة لمستوى 5% - العودة للصعوبة الطبيعية!
-        if (difficulty === 0.5) { // مستوى 5%
-            // إيقاف أي وضع سهولة مفعل مسبقاً
-            this.disableSmartCatchBox();
-            
-            // العودة للإعدادات الطبيعية الكلاسيكية
-            this.spawnTimer.delay = GAME_CONFIG.items.baseSpawnRate; // العودة للسرعة الأصلية (1500ms)
-            
-            console.log('🎯 تم إيقاف وضع السهولة - عودة للصعوبة الطبيعية');
-            return; // لا نزيد الصعوبة في مستوى 5%
-        }
-        
-        // باقي المستويات - صعوبة عادية متدرجة
-        const speedMultiplier = 1 + (difficulty * 0.3);
-        
-        // تقليل زمن الظهور (سرعة أكبر في الظهور)
-        const currentDelay = this.spawnTimer.delay;
-        this.spawnTimer.delay = Math.max(300, currentDelay - (difficulty * 200));
-        
-        // زيادة نسبة العناصر السيئة
-        // هذا سيتم تطبيقه في دالة spawnItem
-        
-        console.log(`🔥 الصعوبة زادت! المستوى: ${difficulty}`);
+        // لا توجد معالجة خاصة - صعوبة تدريجية للمحترفين فقط! 🔥
+        console.log(`🔥 الصعوبة زادت للمحترفين! المستوى: ${difficulty}`);
     }
     
-    enableSmartCatchBox() {
-        // تفعيل نظام التقاط ذكي - نطاق أوسع لالتقاط الساندوتشات
-        this.smartCatchEnabled = true;
-        
-        // إظهار مؤثر بصري للنطاق الموسع
-        if (this.smartCatchIndicator) {
-            this.smartCatchIndicator.destroy();
-        }
-        
-        // مؤشر بصري للنطاق الموسع حول اللاعب
-        this.smartCatchIndicator = this.add.graphics();
-        this.smartCatchIndicator.lineStyle(4, 0x00ff00, 0.6);
-        this.smartCatchIndicator.strokeRect(
-            this.player.x - 100, 
-            this.player.y - 50, 
-            200, 
-            100
-        );
-        this.smartCatchIndicator.setDepth(10);
-        
-        // تحديث موقع المؤشر مع اللاعب
-        this.updateSmartCatchIndicator();
-        
-        // الصندوق الذكي مفعل بصمت
-    }
-    
-    disableSmartCatchBox() {
-        // إيقاف نظام التقاط الذكي
-        this.smartCatchEnabled = false;
-        
-        // إزالة المؤشر البصري إن وجد
-        if (this.smartCatchIndicator) {
-            this.smartCatchIndicator.destroy();
-            this.smartCatchIndicator = null;
-        }
-        
-        // إزالة أي مؤقتات مرتبطة بالتحديث
-        if (this.smartCatchTimer) {
-            this.smartCatchTimer.destroy();
-            this.smartCatchTimer = null;
-        }
-        
-        console.log('❌ تم إيقاف وضع التقاط الذكي');
-    }
-    
-    updateSmartCatchIndicator() {
-        if (this.smartCatchEnabled && this.smartCatchIndicator) {
-            // تحديث موقع المؤشر كل إطار
-            this.time.addEvent({
-                delay: 16, // 60 FPS
-                repeat: -1,
-                callback: () => {
-                    if (this.smartCatchIndicator && this.player) {
-                        this.smartCatchIndicator.clear();
-                        this.smartCatchIndicator.lineStyle(4, 0x00ff00, 0.4);
-                        this.smartCatchIndicator.strokeRect(
-                            this.player.x - 100, 
-                            this.player.y - 50, 
-                            200, 
-                            100
-                        );
-                    }
-                }
-            });
-        }
-    }
+    // تم حذف جميع مودات السهولة - للمحترفين فقط! 🔥
     
     showRewardScreen(level) {
         // إيقاف اللعبة نهائياً
@@ -3446,8 +3339,7 @@ class GameScene extends Phaser.Scene {
             // تهيئة مستوى الصعوبة
             this.previousDifficulty = 1;
             
-            // إيقاف وضع السهولة - تبدأ اللعبة بالصعوبة الطبيعية
-            this.smartCatchEnabled = false;
+            // لا توجد مودات سهولة - للمحترفين فقط!
             
             // التأكد من حالة gameManager
             if (this.gameManager) {
