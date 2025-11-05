@@ -2154,14 +2154,7 @@ class GameScene extends Phaser.Scene {
             }
         }
         
-        // عرض مؤشر النطاق الموسع قبل 5%
-        if (this.player && this.gameManager.discount < 5) {
-            this.updateEasyModeIndicator();
-        } else if (this.easyModeIndicator) {
-            // إزالة المؤشر عند الوصول لـ 5%
-            this.easyModeIndicator.destroy();
-            this.easyModeIndicator = null;
-        }
+
         
         // فحص النطاق الموسع للتقاط ذكي في مستوى 5%
         if (this.smartCatchEnabled && this.player) {
@@ -2659,20 +2652,6 @@ class GameScene extends Phaser.Scene {
         this.updateSmartCatchIndicator();
         
         console.log('🧲 تم تفعيل الصندوق الذكي - نطاق التقاط أوسع!');
-    }
-    
-    updateEasyModeIndicator() {
-        // مؤشر الوضع السهل قبل 5%
-        if (!this.easyModeIndicator && this.player) {
-            this.easyModeIndicator = this.add.graphics();
-        }
-        
-        if (this.easyModeIndicator && this.player) {
-            this.easyModeIndicator.clear();
-            this.easyModeIndicator.lineStyle(3, 0x00ff88, 0.6);
-            this.easyModeIndicator.strokeCircle(this.player.x, this.player.y, 180); // نطاق واسع
-            this.easyModeIndicator.setDepth(5);
-        }
     }
     
     updateSmartCatchIndicator() {
