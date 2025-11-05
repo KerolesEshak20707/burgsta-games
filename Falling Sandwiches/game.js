@@ -49,8 +49,8 @@ const RISK_LEVELS = [
         message: "خصم 5%", 
         difficulty: 0.5,
         reached: false,
-        description: "🎯 مبروك! وصلت للمستوى الأول",
-        reward: "خصم 5% + وضع السهولة (التقاط ذكي + سرعة أبطأ) + ساندوتش مجاني!",
+        description: "مبروك! وصلت للمستوى الأول",
+        reward: "خصم 5% + وضع السهولة (التقاط ذكي + سرعة أبطأ) + فرصة ساندوتش ذهبي خاص قد يمنحك وجبة مجانية",
         nextRisk: "ستحصل على وضع خاص سهل جداً..."
     },
     { 
@@ -58,8 +58,8 @@ const RISK_LEVELS = [
         message: "خصم 10%", 
         difficulty: 1,
         reached: false,
-        description: "🎉 مبروك! وصلت للمستوى الثاني",
-        reward: "خصم 10% على طلبك + 🥇 سندويتش ذهبي سريع!",
+        description: "مبروك! وصلت للمستوى الثاني",
+        reward: "خصم 10% على طلبك + سندويتش ذهبي سريع",
         nextRisk: "الصعوبة ستزيد قليلاً..."
     },
     { 
@@ -67,8 +67,8 @@ const RISK_LEVELS = [
         message: "خصم 25%", 
         difficulty: 2,
         reached: false,
-        description: "🔥 ممتاز! مستوى متقدم",
-        reward: "خصم ربع على طلبك + 🥇 سندويتش ذهبي أسرع!", 
+        description: "ممتاز! مستوى متقدم",
+        reward: "خصم ربع على طلبك + سندويتش ذهبي أسرع", 
         nextRisk: "سرعة أكبر وعناصر سيئة أكثر!"
     },
     { 
@@ -76,8 +76,8 @@ const RISK_LEVELS = [
         message: "خصم 50%", 
         difficulty: 3,
         reached: false,
-        description: "⭐ رائع جداً! نصف الطريق",
-        reward: "خصم نصف السعر + 🥇 سندويتش ذهبي فائق السرعة!",
+        description: "رائع جداً! نصف الطريق",
+        reward: "خصم نصف السعر + سندويتش ذهبي فائق السرعة",
         nextRisk: "تحدي شديد في انتظارك..."
     },
     { 
@@ -85,16 +85,16 @@ const RISK_LEVELS = [
         message: "خصم 75%", 
         difficulty: 4,
         reached: false,
-        description: "🏆 إنجاز استثنائي!",
-        reward: "خصم ثلاثة أرباع السعر + 🥇 سندويتش ذهبي صاروخي!",
+        description: "إنجاز استثنائي!",
+        reward: "خصم ثلاثة أرباع السعر + سندويتش ذهبي صاروخي",
         nextRisk: "المرحلة الأخيرة... صعبة جداً!"
     },
     { 
         percent: 100, 
-        message: "🍔 وجبة مجانية كاملة!", 
+        message: "وجبة مجانية كاملة!", 
         difficulty: 5,
         reached: false,
-        description: "👑 المستوى الأسطوري!",
+        description: "المستوى الأسطوري!",
         reward: "وجبة مجانية 100% - تستحق التحية!",
         nextRisk: "هذا أقصى مستوى!"
     }
@@ -1770,6 +1770,50 @@ class GameScene extends Phaser.Scene {
         });
     }
     
+    showMessage(message, duration = 2000, color = '#ffffff') {
+        // إنشاء خلفية للرسالة
+        const messageBg = this.add.graphics();
+        messageBg.fillStyle(0x000000, 0.8);
+        messageBg.fillRoundedRect(GAME_CONFIG.width / 2 - 200, 100, 400, 80, 20);
+        
+        // إطار ملون حسب نوع الرسالة
+        messageBg.lineStyle(4, Phaser.Display.Color.HexStringToColor(color).color, 1);
+        messageBg.strokeRoundedRect(GAME_CONFIG.width / 2 - 200, 100, 400, 80, 20);
+        
+        // النص
+        const messageText = this.add.text(GAME_CONFIG.width / 2, 140, message, {
+            fontFamily: 'Arial',
+            fontSize: '28px',
+            fontWeight: 'bold',
+            color: color,
+            align: 'center',
+            wordWrap: { width: 360 }
+        }).setOrigin(0.5);
+        
+        // تأثير ظهور واختفاء
+        messageBg.setAlpha(0);
+        messageText.setAlpha(0);
+        
+        this.tweens.add({
+            targets: [messageBg, messageText],
+            alpha: 1,
+            duration: 300,
+            ease: 'Power2'
+        });
+        
+        this.tweens.add({
+            targets: [messageBg, messageText],
+            alpha: 0,
+            duration: 500,
+            delay: duration,
+            ease: 'Power2',
+            onComplete: () => {
+                messageBg.destroy();
+                messageText.destroy();
+            }
+        });
+    }
+    
     showDifficultyNotification(title, message) {
         // إنشاء container للإشعار منظم
         const notificationPopup = this.add.container(GAME_CONFIG.width / 2, 250);
@@ -2287,54 +2331,91 @@ class GameScene extends Phaser.Scene {
                     questionText.destroy();
                     choiceText.destroy();
                     countdownText.destroy();
+                    withdrawBg.destroy();
                     withdrawBtn.destroy();
+                    continueBg.destroy();
                     continueBtn.destroy();
                 }
             }
         });
 
-        // أزرار الاختيار في أسفل الشاشة
-        const withdrawBtn = this.add.text(centerX - 300, GAME_CONFIG.height - 120, '💰 انسحب الآن', {
-            fontSize: '36px', // مكبر من 20px إلى 36px
+        // أزرار الاختيار في أسفل الشاشة مع خلفية ملونة
+        
+        // خلفية زر الانسحاب (أخضر آمن)
+        const withdrawBg = this.add.graphics();
+        withdrawBg.fillStyle(0x27ae60, 0.9); // أخضر من ألوان اللعبة
+        withdrawBg.lineStyle(4, 0x2ecc71, 1);
+        withdrawBg.fillRoundedRect(centerX - 400, GAME_CONFIG.height - 150, 200, 80, 15);
+        withdrawBg.strokeRoundedRect(centerX - 400, GAME_CONFIG.height - 150, 200, 80, 15);
+        withdrawBg.setDepth(59);
+        
+        const withdrawBtn = this.add.text(centerX - 300, GAME_CONFIG.height - 110, 'انسحب الآن', {
+            fontSize: '32px',
             fill: '#ffffff',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 5,
-            padding: { x: 25, y: 15 }, // مكبر من 15,8 إلى 25,15
-            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 5, fill: true }
+            strokeThickness: 3,
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
         withdrawBtn.setDepth(60);
 
-        const continueBtn = this.add.text(centerX + 300, GAME_CONFIG.height - 120, '🔥 أكمل اللعب', {
-            fontSize: '36px', // مكبر من 20px إلى 36px
+        // خلفية زر المتابعة (أحمر تحذيري)
+        const continueBg = this.add.graphics();
+        continueBg.fillStyle(0xe74c3c, 0.9); // أحمر من ألوان اللعبة
+        continueBg.lineStyle(4, 0xc0392b, 1);
+        continueBg.fillRoundedRect(centerX + 200, GAME_CONFIG.height - 150, 200, 80, 15);
+        continueBg.strokeRoundedRect(centerX + 200, GAME_CONFIG.height - 150, 200, 80, 15);
+        continueBg.setDepth(59);
+        
+        const continueBtn = this.add.text(centerX + 300, GAME_CONFIG.height - 110, 'أكمل اللعب', {
+            fontSize: '32px',
             fill: '#ffffff',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 5,
-            padding: { x: 25, y: 15 }, // مكبر من 15,8 إلى 25,15
-            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 5, fill: true }
+            strokeThickness: 3,
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
         continueBtn.setDepth(60);
 
         // تأثيرات تفاعلية محسنة للأزرار
         withdrawBtn.on('pointerover', () => { 
-            withdrawBtn.setScale(1.15); 
-            withdrawBtn.setFill('#00ff00');
+            withdrawBtn.setScale(1.1);
+            withdrawBg.setScale(1.05);
+            withdrawBg.clear();
+            withdrawBg.fillStyle(0x2ecc71, 1); // أخضر أكثر إشراقاً
+            withdrawBg.lineStyle(4, 0x27ae60, 1);
+            withdrawBg.fillRoundedRect(centerX - 400, GAME_CONFIG.height - 150, 200, 80, 15);
+            withdrawBg.strokeRoundedRect(centerX - 400, GAME_CONFIG.height - 150, 200, 80, 15);
             if (this.sounds && this.sounds.collect) this.sounds.collect.play(); 
         });
         withdrawBtn.on('pointerout', () => { 
-            withdrawBtn.setScale(1); 
-            withdrawBtn.setFill('#ffffff');
+            withdrawBtn.setScale(1);
+            withdrawBg.setScale(1);
+            withdrawBg.clear();
+            withdrawBg.fillStyle(0x27ae60, 0.9);
+            withdrawBg.lineStyle(4, 0x2ecc71, 1);
+            withdrawBg.fillRoundedRect(centerX - 400, GAME_CONFIG.height - 150, 200, 80, 15);
+            withdrawBg.strokeRoundedRect(centerX - 400, GAME_CONFIG.height - 150, 200, 80, 15);
         });
 
         continueBtn.on('pointerover', () => { 
-            continueBtn.setScale(1.15); 
-            continueBtn.setFill('#ff3300');
+            continueBtn.setScale(1.1);
+            continueBg.setScale(1.05);
+            continueBg.clear();
+            continueBg.fillStyle(0xc0392b, 1); // أحمر أكثر إشراقاً
+            continueBg.lineStyle(4, 0xe74c3c, 1);
+            continueBg.fillRoundedRect(centerX + 200, GAME_CONFIG.height - 150, 200, 80, 15);
+            continueBg.strokeRoundedRect(centerX + 200, GAME_CONFIG.height - 150, 200, 80, 15);
             if (this.sounds && this.sounds.collect) this.sounds.collect.play(); 
         });
         continueBtn.on('pointerout', () => { 
-            continueBtn.setScale(1); 
-            continueBtn.setFill('#ffffff');
+            continueBtn.setScale(1);
+            continueBg.setScale(1);
+            continueBg.clear();
+            continueBg.fillStyle(0xe74c3c, 0.9);
+            continueBg.lineStyle(4, 0xc0392b, 1);
+            continueBg.fillRoundedRect(centerX + 200, GAME_CONFIG.height - 150, 200, 80, 15);
+            continueBg.strokeRoundedRect(centerX + 200, GAME_CONFIG.height - 150, 200, 80, 15);
         });
 
         // معالجة النقر على الأزرار
@@ -2349,7 +2430,9 @@ class GameScene extends Phaser.Scene {
             questionText.destroy();
             choiceText.destroy();
             countdownText.destroy();
+            withdrawBg.destroy();
             withdrawBtn.destroy();
+            continueBg.destroy();
             continueBtn.destroy();
         });
 
@@ -2364,7 +2447,9 @@ class GameScene extends Phaser.Scene {
             questionText.destroy();
             choiceText.destroy();
             countdownText.destroy();
+            withdrawBg.destroy();
             withdrawBtn.destroy();
+            continueBg.destroy();
             continueBtn.destroy();
         });
 
