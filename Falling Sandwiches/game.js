@@ -2881,7 +2881,7 @@ class GameScene extends Phaser.Scene {
                 this.tweens.add({
                     targets: goldenItem,
                     alpha: 0.2,
-                    duration: canCatch ? 150 : 80, // وميض سريع جداً
+                    duration: canGetFreeMeal ? 150 : 80, // وميض سريع جداً للوجبة المجانية، أسرع للخصمات
                     yoyo: true,
                     repeat: -1,
                     ease: 'Power2'
@@ -2891,7 +2891,7 @@ class GameScene extends Phaser.Scene {
                 this.tweens.add({
                     targets: goldenItem,
                     rotation: Math.PI * 4, // دوران مضاعف
-                    duration: canCatch ? 400 : 200, // دوران سريع جداً
+                    duration: canGetFreeMeal ? 400 : 200, // دوران أبطأ للوجبة المجانية، أسرع للخصمات
                     repeat: -1,
                     ease: 'Linear'
                 });
@@ -2913,7 +2913,7 @@ class GameScene extends Phaser.Scene {
                 
                 // إضافة مؤقت للاختفاء السريع
                 this.time.addEvent({
-                    delay: canCatch ? 4000 : 2500, // يختفي بسرعة!
+                    delay: canGetFreeMeal ? 4000 : 2500, // وقت أطول للوجبة المجانية، أقل للخصمات
                     callback: () => {
                         if (goldenItem && goldenItem.active) {
                             // إضافة تأثير اختفاء
