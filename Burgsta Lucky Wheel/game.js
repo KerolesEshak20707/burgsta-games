@@ -2222,8 +2222,8 @@ const gameManager = new GameManager();
 
 const config = {
     type: Phaser.AUTO,
-    width: 3840,
-    height: 2160,
+    width: 1280,
+    height: 720,
     backgroundColor: '#0D5016', // أخضر كازينو داكن
     parent: 'gameContainer',
     scene: [GameScene],
@@ -2231,15 +2231,15 @@ const config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         parent: 'gameContainer',
-        width: 3840,
-        height: 2160,
+        width: 1280,
+        height: 720,
         min: {
             width: 800,
             height: 600
         },
         max: {
-            width: 3840,
-            height: 2160
+            width: 1280,
+            height: 720
         },
         expandParent: false,
         autoRound: true
