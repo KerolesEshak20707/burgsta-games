@@ -1665,12 +1665,17 @@ class GameScene extends Phaser.Scene {
     }
     
     handleBadItem() {
-        // 💥 السندوتش الفاسد يخسرك من الخصم المُجمّع
+        // 💥 القنبلة تخصم من الخصم المُجمّع
         const lostDiscount = Math.abs(GAME_CONFIG.discount.badItem);
-        this.gameManager.addDiscount(-lostDiscount); // خسارة من الخصم المُجمّع
         
-        // 🍟 يخسر كيس بطاطس (حياة) فقط إذا كان الخصم 0.0%
-        if (this.gameManager.discount <= 0) {
+        // 🍟 فحص إذا كان الخصم سيصل لـ0% أو أقل بعد الخصم
+        const discountAfterLoss = this.gameManager.discount - lostDiscount;
+        
+        // خصم النسبة أولاً
+        this.gameManager.addDiscount(-lostDiscount);
+        
+        // إذا وصل الخصم لـ0% أو أقل → خسارة حياة إضافية!
+        if (discountAfterLoss <= 0) {
             this.gameManager.loseLife();
             this.showFloatingText(`-${lostDiscount.toFixed(1)}% و حياة!`, GAME_CONFIG.colors.danger);
         } else {
