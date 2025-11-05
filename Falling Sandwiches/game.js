@@ -1513,6 +1513,12 @@ class GameScene extends Phaser.Scene {
         // تحديد منطقة اللعب (الجانب الأيسر فقط - قبل الخط الفاصل)
         const gameAreaWidth = GAME_CONFIG.width - 400; // ترك 400px للوحة البيانات الكبيرة
         
+        // وضع السهولة الفائقة قبل 5%
+        if (this.gameManager.discount < 5) {
+            this.spawnEasyMode(gameAreaWidth);
+            return;
+        }
+        
         // تحديد نوع العنصر (بدون سندوتشات ذهبية عادية)
         const currentDifficulty = this.getCurrentDifficultyLevel();
         
@@ -1522,11 +1528,7 @@ class GameScene extends Phaser.Scene {
         
         // إنتاج سندوتشات متوازنة مع الأحجام الكبيرة 🔥💀
         let numItems;
-        if (this.gameManager.discount < 3) {
-            numItems = Math.floor(Math.random() * 2) + 2; // 2-3 سندوتشات (مناسب للأحجام الكبيرة!)
-        } else if (this.gameManager.discount < 5) {
-            numItems = Math.floor(Math.random() * 2) + 3; // 3-4 سندوتشات 
-        } else if (this.gameManager.discount < 10) {
+        if (this.gameManager.discount < 10) {
             numItems = Math.floor(Math.random() * 3) + 3; // 3-5 سندوتشات 
         } else if (this.gameManager.discount < 15) {
             numItems = Math.floor(Math.random() * 3) + 4; // 4-6 سندوتشات 
@@ -1553,6 +1555,47 @@ class GameScene extends Phaser.Scene {
             const itemDelay = Math.random() * 300;
             this.time.delayedCall(itemDelay, () => {
                 this.createFallingItem(x, itemType, texture);
+            });
+        }
+    }
+    
+    spawnEasyMode(gameAreaWidth) {
+        // الوضع السهل قبل 5% - ساندوتشات جيدة كثيرة ومتقاربة!
+        
+        // كمية كبيرة من الساندوتشات الجيدة
+        const numGoodItems = Math.floor(Math.random() * 4) + 6; // 6-9 ساندوتشات جيدة!
+        const numBadItems = Math.floor(Math.random() * 2) + 1;  // 1-2 سيئة فقط
+        
+        // منطقة مركزة في الوسط لسهولة الوصول
+        const centerX = gameAreaWidth / 2;
+        const spawnRadius = Math.min(300, gameAreaWidth / 3); // منطقة مركزة
+        
+        // إنتاج الساندوتشات الجيدة أولاً (متتالية وسريعة)
+        for (let i = 0; i < numGoodItems; i++) {
+            // مواقع قريبة من الوسط
+            const angle = (Math.PI * 2 / numGoodItems) * i + (Math.random() - 0.5);
+            const distance = Math.random() * spawnRadius;
+            const x = Math.max(50, Math.min(gameAreaWidth - 50, 
+                centerX + Math.cos(angle) * distance));
+            
+            // تأخير قصير بين الساندوتشات الجيدة (سريعة متتالية)
+            const itemDelay = i * 150; // كل 150ms ساندوتش جديد
+            this.time.delayedCall(itemDelay, () => {
+                this.createFallingItem(x, 'good', 'goodSandwich');
+            });
+        }
+        
+        // إنتاج قليل من السيئة (بعيدة عن الوسط)
+        for (let i = 0; i < numBadItems; i++) {
+            // مواقع عشوائية بعيدة عن الوسط
+            const x = Math.random() < 0.5 ? 
+                Math.random() * 100 + 25 : // يسار بعيد
+                gameAreaWidth - Math.random() * 100 - 75; // يمين بعيد
+            
+            // تأخير أطول للعناصر السيئة
+            const itemDelay = (numGoodItems * 150) + (i * 400);
+            this.time.delayedCall(itemDelay, () => {
+                this.createFallingItem(x, 'bad', 'badItem');
             });
         }
     }
