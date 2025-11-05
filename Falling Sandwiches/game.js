@@ -8,7 +8,7 @@ const GAME_CONFIG = {
     
     // إعدادات اللاعب
     player: {
-        speed: 25,  // سرعة صاروخية للاستجابة الفورية
+        speed: 40,  // سرعة أعلى للاستجابة الفورية السريعة
         size: 80
     },
     
@@ -16,9 +16,9 @@ const GAME_CONFIG = {
     items: {
         baseSpeed: 70,         // سرعة أبطأ - وقت للإمساك بالعناصر
         speedIncrement: 20,    // زيادة تدريجية
-        baseSpawnRate: 4000,   // فترات أطول بكثير - 4 ثواني
+        baseSpawnRate: 1500,   // بداية سريعة - ثانية ونص
         spawnRateDecrement: 80, // تسارع تدريجي
-        minSpawnRate: 1500     // حد أدنى أبطأ - ثانية ونص
+        minSpawnRate: 800      // حد أدنى أسرع
     },
     
     // نظام الخصم - صعوبة عالية جداً 🔥
@@ -310,15 +310,15 @@ class GameManager {
         let spawnMultiplier = 1;
         
         if (this.discount >= 25) {
-            spawnMultiplier = 0.4; // كثيف بس مش جنون �
+            spawnMultiplier = 0.3; // كثيف بس مش جنون �
         } else if (this.discount >= 15) {
-            spawnMultiplier = 0.6; // متوسط السرعة 
+            spawnMultiplier = 0.4; // متوسط السرعة 
         } else if (this.discount >= 10) {
-            spawnMultiplier = 0.8;  // بداية التسريع
+            spawnMultiplier = 0.6;  // بداية التسريع
         } else if (this.discount >= 5) {
-            spawnMultiplier = 1.0;  // نفس المعدل حتى 10% - مرحلة تدريبية
+            spawnMultiplier = 0.8;  // نفس المعدل حتى 10% - مرحلة تدريبية
         } else {
-            spawnMultiplier = 2.5;  // هدوء وراحة قبل 5% - وقت للتفكير بهدوء
+            spawnMultiplier = 1.0;  // ثانية ونص - بداية سريعة بدون ملل!
         }
         
         const rate = GAME_CONFIG.items.baseSpawnRate * spawnMultiplier;
@@ -1517,49 +1517,33 @@ class GameScene extends Phaser.Scene {
         const currentDifficulty = this.getCurrentDifficultyLevel();
         
         // احتماليات متدرجة حسب مستوى الخصم
-        let badChance, goodChance, numItems;
+        let badChance;
         
         if (this.gameManager.discount < 5) {
-            // سهولة منطقية - ساندوتشات جيدة أكثر بس مش مجنونة
-            badChance = 0.25; // 25% سيئة فقط (بدلاً من 60%+)
-            goodChance = 0.75; // 75% جيدة
-            numItems = Math.floor(Math.random() * 3) + 3; // 3-5 ساندوتشات (+1 من الأصل)
+            badChance = 0.35; // 35% سيئة - زيادة كما طلبت
         } else if (this.gameManager.discount < 10) {
-            badChance = 0.50; // 50% سيئة
-            goodChance = 0.50; // 50% جيدة
-            numItems = Math.floor(Math.random() * 3) + 4; // 4-6 ساندوتشات (+1 من الأصل)
+            badChance = 0.55; // 55% سيئة 
         } else if (this.gameManager.discount < 15) {
-            badChance = 0.65; // 65% سيئة
-            goodChance = 0.35; // 35% جيدة
-            numItems = Math.floor(Math.random() * 3) + 5; // 5-7 سندوتشات (+1 من الأصل) 
+            badChance = 0.70; // 70% سيئة
         } else {
-            // احتماليات متوازنة - عناصر جيدة أكثر! ✨
-            badChance = Math.min(0.6, 0.4 + (currentDifficulty * 0.05)); // من 40% إلى 60% سيئة فقط!
-            goodChance = 1 - badChance; // قليل جداً من العناصر الجيدة
-            numItems = Math.floor(Math.random() * 4) + 6; // 6-9 سندوتشات (+1 من الأصل)
+            badChance = 0.80; // 80% سيئة في المراحل الصعبة
         }
         
-        // 🕰️ إنشاء السندوتشات بفترات زمنية متغيرة لزيادة التشويق
-        for (let i = 0; i < numItems; i++) {
-            const x = Math.random() * (gameAreaWidth - 50) + 25;
-            let itemType, texture;
-            const rand = Math.random();
-            
-            // لا توجد سندوتشات ذهبية عادية - السندوتش الذهبي حدث خاص!
-            if (rand < goodChance) {
-                itemType = 'good';
-                texture = 'goodSandwich';
-            } else {
-                itemType = 'bad';
-                texture = 'badItem';
-            }
-            
-            // ⏰ تأخير عشوائي بين كل سندوتش (من 0 إلى 300ms)
-            const itemDelay = Math.random() * 300;
-            this.time.delayedCall(itemDelay, () => {
-                this.createFallingItem(x, itemType, texture);
-            });
+        // إنتاج عنصر واحد فقط في كل مرة - بدون انتظار!
+        const x = Math.random() * (gameAreaWidth - 50) + 25;
+        let itemType, texture;
+        const rand = Math.random();
+        
+        if (rand < badChance) {
+            itemType = 'bad';
+            texture = 'badItem';
+        } else {
+            itemType = 'good';
+            texture = 'goodSandwich';
         }
+        
+        // إنشاء فوري بدون تأخير
+        this.createFallingItem(x, itemType, texture);
     }
     
     checkSpecialGoldenSandwich() {
