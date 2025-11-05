@@ -427,12 +427,12 @@ class GameScene extends Phaser.Scene {
         
         // ✅ إعداد مراقبة حدود العالم لحذف العناصر  
         const gameAreaWidth = GAME_CONFIG.width - 200; // مساحة مناسبة للوحة مع الدقة HD
-        this.physics.world.setBounds(0, 0, gameAreaWidth, GAME_CONFIG.height);
+        this.physics.world.setBounds(0, 0, gameAreaWidth, GAME_CONFIG.height + 100); // امتداد أسفل الشاشة
         
         this.physics.world.on('worldbounds', (body) => {
             // نتعامل فقط مع العناصر التي ليست من fallingItems
             // العناصر المتساقطة لها معالج خاص في createFallingItem
-            if (body.gameObject && (body.gameObject.y > GAME_CONFIG.height || body.gameObject.x > gameAreaWidth)) {
+            if (body.gameObject && (body.gameObject.y > GAME_CONFIG.height + 50 || body.gameObject.x > gameAreaWidth)) {
                 if (!this.fallingItems.contains(body.gameObject)) {
                     // للعناصر الأخرى مثل التأثيرات المؤقتة
                     body.gameObject.destroy();
@@ -758,46 +758,46 @@ class GameScene extends Phaser.Scene {
         
         let currentY = y; // البداية من الأسفل
         
-        // رسم برجر واقعي متدرج - حجم أكبر للشاشة 4K
-        const burgerWidth = 160;  // عرض مضاعف للبرجر للشاشة 4K
-        const burgerCenterX = x + 50;  // مركز البرجر مع تعديل للحجم الأكبر
+        // رسم برجر واقعي متدرج - حجم مناسب للدقة HD
+        const burgerWidth = 60;  // عرض مناسب للدقة HD
+        const burgerCenterX = x + 20;  // مركز البرجر داخل اللوحة
         
-        // 1. الطبق - قاعدة عريضة أكبر
+        // 1. الطبق - قاعدة عريضة مناسبة
         this.ui.miniSandwichLayers.fillStyle(0xf5f5f5);
-        this.ui.miniSandwichLayers.fillEllipse(burgerCenterX, currentY + 8, 190, 16); // حجم مضاعف
-        this.ui.miniSandwichLayers.lineStyle(2, 0xd0d0d0);
-        this.ui.miniSandwichLayers.strokeEllipse(burgerCenterX, currentY + 8, 190, 16);
-        // ظل الطبق أكبر
+        this.ui.miniSandwichLayers.fillEllipse(burgerCenterX, currentY + 4, 70, 8); // حجم مناسب للدقة HD
+        this.ui.miniSandwichLayers.lineStyle(1, 0xd0d0d0);
+        this.ui.miniSandwichLayers.strokeEllipse(burgerCenterX, currentY + 4, 70, 8);
+        // ظل الطبق
         this.ui.miniSandwichLayers.fillStyle(0xe8e8e8);
-        this.ui.miniSandwichLayers.fillEllipse(burgerCenterX, currentY + 12, 170, 8);
+        this.ui.miniSandwichLayers.fillEllipse(burgerCenterX, currentY + 6, 60, 4);
         
         // 2. الخبز السفلي (5%) - قاعدة البرجر
         if (discount >= 5) {
-            currentY -= 12;
+            currentY -= 6;
             // الخبز السفلي مقبب قليلاً
             this.ui.miniSandwichLayers.fillStyle(0xdaa520);
-            this.ui.miniSandwichLayers.fillRoundedRect(burgerCenterX - burgerWidth/2, currentY, burgerWidth, 10, 5);
+            this.ui.miniSandwichLayers.fillRoundedRect(burgerCenterX - burgerWidth/2, currentY, burgerWidth, 5, 2);
             // لون أغمق للعمق
             this.ui.miniSandwichLayers.fillStyle(0xb8860b);
-            this.ui.miniSandwichLayers.fillRoundedRect(burgerCenterX - burgerWidth/2 + 2, currentY + 2, burgerWidth - 4, 6, 3);
+            this.ui.miniSandwichLayers.fillRoundedRect(burgerCenterX - burgerWidth/2 + 1, currentY + 1, burgerWidth - 2, 3, 1);
             // ملمس الخبز
             this.ui.miniSandwichLayers.fillStyle(0xcd9b1d);
-            this.ui.miniSandwichLayers.fillRoundedRect(burgerCenterX - burgerWidth/2 + 4, currentY + 4, burgerWidth - 8, 2, 1);
+            this.ui.miniSandwichLayers.fillRoundedRect(burgerCenterX - burgerWidth/2 + 2, currentY + 2, burgerWidth - 4, 1, 1);
         }
         
         // 3. الجبن الأول (15%) - جبن منصهر ينسكب على الجوانب
         if (discount >= 15) {
-            currentY -= 3;
-            const cheeseWidth = burgerWidth - 8;
+            currentY -= 2;
+            const cheeseWidth = burgerWidth - 4;
             // جبن أساسي
             this.ui.miniSandwichLayers.fillStyle(0xffd700);
-            this.ui.miniSandwichLayers.fillRect(burgerCenterX - cheeseWidth/2, currentY, cheeseWidth, 2);
+            this.ui.miniSandwichLayers.fillRect(burgerCenterX - cheeseWidth/2, currentY, cheeseWidth, 1);
             // جبن منصهر يتدلى على الجوانب
             this.ui.miniSandwichLayers.fillStyle(0xffeb3b);
-            this.ui.miniSandwichLayers.fillRoundedRect(burgerCenterX - cheeseWidth/2 - 4, currentY + 1, cheeseWidth + 8, 2, 2);
+            this.ui.miniSandwichLayers.fillRoundedRect(burgerCenterX - cheeseWidth/2 - 2, currentY + 1, cheeseWidth + 4, 1, 1);
             // لمعة الجبن
             this.ui.miniSandwichLayers.fillStyle(0xffffe0, 0.7);
-            this.ui.miniSandwichLayers.fillRect(burgerCenterX - cheeseWidth/2 + 2, currentY, cheeseWidth - 4, 1);
+            this.ui.miniSandwichLayers.fillRect(burgerCenterX - cheeseWidth/2 + 1, currentY, cheeseWidth - 2, 1);
         }
         
         // 4. اللحم الأول (25%) - برجر مشوي سميك
@@ -2257,14 +2257,14 @@ class GameScene extends Phaser.Scene {
         // عند الخسارة، لا يحصل اللاعب على أي خصم لأنه لم ينسحب
         // الخصم يُحصل عليه فقط عند الانسحاب الآمن أو الفوز الكامل
         
-        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 150, finalMessage, {
+        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 50, finalMessage, {
             fontFamily: 'Cairo, Arial',
-            fontSize: '60px', // تكبير الخط 3 مرات
+            fontSize: '18px', // حجم مناسب للدقة HD
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 6, // تكبير السمك أيضاً
+            strokeThickness: 2, // سمك مناسب للدقة HD
             align: 'center',
-            wordWrap: { width: GAME_CONFIG.width - 200 } // إضافة word wrap
+            wordWrap: { width: GAME_CONFIG.width - 100 } // عرض مناسب للدقة HD
         }).setOrigin(0.5).setDepth(100); // طبقة عالية فوق كل العناصر
         
         // إحصائيات نهائية
