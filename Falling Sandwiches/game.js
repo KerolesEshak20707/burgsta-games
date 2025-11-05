@@ -1277,23 +1277,37 @@ class GameScene extends Phaser.Scene {
         }
         
         // إزالة العنصر
-        // تنظيف التأثيرات الخاصة قبل التدمير
+        // تنظيف شامل للتأثيرات الخاصة قبل التدمير
         if (item.updateGlow) {
             item.updateGlow.destroy();
+        }
+        if (item.colorTimer) {
+            item.colorTimer.destroy();
         }
         if (item.glowEffect) {
             item.glowEffect.destroy();
         }
+        if (item.allEffects) {
+            item.allEffects.forEach(effect => {
+                if (effect && effect.destroy) effect.destroy();
+            });
+        }
         
         item.destroy();
         
-        // فحص إذا كان ساندوتش مجاني خاص
+        // فحص إذا كان الساندوتش الذهبي الموحد الجديد
+        if (item.isUnifiedGoldenSandwich) {
+            this.handleUnifiedGoldenSandwich(item);
+            return;
+        }
+        
+        // فحص إذا كان ساندوتش مجاني خاص (النظام القديم - للتوافق)
         if (item.isFreeSandwich) {
             this.handleFreeSandwich(item);
             return;
         }
         
-        // فحص إذا كان ساندوتش ذهبي خاص
+        // فحص إذا كان ساندوتش ذهبي خاص (النظام القديم - للتوافق)
         if (item.isGoldenSandwich) {
             this.handleSpecialGoldenSandwich(item);
             return;
@@ -1334,6 +1348,57 @@ class GameScene extends Phaser.Scene {
             }
         } catch (error) {
             // تجاهل أخطاء الأصوات
+        }
+    }
+
+    handleUnifiedGoldenSandwich(item) {
+        // الساندوتش الذهبي الموحد الجديد!
+        
+        if (item.canGetFreeMeal) {
+            // يمكن الحصول على وجبة مجانية!
+            if (this.gameManager.useFreeSandwich()) {
+                // وجبة مجانية كاملة - 100% خصم!
+                this.gameManager.discount = 100;
+                this.gameManager.gameWon = true;
+                
+                // إيقاف اللعبة
+                this.spawnTimer.paused = true;
+                this.physics.pause();
+                
+                // رسالة احتفال مميزة
+                this.showUnifiedGoldenCelebration();
+                
+                // صوت مميز
+                if (this.sounds && this.sounds.golden) {
+                    this.sounds.golden.play();
+                }
+                
+                // إظهار شاشة الفوز بعد 4 ثوانِ
+                this.time.addEvent({
+                    delay: 4000,
+                    callback: () => {
+                        this.showWinScreen();
+                    }
+                });
+            }
+        } else {
+            // خصمات مضاعفة فقط - لا وجبات مجانية متبقية
+            const goldenBonus = GAME_CONFIG.discount.goldenSandwich * 2.5; // خصم مضاعف!
+            this.gameManager.addDiscount(goldenBonus);
+            this.gameManager.score += 150; // نقاط مضاعفة
+            this.gameManager.goldenCaught++;
+            
+            // تأثيرات بصرية
+            this.showFloatingText(`+${goldenBonus.toFixed(1)}% ذهبي مضاعف!`, '#C0C0C0', 2.0);
+            this.createSpecialEffect(this.player.x, this.player.y);
+            
+            // صوت مميز
+            if (this.sounds && this.sounds.golden) {
+                this.sounds.golden.play();
+            }
+            
+            // رسالة نجاح
+            this.showMessage('ممتاز! خصم ذهبي مضاعف! (انتهت الوجبات المجانية اليوم)', 3500, '#C0C0C0');
         }
     }
     
@@ -1395,11 +1460,11 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
         mainTitle.setDepth(201);
 
-        // شرح ما هو الساندوتش الذهبي
+        // شرح ما هو الساندوتش الذهبي المجاني مع توضيح الندرة
         const explanation = this.add.text(GAME_CONFIG.width / 2, 600, 
-            'الساندوتش الذهبي هو ساندوتش سحري نادر جداً\n' +
+            'الساندوتش الذهبي المجاني نادر جداً - 5% فقط احتمال ظهور!\n' +
             'يمنحك وجبة مجانية كاملة 100% بدون أي شروط!\n' + 
-            'يظهر مرتين فقط يومياً لأكثر اللاعبين مهارة وحظاً', {
+            'يظهر مرتين فقط يومياً - أنت محظوظ جداً!', {
             fontSize: '48px',
             fill: '#FFFFFF',
             fontFamily: 'Arial',
@@ -1464,6 +1529,92 @@ class GameScene extends Phaser.Scene {
                 y: particle.y - 200,
                 alpha: 0,
                 duration: 3000 + Math.random() * 1000,
+                ease: 'Power2.easeOut',
+                onComplete: () => particle.destroy()
+            });
+        }
+    }
+
+    showUnifiedGoldenCelebration() {
+        // خلفية احتفالية متدرجة ذهبية
+        const celebrationBg = this.add.graphics();
+        celebrationBg.fillGradientStyle(
+            0x000000, 0x000000, 0xFFD700, 0xFFD700, 0.9
+        );
+        celebrationBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
+        celebrationBg.setDepth(200);
+
+        // العنوان الرئيسي
+        const mainTitle = this.add.text(GAME_CONFIG.width / 2, 350, 
+            'مبروك! الساندوتش الذهبي النادر!', {
+            fontSize: '88px',
+            fill: '#FFD700',
+            fontFamily: 'Arial Black',
+            stroke: '#FFFFFF',
+            strokeThickness: 8,
+            align: 'center',
+            shadow: { offsetX: 4, offsetY: 4, color: '#000000', blur: 8, fill: true }
+        }).setOrigin(0.5);
+        mainTitle.setDepth(201);
+
+        // شرح ما هو الساندوتش الموحد
+        const explanation = this.add.text(GAME_CONFIG.width / 2, 550, 
+            'الساندوتش الذهبي الموحد - نادر جداً!\n' +
+            'مرتين فقط يومياً = وجبة مجانية 100%\n' + 
+            'باقي اليوم = خصمات ذهبية مضاعفة فقط', {
+            fontSize: '52px',
+            fill: '#FFFFFF',
+            fontFamily: 'Arial',
+            stroke: '#FFD700',
+            strokeThickness: 4,
+            align: 'center',
+            lineSpacing: 18,
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 5, fill: true }
+        }).setOrigin(0.5);
+        explanation.setDepth(201);
+
+        // ما حدث الآن
+        const whatHappened = this.add.text(GAME_CONFIG.width / 2, 800, 
+            'لقد حصلت على وجبة مجانية 100%!\n' +
+            '• التقطت الساندوتش في الوقت المناسب\n' +
+            '• كان لديك فرص متبقية اليوم\n' +
+            '• استمتع بوجبتك المجانية في برجستا!', {
+            fontSize: '46px',
+            fill: '#FFFACD',
+            fontFamily: 'Arial',
+            stroke: '#8B7D6B',
+            strokeThickness: 3,
+            align: 'center',
+            lineSpacing: 15,
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+        }).setOrigin(0.5);
+        whatHappened.setDepth(201);
+
+        // تأثيرات متحركة
+        this.tweens.add({
+            targets: mainTitle,
+            scaleX: 1.1,
+            scaleY: 1.1,
+            duration: 1000,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+
+        // جزيئات ذهبية
+        for (let i = 0; i < 25; i++) {
+            const particle = this.add.graphics();
+            particle.fillStyle(0xFFD700, 0.9);
+            particle.fillCircle(0, 0, Math.random() * 10 + 5);
+            particle.x = Math.random() * GAME_CONFIG.width;
+            particle.y = Math.random() * GAME_CONFIG.height;
+            particle.setDepth(202);
+
+            this.tweens.add({
+                targets: particle,
+                y: particle.y - 300,
+                alpha: 0,
+                duration: 3500 + Math.random() * 1500,
                 ease: 'Power2.easeOut',
                 onComplete: () => particle.destroy()
             });
@@ -2567,6 +2718,65 @@ class GameScene extends Phaser.Scene {
             timer: countdownTimer
         };
     }
+
+    addDiamondEffects(goldenItem) {
+        // تأثيرات الماس المتقدمة للوجبة المجانية
+        const glowEffect = this.add.graphics();
+        
+        // حلقات متوهجة متعددة
+        glowEffect.lineStyle(10, 0xFFD700, 0.9);
+        glowEffect.strokeCircle(0, 0, 90);
+        glowEffect.lineStyle(6, 0xFFFFFF, 0.8);
+        glowEffect.strokeCircle(0, 0, 65);
+        glowEffect.lineStyle(4, 0xFFFACD, 0.9);
+        glowEffect.strokeCircle(0, 0, 40);
+        glowEffect.setDepth(99);
+        
+        // ربط التأثيرات بالساندوتش
+        goldenItem.glowEffect = glowEffect;
+        goldenItem.updateGlow = this.time.addEvent({
+            delay: 16,
+            repeat: -1,
+            callback: () => {
+                if (goldenItem.active) {
+                    glowEffect.x = goldenItem.x;
+                    glowEffect.y = goldenItem.y;
+                } else {
+                    glowEffect.destroy();
+                }
+            }
+        });
+        
+        // دوران سحري
+        this.tweens.add({
+            targets: goldenItem,
+            rotation: Math.PI * 4,
+            duration: 2500,
+            repeat: -1,
+            ease: 'Linear'
+        });
+        
+        // نبضة متألقة
+        this.tweens.add({
+            targets: goldenItem,
+            scaleX: 1.3,
+            scaleY: 1.3,
+            duration: 800,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+        
+        // وميض الماس
+        this.tweens.add({
+            targets: glowEffect,
+            alpha: 0.4,
+            duration: 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Power2'
+        });
+    }
     
     takeReward(level) {
         // اللاعب اختار الانسحاب والحصول على المكافأة
@@ -2586,9 +2796,15 @@ class GameScene extends Phaser.Scene {
         // اللاعب اختار المواصلة والمخاطرة
         this.gameManager.isInRiskMode = false;
         
-        // الساندوتش المجاني ينزل في كل جيم عند 5% أو أكثر، لكن بسرعة متغيرة
+        // الساندوتش الذهبي الموحد - نادر جداً!
         if (level.percent >= 5) {
-            this.triggerFreeSandwichEvent();
+            const shouldAppearGoldenSandwich = Math.random() < 0.08; // 8% فقط احتمال ظهور!
+            if (shouldAppearGoldenSandwich) {
+                console.log('� الساندوتش الذهبي النادر سيظهر!');
+                this.triggerUnifiedGoldenSandwich();
+            } else {
+                console.log('🚫 الساندوتش الذهبي لم يظهر - نادر جداً!');
+            }
         }
         
         // زيادة الصعوبة حسب المستوى
@@ -2601,25 +2817,19 @@ class GameScene extends Phaser.Scene {
         // تشغيل صوت المواصلة
         this.sounds.bad.play(); // صوت تحذيري
         
-        // 🌟 إطلاق السندوتش الذهبي كمكافأة للمخاطرة!
-        this.launchRiskGoldenSandwich(level);
+        // تم دمج السندوتش الذهبي مع المجاني في دالة واحدة موحدة
         
         // عرض رسالة تشجيعية
         this.showEncouragementMessage(level);
     }
     
-    launchRiskGoldenSandwich(level) {
-        // السندوتش الذهبي - نادر جداً وصعب للغاية!
-        const shouldAppear = Math.random() < 0.15; // 15% فقط احتمال ظهور!
-        if (!shouldAppear) {
-            console.log('🚫 السندوتش الذهبي لم يظهر هذه المرة - حظ أفضل في المرة القادمة!');
-            return; // لا يظهر هذه المرة
-        }
+    triggerUnifiedGoldenSandwich() {
+        // الساندوتش الذهبي الموحد - نادر جداً وصعب للغاية!
+        console.log('🏆 إطلاق الساندوتش الذهبي الموحد!');
         
-        console.log('🏆 إطلاق السندوتش الذهبي النادر - تحدي صعب!');
-        
-        // تحديد إذا كان قابل للإمساك اليوم (مرتين يومياً فقط)
-        const canCatch = this.gameManager.canCatchGoldenSandwich();
+        // تحديد الحالة اليومية للوجبات المجانية
+        const canGetFreeMeal = this.gameManager.canGetFreeSandwich();
+        const freeMealsLeft = 2 - this.gameManager.freeSandwichesUsed;
         
         // تأخير عشوائي لجعل الظهور غير متوقع
         const randomDelay = Math.random() * 3000 + 500; // من نصف ثانية إلى 3.5 ثانية
@@ -2629,35 +2839,38 @@ class GameScene extends Phaser.Scene {
                 const gameAreaWidth = GAME_CONFIG.width - 400;
                 const x = Math.random() * (gameAreaWidth - 50) + 25;
                 
-                // إنشاء السندوتش الذهبي
-                const goldenItem = this.physics.add.sprite(x, -30, 'goldenSandwich');
-                goldenItem.itemType = 'golden';
-                goldenItem.isGoldenSandwich = true;
-                goldenItem.canBeCaught = canCatch;
+                // إنشاء الساندوتش الذهبي الموحد
+                const goldenItem = this.physics.add.sprite(x, -30, 'sandwich1');
+                goldenItem.itemType = 'unifiedGolden';
+                goldenItem.isUnifiedGoldenSandwich = true;
+                goldenItem.canGetFreeMeal = canGetFreeMeal;
                 
                 // السرعة: صاروخية تجعل الإمساك به تحدي حقيقي!
-                const baseSpeed = this.gameManager.getCurrentItemSpeed() * 6; // سرعة صاروخية!
-                const finalSpeed = canCatch ? baseSpeed * 0.75 : baseSpeed * 1.5; // حتى لو قابل للإمساك - صعب جداً!
+                const baseSpeed = this.gameManager.getCurrentItemSpeed() * 5; // سرعة صاروخية!
+                const finalSpeed = canGetFreeMeal ? baseSpeed * 0.8 : baseSpeed * 1.2; // أبطأ قليلاً للوجبة المجانية
                 goldenItem.setVelocityY(finalSpeed);
                 
                 // حركة جانبية عشوائية لزيادة الصعوبة
-                const sideMovement = canCatch ? 
-                    Phaser.Math.Between(-150, 150) : // حركة متوسطة إذا قابل للإمساك
-                    Phaser.Math.Between(-300, 300);  // حركة جنونية إذا غير قابل للإمساك
+                const sideMovement = canGetFreeMeal ? 
+                    Phaser.Math.Between(-120, 120) : // حركة متوسطة للوجبة المجانية
+                    Phaser.Math.Between(-200, 200);  // حركة أقل جنونية للخصمات
                 goldenItem.setVelocityX(sideMovement);
                 
-                // تأثيرات بصرية حسب إمكانية الإمساك
-                goldenItem.setScale(1.8); // أصغر قليلاً لزيادة الصعوبة
-                goldenItem.setDepth(50); // فوق العناصر العادية
+                // تأثيرات بصرية حسب نوع المكافأة
+                goldenItem.setDisplaySize(150, 150); // حجم مميز
+                goldenItem.setDepth(100); // فوق كل شيء
                 
-                if (canCatch) {
-                    // قابل للإمساك - توهج أخضر مع تحذير
-                    goldenItem.setTint(0x32CD32); // أخضر ليموني
-                    this.showMessage('ساندوتش ذهبي نادر! سريع جداً - تحدي صعب!', 2500, '#32CD32');
+                if (canGetFreeMeal) {
+                    // وجبة مجانية متاحة - توهج ذهبي ماسي!
+                    goldenItem.setTint(0xFFD700); // ذهبي براق
+                    this.showMessage(`ساندوتش ذهبي ماسي! وجبة مجانية 100%! (${freeMealsLeft} متبقية اليوم)`, 4000, '#FFD700');
+                    
+                    // تأثيرات الماس للوجبة المجانية
+                    this.addDiamondEffects(goldenItem);
                 } else {
-                    // سريع جداً - توهج أحمر مع تحذير أقوى
-                    goldenItem.setTint(0xFF4500); // أحمر برتقالي
-                    this.showMessage('ساندوتش ذهبي صاروخي! مستحيل تقريباً! (استنفدت فرصك)', 3000, '#FF4500');
+                    // خصمات فقط - توهج فضي
+                    goldenItem.setTint(0xC0C0C0); // فضي
+                    this.showMessage('ساندوتش ذهبي! خصمات مضاعفة! (انتهت الوجبات المجانية اليوم)', 3500, '#C0C0C0');
                 }
                 
                 // تأثير وميض سريع يدل على الصعوبة
@@ -3404,11 +3617,11 @@ class GameScene extends Phaser.Scene {
         // سرعة السقوط: إذا لم يعد مسموح له = سرعة فائقة، وإلا سرعة عادية  
         const dropSpeed = canCatch ? 800 : 2000; // السرعة الفائقة تجعل الإمساك مستحيل تقريباً
         
-        // إظهار رسالة حسب الحالة
+        // إظهار رسالة حسب الحالة مع توضيح الندرة
         if (canCatch) {
-            this.showMessage('ساندوتش ذهبي سحري! وجبة مجانية 100% - أمسك به الآن!', 3000, '#FFD700');
+            this.showMessage(`ساندوتش ماسي نادر جداً! وجبة مجانية 100%! (${this.gameManager.freeSandwichesUsed + 1}/2 محاولات اليوم)`, 4000, '#FFD700');
         } else {
-            this.showMessage(`ساندوتش ذهبي سريع جداً! (${this.gameManager.freeSandwichesUsed}/2 محاولات مستخدمة اليوم)`, 3000, '#ffaa00');
+            this.showMessage(`ساندوتش ماسي نادر لكن سريع! لقد استنفدت محاولاتك اليومية (2/2)`, 3500, '#ffaa00');
         }
         
         // إنشاء الساندوتش المجاني الخاص
@@ -3419,18 +3632,23 @@ class GameScene extends Phaser.Scene {
         );
         
         // مظهر خاص للساندوتش المجاني - كقطعة ماس ذهبية! ✨💎
-        freeSandwich.setDisplaySize(140, 140); // حجم أكبر ومميز
+        freeSandwich.setDisplaySize(160, 160); // حجم أكبر ومميز جداً
         freeSandwich.setTint(0xFFD700); // لون ذهبي براق
         freeSandwich.isFreeSandwich = true;
         freeSandwich.canBeCaught = canCatch;
         freeSandwich.setDepth(100); // فوق كل شيء
         
-        // تأثير الإضاءة الماسية - وهج ذهبي متألق
+        // تأثير الإضاءة الماسية المتقدم - وهج ذهبي متألق مضاعف!
         const glowEffect = this.add.graphics();
-        glowEffect.lineStyle(8, 0xFFD700, 0.8);
-        glowEffect.strokeCircle(0, 0, 80);
-        glowEffect.lineStyle(4, 0xFFFFFF, 0.6); 
-        glowEffect.strokeCircle(0, 0, 60);
+        // الحلقة الخارجية - ذهبية كبيرة
+        glowEffect.lineStyle(12, 0xFFD700, 0.9);
+        glowEffect.strokeCircle(0, 0, 100);
+        // الحلقة المتوسطة - بيضاء متوهجة
+        glowEffect.lineStyle(8, 0xFFFFFF, 0.8); 
+        glowEffect.strokeCircle(0, 0, 75);
+        // الحلقة الداخلية - ذهبية مركزة
+        glowEffect.lineStyle(6, 0xFFFACD, 0.9);
+        glowEffect.strokeCircle(0, 0, 50);
         glowEffect.setDepth(99);
         
         // ربط التأثير بالساندوتش
@@ -3470,14 +3688,36 @@ class GameScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
         
-        // تأثير وميض الماس
+        // تأثير وميض الماس المضاعف
         this.tweens.add({
             targets: glowEffect,
             alpha: 0.3,
-            duration: 400,
+            duration: 300,
             yoyo: true,
             repeat: -1,
             ease: 'Power2'
+        });
+        
+        // تأثير تألق السندوتش نفسه
+        this.tweens.add({
+            targets: freeSandwich,
+            alpha: 0.7,
+            duration: 400,
+            yoyo: true,
+            repeat: -1,
+            ease: 'Sine.easeInOut'
+        });
+        
+        // تأثير لمعان إضافي للون
+        let colorShift = 0;
+        freeSandwich.colorTimer = this.time.addEvent({
+            delay: 200,
+            repeat: -1,
+            callback: () => {
+                colorShift += 0.1;
+                const golden = Phaser.Display.Color.HSVToRGB(0.15 + Math.sin(colorShift) * 0.05, 1, 1);
+                freeSandwich.setTint(golden.color);
+            }
         });
         
         // فيزياء السقوط
@@ -3495,17 +3735,28 @@ class GameScene extends Phaser.Scene {
         // حفظ مرجع للتأثيرات للتنظيف اللاحق
         freeSandwich.glowEffect = glowEffect;
         
+        // حفظ مرجع لكل التأثيرات للتنظيف
+        freeSandwich.allEffects = [glowEffect];
+        
         // إزالة تلقائية إذا خرج من الشاشة مع تنظيف التأثيرات
         this.time.addEvent({
             delay: 5000,
             callback: () => {
                 if (freeSandwich && freeSandwich.active) {
-                    // تنظيف التأثيرات
+                    // تنظيف شامل لكل التأثيرات
                     if (freeSandwich.updateGlow) {
                         freeSandwich.updateGlow.destroy();
                     }
+                    if (freeSandwich.colorTimer) {
+                        freeSandwich.colorTimer.destroy();
+                    }
                     if (freeSandwich.glowEffect) {
                         freeSandwich.glowEffect.destroy();
+                    }
+                    if (freeSandwich.allEffects) {
+                        freeSandwich.allEffects.forEach(effect => {
+                            if (effect && effect.destroy) effect.destroy();
+                        });
                     }
                     freeSandwich.destroy();
                 }
