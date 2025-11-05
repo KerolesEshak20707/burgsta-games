@@ -287,19 +287,19 @@ class GameManager {
     }
     
     getCurrentItemSpeed() {
-        // السرعة تزيد بشكل جنوني حسب نسبة الخصم المحققة 🚀
-        let speedMultiplier = 1;
+        // منحنى صعوبة تدريجي منطقي - لا جمب مفاجئ! 🎯
+        let speedMultiplier = 1.0;
         
         if (this.discount >= 25) {
-            speedMultiplier = 8.0; // كابوس مطلق! ���
+            speedMultiplier = 7.5; // شبه مستحيل 💀
         } else if (this.discount >= 15) {
-            speedMultiplier = 6.0; // هجوم ساحق للخبراء! 🔥🔥🔥
+            speedMultiplier = 4.2; // مجنون 🔥🔥
         } else if (this.discount >= 10) {
-            speedMultiplier = 4.0; // للمحترفين فقط! 🔥🔥
+            speedMultiplier = 2.5; // صعب جداً 🔥
         } else if (this.discount >= 5) {
-            speedMultiplier = 2.5; // سرعة عالية جداً بعد 5%! التحدي الحقيقي يبدأ هنا! 🔥
+            speedMultiplier = 1.7; // متوسط - بداية التحدي الحقيقي
         } else {
-            speedMultiplier = 1.0; // سرعة طبيعية للبداية فقط (0-5%)
+            speedMultiplier = 1.0; // سهل للبداية (0-5%)
         }
         
         return GAME_CONFIG.items.baseSpeed * speedMultiplier;
@@ -307,18 +307,19 @@ class GameManager {
     
     getCurrentSpawnRate() {
         // معدل الظهور يزيد بشكل تدريجي (الوقت يقل) حسب نسبة الخصم
-        let spawnMultiplier = 1;
+        // منحنى ظهور تدريجي منطقي 🎯
+        let spawnMultiplier = 1.0;
         
         if (this.discount >= 25) {
-            spawnMultiplier = 0.15; // كثيف بس مش جنون �
+            spawnMultiplier = 0.15; // مجنون - ظهور سريع جداً 💀
         } else if (this.discount >= 15) {
-            spawnMultiplier = 0.25; // متوسط السرعة 
+            spawnMultiplier = 0.25; // سريع جداً 🔥🔥
         } else if (this.discount >= 10) {
-            spawnMultiplier = 0.3;  // ظهور سريع جداً! 🚀
+            spawnMultiplier = 0.4;  // سريع �
         } else if (this.discount >= 5) {
-            spawnMultiplier = 0.5;  // ظهور سريع بعد 5% - التحدي الحقيقي! 🔥
+            spawnMultiplier = 0.7;  // أسرع قليلاً - بداية التحدي
         } else {
-            spawnMultiplier = 1.0;  // ظهور طبيعي للبداية فقط (0-5%)
+            spawnMultiplier = 1.0;  // طبيعي للبداية (0-5%)
         }
         
         const rate = GAME_CONFIG.items.baseSpawnRate * spawnMultiplier;
@@ -1773,16 +1774,17 @@ class GameScene extends Phaser.Scene {
         // احتماليات صعبة جداً - خصم حقيقي يستحق التحدي! 💰
         let badChance;
         
+        // منحنى قنابل تدريجي منطقي 🎯
         if (this.gameManager.discount < 5) {
-            badChance = 0.30; // 30% سيئة - صعوبة معتدلة للبداية
-        } else if (this.gameManager.discount === 5) {
-            badChance = 0.50; // 50% سيئة - بداية التحدي الحقيقي!
+            badChance = 0.25; // 25% قنابل - سهل للبداية
         } else if (this.gameManager.discount < 10) {
-            badChance = 0.75; // 75% قنابل - صعوبة قاسية للحصول على خصم حقيقي!
+            badChance = 0.55; // 55% قنابل - متوسط بعد 5%
         } else if (this.gameManager.discount < 15) {
-            badChance = 0.85; // 85% قنابل - للمحترفين فقط! 🔥
+            badChance = 0.75; // 75% قنابل - صعب جداً! 🔥
+        } else if (this.gameManager.discount < 25) {
+            badChance = 0.85; // 85% قنابل - للمحترفين فقط! 🔥🔥
         } else {
-            badChance = 0.95; // 95% قنابل - هجوم ساحق للخبراء! 💀
+            badChance = 0.95; // 95% قنابل - شبه مستحيل! 💀
         }
         
         // إنتاج عنصر واحد فقط في كل مرة - بدون انتظار!
@@ -2430,6 +2432,12 @@ class GameScene extends Phaser.Scene {
     checkRiskLevels() {
         // إذا كنا في وضع المخاطرة، لا نفحص مرة أخرى
         if (this.gameManager.isInRiskMode) return;
+        
+        // تعطيل smartCatch بعد 5% - لا سهولة بعد الآن! 🔥
+        if (this.gameManager.discount >= 5 && this.smartCatchEnabled) {
+            this.disableSmartCatchBox();
+            console.log('🚫 تم تعطيل وضع السهولة - التحدي الحقيقي يبدأ الآن!');
+        }
         
         // فحص كل مستوى لمعرفة إذا تم الوصول إليه
         for (const level of RISK_LEVELS) {
