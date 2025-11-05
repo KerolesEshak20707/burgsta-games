@@ -2167,26 +2167,26 @@ class GameScene extends Phaser.Scene {
         const baseY = GAME_CONFIG.height / 2;
 
         // الجملة الأولى: مبروك وصلت للمستوى الأول - في أعلى الصفحة
-        const titleText = this.add.text(centerX, 100, level.description, {
-            fontSize: '32px',
+        const titleText = this.add.text(centerX, 150, level.description, {
+            fontSize: '60px', // مكبر من 32px إلى 60px
             fill: '#ffff00',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 6,
+            strokeThickness: 8,
             align: 'center',
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 6, fill: true }
         }).setOrigin(0.5);
         titleText.setDepth(55);
 
         // الجملة الثانية: خصم 10% - تحت الأولى مباشرة
-        const rewardText = this.add.text(centerX, 150, `🎁 ${level.reward}`, {
-            fontSize: '24px',
+        const rewardText = this.add.text(centerX, 250, `🎁 ${level.reward}`, {
+            fontSize: '42px', // مكبر من 24px إلى 42px
             fill: '#00ff00',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 5,
+            strokeThickness: 6,
             align: 'center',
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 5, fill: true }
         }).setOrigin(0.5);
         rewardText.setDepth(55);
 
@@ -2220,29 +2220,29 @@ class GameScene extends Phaser.Scene {
         }
 
         // النص التفصيلي - بعيداً عن الثلاث جمل الأساسية
-        const questionText = this.add.text(centerX, 400, infoMessage, {
-            fontSize: '14px',
+        const questionText = this.add.text(centerX, 550, infoMessage, {
+            fontSize: '28px', // مكبر من 14px إلى 28px
             fill: '#ffffff',
             fontFamily: 'Arial',
             fontWeight: 'bold',
             stroke: '#000000',
-            strokeThickness: 2,
+            strokeThickness: 3,
             align: 'center',
-            lineSpacing: 5,
-            wordWrap: { width: 600 },
-            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 3, fill: true }
+            lineSpacing: 8,
+            wordWrap: { width: 1200 }, // مكبر من 600 إلى 1200
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5);
         questionText.setDepth(55);
         
         // الجملة الثالثة: ماذا تقرر؟ - تحت الثانية مباشرة
-        const choiceText = this.add.text(centerX, 200, '🤔 ماذا تقرر؟', {
-            fontSize: '20px',
+        const choiceText = this.add.text(centerX, 350, '🤔 ماذا تقرر؟', {
+            fontSize: '38px', // مكبر من 20px إلى 38px
             fill: '#ffdd44',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 3,
+            strokeThickness: 4,
             align: 'center',
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 5, fill: true }
         }).setOrigin(0.5);
         choiceText.setDepth(55);
 
@@ -2250,14 +2250,14 @@ class GameScene extends Phaser.Scene {
 
         // عد تنازلي للقرار - في الأسفل أكثر
         let countdown = 15;
-        const countdownText = this.add.text(centerX, GAME_CONFIG.height - 120, `⏰ الوقت المتبقي: ${countdown} ثانية`, {
-            fontSize: '18px',
+        const countdownText = this.add.text(centerX, GAME_CONFIG.height - 200, `⏰ الوقت المتبقي: ${countdown} ثانية`, {
+            fontSize: '32px', // مكبر من 18px إلى 32px
             fill: '#ffaa00',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 3,
+            strokeThickness: 4,
             align: 'center',
-            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 3, fill: true }
         }).setOrigin(0.5);
         countdownText.setDepth(55);
 
@@ -2294,25 +2294,25 @@ class GameScene extends Phaser.Scene {
         });
 
         // أزرار الاختيار في أسفل الشاشة
-        const withdrawBtn = this.add.text(centerX - 150, GAME_CONFIG.height - 80, '💰 انسحب الآن', {
-            fontSize: '20px',
+        const withdrawBtn = this.add.text(centerX - 300, GAME_CONFIG.height - 120, '💰 انسحب الآن', {
+            fontSize: '36px', // مكبر من 20px إلى 36px
             fill: '#ffffff',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 4,
-            padding: { x: 15, y: 8 },
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+            strokeThickness: 5,
+            padding: { x: 25, y: 15 }, // مكبر من 15,8 إلى 25,15
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 5, fill: true }
         }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
         withdrawBtn.setDepth(60);
 
-        const continueBtn = this.add.text(centerX + 150, GAME_CONFIG.height - 80, '🔥 أكمل اللعب', {
-            fontSize: '20px',
+        const continueBtn = this.add.text(centerX + 300, GAME_CONFIG.height - 120, '🔥 أكمل اللعب', {
+            fontSize: '36px', // مكبر من 20px إلى 36px
             fill: '#ffffff',
             fontFamily: 'Arial Black',
             stroke: '#000000',
-            strokeThickness: 4,
-            padding: { x: 15, y: 8 },
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+            strokeThickness: 5,
+            padding: { x: 25, y: 15 }, // مكبر من 15,8 إلى 25,15
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 5, fill: true }
         }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
         continueBtn.setDepth(60);
 
@@ -2592,33 +2592,40 @@ class GameScene extends Phaser.Scene {
         winBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
         
         // رسالة التهنئة
-        const congratsText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 100, 
+        const congratsText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 200, 
             `🎉 مبروك! 🎉\n${level.reward}`, {
-            fontSize: '32px',
+            fontSize: '72px', // مكبر من 32px إلى 72px
             fill: '#ffffff',
             fontFamily: 'Arial Black',
             align: 'center',
             stroke: '#27ae60',
-            strokeThickness: 2
+            strokeThickness: 4,
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 6, fill: true }
         }).setOrigin(0.5);
         
         // رسالة عرض الخصم
-        const discountText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2, 
+        const discountText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 50, 
             'أظهر هذه الشاشة في المطعم\nلاستلام خصمك', {
-            fontSize: '20px',
+            fontSize: '42px', // مكبر من 20px إلى 42px
             fill: '#ffffff',
             fontFamily: 'Arial',
-            align: 'center'
+            align: 'center',
+            stroke: '#000000',
+            strokeThickness: 2,
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5);
         
         // رقم الخصم بارز
-        const discountCode = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 80, 
+        const discountCode = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 150, 
             `كود الخصم: BURGSTA${level.percent}`, {
-            fontSize: '24px',
+            fontSize: '48px', // مكبر من 24px إلى 48px
             fill: '#FFD700',
             fontFamily: 'Arial Black',
             backgroundColor: '#27ae60',
-            padding: { x: 20, y: 10 }
+            padding: { x: 30, y: 20 }, // مكبر من 20,10 إلى 30,20
+            stroke: '#000000',
+            strokeThickness: 3,
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 5, fill: true }
         }).setOrigin(0.5);
         
         // زر إعادة اللعب
