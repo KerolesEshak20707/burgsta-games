@@ -495,13 +495,13 @@ class GameScene extends Phaser.Scene {
         // تمت إزالة مؤشر التحديث المؤقت لعدم التأثير على واجهة المستخدم النهائية
 
         // شعار المطعم في الأعلى مع تأثير إضاءة
-        const restaurantName = this.add.text(width / 2, 240, 'BURGSTA', {
+        const restaurantName = this.add.text(width / 2, 80, 'BURGSTA', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '144px', // تكبير الخط 3 مرات للدقة 4K
+            fontSize: '48px', // حجم مناسب للدقة HD
             fontWeight: 'bold',
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
-            strokeThickness: 6, // تكبير السمك أيضاً
+            strokeThickness: 2, // سمك أقل للدقة الجديدة
             shadow: {
                 offsetX: 6,
                 offsetY: 6,
@@ -730,8 +730,8 @@ class GameScene extends Phaser.Scene {
 
     createWheel(width, height) {
         const centerX = width / 2;
-        const centerY = height / 2 + 60; // نزل العجلة أكثر للدقة 4K
-        const radius = Math.min(width, height) * 0.25; // حجم متناسب مع الدقة 4K
+        const centerY = height / 2 + 20; // موضع مناسب للدقة HD
+        const radius = Math.min(width, height) * 0.3; // حجم أكبر نسبياً للدقة HD
         
         this.sectorAngle = 360 / this.prizes.length;
         
@@ -807,8 +807,8 @@ class GameScene extends Phaser.Scene {
             const textX = Math.cos(textAngle) * textRadius;
             const textY = Math.sin(textAngle) * textRadius;
             
-            // حساب حجم الخط بناءً على حجم العجلة للدقة 4K
-            const fontSize = Math.max(48, Math.min(72, radius / 8)); // تكبير الخط للدقة 4K
+            // حساب حجم الخط بناءً على حجم العجلة للدقة HD
+            const fontSize = Math.max(16, Math.min(24, radius / 8)); // حجم خط مناسب للدقة HD
             
             // إضافة صورة الجائزة إذا كانت متوفرة (خاصة للوافل)
             const prizeImageResult = this.addPrizeImage(textX, textY - fontSize * 0.3, this.prizes[i], radius);
@@ -937,8 +937,8 @@ class GameScene extends Phaser.Scene {
 
     createPlayButton(width, height) {
         const buttonX = width / 2;
-        const buttonY = height / 2 + 60; // نفس مكان العجلة الجديد للدقة 4K
-        const buttonSize = Math.max(150, Math.min(200, Math.min(width, height) * 0.06)); // أكبر للدقة 4K
+        const buttonY = height / 2 + 20; // نفس مكان العجلة الجديد للدقة HD
+        const buttonSize = Math.max(50, Math.min(70, Math.min(width, height) * 0.08)); // حجم مناسب للدقة HD
         
         // ظل الزر
         const buttonShadow = this.add.graphics();
@@ -1123,7 +1123,7 @@ class GameScene extends Phaser.Scene {
         // تأثير بصري أثناء الدوران
         const spinningIndicator = this.add.text(width / 2, height / 2 + 450, 'جاري السحب...', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '60px', // تكبير للدقة 4K
+            fontSize: '20px', // حجم مناسب للدقة HD
             color: gameManager.colors.primary,
             alpha: 0.8
         }).setOrigin(0.5);
@@ -1243,21 +1243,21 @@ class GameScene extends Phaser.Scene {
         // ظل الصندوق
         const messageShadow = this.add.graphics();
         messageShadow.fillStyle(0x000000, 0.4);
-        messageShadow.fillRoundedRect(width / 2 - 195, height / 2 - 145, 400, 300, 25);
+        messageShadow.fillRoundedRect(width / 2 - 165, height / 2 - 120, 330, 240, 20);
         messageShadow.setDepth(201);
         
         // صندوق الرسالة مع تدرج
         const messageBox = this.add.graphics();
         messageBox.fillGradientStyle(0xfaf6e8, 0xf5f1e6, 0xe8dcc0, 0xf0e6d2, 1);
-        messageBox.lineStyle(6, 0xc49b41);
-        messageBox.fillRoundedRect(width / 2 - 200, height / 2 - 150, 400, 300, 25);
-        messageBox.strokeRoundedRect(width / 2 - 200, height / 2 - 150, 400, 300, 25);
+        messageBox.lineStyle(4, 0xc49b41);
+        messageBox.fillRoundedRect(width / 2 - 170, height / 2 - 125, 340, 250, 20);
+        messageBox.strokeRoundedRect(width / 2 - 170, height / 2 - 125, 340, 250, 20);
         messageBox.setDepth(202);
 
         // حدود داخلية ذهبية
         const innerBorder = this.add.graphics();
         innerBorder.lineStyle(2, 0xd4af37, 0.8);
-        innerBorder.strokeRoundedRect(width / 2 - 185, height / 2 - 135, 370, 270, 20);
+        innerBorder.strokeRoundedRect(width / 2 - 155, height / 2 - 110, 310, 220, 15);
         innerBorder.setDepth(203);
         
         // نص التهنئة مع تأثيرات
@@ -1355,7 +1355,7 @@ class GameScene extends Phaser.Scene {
             .setInteractive()
             .setDepth(200); // عمق أعلى من الزر
         
-        // ظل الصندوق (مكبر للدقة 4K)
+        // ظل الصندوق (مناسب للدقة HD)
         const messageShadow = this.add.graphics();
         messageShadow.fillStyle(0x000000, 0.4);
         const winBoxW = 1400;  // عرض أكبر
@@ -1505,7 +1505,7 @@ class GameScene extends Phaser.Scene {
     const messageShadow = this.add.graphics();
     messageShadow.fillStyle(0x000000, 0.4);
     // صندوق أكبر: العرض والارتفاع مرفوعان ليتناسبا مع الخط الكبير
-    const tryLaterBoxW = 1200;
+    const tryLaterBoxW = 400;
     const tryLaterBoxH = 480;
     messageShadow.fillRoundedRect(width / 2 - tryLaterBoxW / 2, height / 2 - tryLaterBoxH / 2, tryLaterBoxW, tryLaterBoxH, 30);
     messageShadow.setDepth(201);
@@ -1622,7 +1622,7 @@ class GameScene extends Phaser.Scene {
         // ظل الصندوق
         const messageShadow = this.add.graphics();
         messageShadow.fillStyle(0x000000, 0.4);
-        messageShadow.fillRoundedRect(width / 2 - 195, height / 2 - 95, 400, 200, 25);
+        messageShadow.fillRoundedRect(width / 2 - 165, height / 2 - 80, 330, 160, 20);
         
         // صندوق الرسالة
         const messageBox = this.add.graphics();
@@ -2018,9 +2018,9 @@ class GameScene extends Phaser.Scene {
     createSoundToggle(width, height) {
         // زر تبديل الصوت في الزاوية العلوية اليمنى
         const soundButton = this.add.graphics();
-        const buttonX = width - 180; // تعديل الموضع للدقة 4K
-        const buttonY = 150; // تعديل الموضع للدقة 4K
-        const buttonSize = 120; // تكبير الزر للدقة 4K
+        const buttonX = width - 60; // تعديل الموضع للدقة HD
+        const buttonY = 50; // تعديل الموضع للدقة HD
+        const buttonSize = 40; // حجم مناسب للدقة HD
         
         // رسم الزر
         const drawSoundButton = (enabled) => {
@@ -2035,7 +2035,7 @@ class GameScene extends Phaser.Scene {
         
         // أيقونة الصوت
         const soundIcon = this.add.text(buttonX, buttonY, this.soundEnabled ? '🔊' : '🔇', {
-            fontSize: '60px' // تكبير الأيقونة للدقة 4K
+            fontSize: '20px' // حجم الأيقونة للدقة HD
         }).setOrigin(0.5);
         
         // منطقة التفاعل
@@ -2160,47 +2160,47 @@ class GameScene extends Phaser.Scene {
             if (this.textures.exists(fileName)) {
                 const prizeImage = this.add.image(x, y, fileName);
                 
-                // التحقق من نوع الصورة لضبط النسبة الصحيحة - مكبرة للدقة 4K
+                // التحقق من نوع الصورة لضبط النسبة الصحيحة - مناسبة للدقة HD
                 if (fileName === 'موهيتو') {
-                    // للموهيتو: نحافظ على النسبة الطبيعية للكوب (أطول من العرض) - مكبر للدقة 4K
-                    const imageWidth = Math.max(195, wheelRadius * 0.35); // تكبير 3 مرات
-                    const imageHeight = Math.max(270, wheelRadius * 0.45); // تكبير 3 مرات
+                    // للموهيتو: نحافظ على النسبة الطبيعية للكوب (أطول من العرض)
+                    const imageWidth = Math.max(65, wheelRadius * 0.35); // حجم مناسب للدقة HD
+                    const imageHeight = Math.max(90, wheelRadius * 0.45); // حجم مناسب للدقة HD
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else if (fileName === 'دليفري') {
-                    // للدليفري: أعرض من الطول بكثير لأن الصورة الأصلية بالعرض - مكبر للدقة 4K
-                    const imageWidth = Math.max(330, wheelRadius * 0.48); // تكبير 3 مرات
-                    const imageHeight = Math.max(195, wheelRadius * 0.28); // تكبير 3 مرات
+                    // للدليفري: أعرض من الطول بكثير لأن الصورة الأصلية بالعرض
+                    const imageWidth = Math.max(110, wheelRadius * 0.48); // حجم مناسب للدقة HD
+                    const imageHeight = Math.max(65, wheelRadius * 0.28); // حجم مناسب للدقة HD
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else if (fileName === 'offer15') {
-                    // لخصم 15%: مربع مناسب لملء الخانة - مكبر للدقة 4K
-                    const imageSize = Math.max(255, wheelRadius * 0.38); // تكبير 3 مرات
+                    // لخصم 15%: مربع مناسب لملء الخانة
+                    const imageSize = Math.max(85, wheelRadius * 0.38); // حجم مناسب للدقة HD
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 } else if (fileName === 'offer5') {
-                    // لخصم 5%: مربع مناسب لملء الخانة - مكبر للدقة 4K
-                    const imageSize = Math.max(255, wheelRadius * 0.38); // تكبير 3 مرات
+                    // لخصم 5%: مربع مناسب لملء الخانة
+                    const imageSize = Math.max(85, wheelRadius * 0.38); // حجم مناسب للدقة HD
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 } else if (fileName === 'اورجينال') {
-                    // للأورجينال برجر: أعرض من الطول ليبدو طبيعياً - مكبر للدقة 4K
-                    const imageWidth = Math.max(285, wheelRadius * 0.42); // تكبير 3 مرات
-                    const imageHeight = Math.max(225, wheelRadius * 0.32); // تكبير 3 مرات
+                    // للأورجينال برجر: أعرض من الطول ليبدو طبيعياً
+                    const imageWidth = Math.max(95, wheelRadius * 0.42); // حجم مناسب للدقة HD
+                    const imageHeight = Math.max(75, wheelRadius * 0.32); // حجم مناسب للدقة HD
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else if (fileName === 'تشكن لافا') {
-                    // لتشكن لافا: أعرض من الطول بكثير ليبدو كساندوتش مسطح - مكبر للدقة 4K
-                    const imageWidth = Math.max(330, wheelRadius * 0.48); // تكبير 3 مرات
-                    const imageHeight = Math.max(195, wheelRadius * 0.28); // تكبير 3 مرات
+                    // لتشكن لافا: أعرض من الطول بكثير ليبدو كساندوتش مسطح
+                    const imageWidth = Math.max(110, wheelRadius * 0.48); // حجم مناسب للدقة HD
+                    const imageHeight = Math.max(65, wheelRadius * 0.28); // حجم مناسب للدقة HD
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else if (fileName === 'كومبو فري') {
-                    // للكومبو: حجم متوسط مناسب - مكبر للدقة 4K
-                    const imageSize = Math.max(255, wheelRadius * 0.36); // تكبير 3 مرات
+                    // للكومبو: حجم متوسط مناسب
+                    const imageSize = Math.max(85, wheelRadius * 0.36); // حجم مناسب للدقة HD
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 } else if (fileName === 'حاول وقت لاحق') {
-                    // لحاول وقت لاحق: صورة صغيرة داخل القطاع الأسود - مكبر للدقة 4K
-                    const imageWidth = Math.max(120, wheelRadius * 0.20); // تكبير 3 مرات
-                    const imageHeight = Math.max(180, wheelRadius * 0.30); // تكبير 3 مرات
+                    // لحاول وقت لاحق: صورة صغيرة داخل القطاع الأسود
+                    const imageWidth = Math.max(40, wheelRadius * 0.20); // حجم مناسب للدقة HD
+                    const imageHeight = Math.max(60, wheelRadius * 0.30); // حجم مناسب للدقة HD
                     prizeImage.setDisplaySize(imageWidth, imageHeight);
                 } else {
-                    // للصور الأخرى: مربع عادي - مكبر للدقة 4K
-                    const imageSize = Math.max(225, wheelRadius * 0.32); // تكبير 3 مرات
+                    // للصور الأخرى: مربع عادي
+                    const imageSize = Math.max(75, wheelRadius * 0.32); // حجم مناسب للدقة HD
                     prizeImage.setDisplaySize(imageSize, imageSize);
                 }
                 
