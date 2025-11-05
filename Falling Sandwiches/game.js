@@ -2072,33 +2072,33 @@ class GameScene extends Phaser.Scene {
     
     showDifficultyNotification(title, message) {
         // إنشاء container للإشعار منظم
-        const notificationPopup = this.add.container(GAME_CONFIG.width / 2, 250);
+        const notificationPopup = this.add.container(GAME_CONFIG.width / 2, 120);
         
         // خلفية الإشعار مع حدود
         const notificationBg = this.add.graphics();
         notificationBg.fillStyle(0xffa500, 0.95);
-        notificationBg.lineStyle(4, 0xff6600, 1);
-        notificationBg.fillRoundedRect(-220, -60, 440, 120, 20);
-        notificationBg.strokeRoundedRect(-220, -60, 440, 120, 20);
+        notificationBg.lineStyle(2, 0xff6600, 1);
+        notificationBg.fillRoundedRect(-110, -30, 220, 60, 10);
+        notificationBg.strokeRoundedRect(-110, -30, 220, 60, 10);
         
-        const titleText = this.add.text(0, -25, title, {
+        const titleText = this.add.text(0, -12, title, {
             fontFamily: 'Arial Black',
-            fontSize: '66px', // خط كبير لعنوان الإشعار
+            fontSize: '22px', // خط مناسب لعنوان الإشعار للدقة HD
             fontWeight: 'bold',
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 9, // خط أثخن للدقة 4K
+            strokeThickness: 3, // خط مناسب للدقة HD
             align: 'center'
         }).setOrigin(0.5);
         
-        const messageText = this.add.text(0, 15, message, {
+        const messageText = this.add.text(0, 8, message, {
             fontFamily: 'Arial',
-            fontSize: '48px', // خط كبير لرسالة الإشعار
+            fontSize: '16px', // خط مناسب لرسالة الإشعار للدقة HD
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 6, // خط أثخن للدقة 4K
+            strokeThickness: 2, // خط مناسب للدقة HD
             align: 'center',
-            wordWrap: { width: 1140 } // عرض أكبر للدقة 4K
+            wordWrap: { width: 200 } // عرض مناسب للدقة HD
         }).setOrigin(0.5);
         
         // إضافة العناصر للـ container
@@ -2129,7 +2129,7 @@ class GameScene extends Phaser.Scene {
     showLevelUp(level) {
         const levelText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2, `المستوى ${level}!`, {
             fontFamily: 'Cairo, Arial',
-            fontSize: '48px',
+            fontSize: '24px',
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         }).setOrigin(0.5);
@@ -2169,9 +2169,9 @@ class GameScene extends Phaser.Scene {
         // صندوق الرسالة مع خلفية
         const messageBox = this.add.graphics();
         messageBox.fillStyle(0xffffff, 0.95);
-        messageBox.lineStyle(4, 0xc49b41, 1);
-        messageBox.fillRoundedRect(-250, -120, 500, 240, 20);
-        messageBox.strokeRoundedRect(-250, -120, 500, 240, 20);
+        messageBox.lineStyle(2, 0xc49b41, 1);
+        messageBox.fillRoundedRect(-150, -80, 300, 160, 15);
+        messageBox.strokeRoundedRect(-150, -80, 300, 160, 15);
         
         // نص التهنئة
         const titleText = this.add.text(0, -60, '🎉 مبروك! 🎉', {
@@ -2244,13 +2244,13 @@ class GameScene extends Phaser.Scene {
         // إزالة صندوق الخسارة الملون - النصوص فقط فوق اللعبة مباشرة
         
         // نصوص الخسارة
-        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 300, 'انتهت اللعبة', {
+        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 100, 'انتهت اللعبة', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '96px', // تكبير الخط 3 مرات
+            fontSize: '32px', // حجم مناسب للدقة HD
             fontWeight: 'bold',
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 8 // تكبير السمك أيضاً
+            strokeThickness: 3 // سمك مناسب للدقة HD
         }).setOrigin(0.5).setDepth(100); // طبقة عالية فوق كل العناصر
         
         let finalMessage = 'لم تحصل على أي خصم - لأنك لم تنسحب في الوقت المناسب!';
