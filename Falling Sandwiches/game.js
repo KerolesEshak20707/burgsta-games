@@ -2,9 +2,9 @@
 
 // إعدادات اللعبة
 const GAME_CONFIG = {
-    // أبعاد اللعبة - دقة 4K للشاشات الكبيرة
-    width: 3840,
-    height: 2160,
+    // أبعاد اللعبة - دقة HD
+    width: 1280,
+    height: 720,
     
     // إعدادات اللاعب
     player: {
@@ -426,7 +426,7 @@ class GameScene extends Phaser.Scene {
         this.setupCollisions();
         
         // ✅ إعداد مراقبة حدود العالم لحذف العناصر  
-        const gameAreaWidth = GAME_CONFIG.width - 400; // مساحة أكبر للوحة مع الشاشة 4K
+        const gameAreaWidth = GAME_CONFIG.width - 200; // مساحة مناسبة للوحة مع الدقة HD
         this.physics.world.setBounds(0, 0, gameAreaWidth, GAME_CONFIG.height);
         
         this.physics.world.on('worldbounds', (body) => {
@@ -3690,8 +3690,8 @@ class GameScene extends Phaser.Scene {
 // إعداد وتشغيل اللعبة - محسّنة للـ WebView
 const gameConfig = {
     type: Phaser.AUTO,
-    width: 3840,
-    height: 2160,
+    width: 1280,
+    height: 720,
     backgroundColor: GAME_CONFIG.colors.secondary,
     parent: 'gameContainer',
     physics: {
@@ -3706,15 +3706,15 @@ const gameConfig = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         parent: 'gameContainer',
-        width: 3840,
-        height: 2160,
+        width: 1280,
+        height: 720,
         min: {
             width: 800,
             height: 600
         },
         max: {
-            width: 3840,
-            height: 2160
+            width: 1280,
+            height: 720
         },
         expandParent: false,
         autoRound: true
