@@ -3354,7 +3354,7 @@ class GameScene extends Phaser.Scene {
         freeSandwich.setVelocityX(Phaser.Math.Between(-100, 100)); // حركة جانبية خفيفة
         
         // إضافة للمجموعة
-        this.sandwiches.add(freeSandwich);
+        this.fallingItems.add(freeSandwich);
         
         // تشغيل صوت خاص
         if (this.sounds.golden) {
