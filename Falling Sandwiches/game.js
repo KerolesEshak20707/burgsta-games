@@ -16,9 +16,9 @@ const GAME_CONFIG = {
     items: {
         baseSpeed: 120,        // سرعة مناسبة للعناصر الكبيرة
         speedIncrement: 20,    // زيادة تدريجية
-        baseSpawnRate: 1200,   // كثافة أقل للعناصر الكبيرة
+        baseSpawnRate: 2000,   // فترات أطول للراحة
         spawnRateDecrement: 80, // تسارع تدريجي
-        minSpawnRate: 300      // حد أدنى مناسب
+        minSpawnRate: 600      // حد أدنى أبطأ للراحة
     },
     
     // نظام الخصم - صعوبة عالية جداً 🔥
@@ -306,19 +306,19 @@ class GameManager {
     }
     
     getCurrentSpawnRate() {
-        // معدل الظهور يزيد بشكل جنوني (الوقت يقل) حسب نسبة الخصم 💀
+        // معدل الظهور يزيد بشكل تدريجي (الوقت يقل) حسب نسبة الخصم
         let spawnMultiplier = 1;
         
         if (this.discount >= 25) {
-            spawnMultiplier = 0.15; // مطر من السندوتشات! 🌧️💀
+            spawnMultiplier = 0.3; // كثيف بس مش جنون �
         } else if (this.discount >= 15) {
-            spawnMultiplier = 0.25; // كثافة جهنمية! 🔥💀
+            spawnMultiplier = 0.5; // متوسط السرعة 
         } else if (this.discount >= 10) {
-            spawnMultiplier = 0.4;  // ظهور قاتل! ⚡💀
+            spawnMultiplier = 0.7;  // بداية التسريع
         } else if (this.discount >= 5) {
-            spawnMultiplier = 0.8;  // بداية الصعوبة مؤجلة إلى 5%
+            spawnMultiplier = 0.9;  // تسريع خفيف
         } else {
-            spawnMultiplier = 2.0;  // فترات أطول بكثير قبل 5% - وقت كافي للتفكير!
+            spawnMultiplier = 1.5;  // هدوء وراحة قبل 5% - وقت للتفكير بهدوء
         }
         
         const rate = GAME_CONFIG.items.baseSpawnRate * spawnMultiplier;
@@ -2239,7 +2239,7 @@ class GameScene extends Phaser.Scene {
         titleText.setDepth(55);
 
         // الجملة الثانية: خصم 10% - تحت الأولى مباشرة
-        const rewardText = this.add.text(centerX, 250, `🎁 ${level.reward}`, {
+        const rewardText = this.add.text(centerX, 250, level.reward, {
             fontSize: '42px', // مكبر من 24px إلى 42px
             fill: '#00ff00',
             fontFamily: 'Arial Black',
@@ -2251,14 +2251,14 @@ class GameScene extends Phaser.Scene {
         rewardText.setDepth(55);
 
         // إنشاء النص الشامل في طباعة واحدة
-        let infoMessage = `🎯 لديك خياران:\n\n`;
+        let infoMessage = `لديك خياران:\n\n`;
         
         // الخيار الأول: الانسحاب
-        infoMessage += `💰 الخيار الأول - الانسحاب الآمن:\n`;
+        infoMessage += `الخيار الأول - الانسحاب الآمن:\n`;
         infoMessage += `احصل على ${level.percent}% خصم مضمون الآن\n\n`;
         
         // الخيار الثاني: المتابعة
-        infoMessage += `🔥 الخيار الثاني - المتابعة للمغامرة:\n`;
+        infoMessage += `الخيار الثاني - المتابعة للمغامرة:\n`;
         if (level.percent < 100) {
             const nextLevel = level.percent === 5 ? 10 : level.percent === 10 ? 25 : level.percent === 25 ? 50 : level.percent === 50 ? 75 : 100;
             infoMessage += `هدف: الوصول للمستوى التالي (${nextLevel}% خصم)\n`;
@@ -2268,34 +2268,34 @@ class GameScene extends Phaser.Scene {
         
         // إضافة معلومة السندويتش الذهبي إذا كان متاحاً
         if (level.reward.includes('سندويتش ذهبي')) {
-            infoMessage += `🎁 مكافأة فورية: سندويتش ذهبي (+3% خصم)\n`;
-            infoMessage += `⚡ سرعة عالية - تحدي ممتع!\n`;
+            infoMessage += `مكافأة فورية: سندويتش ذهبي (+3% خصم)\n`;
+            infoMessage += `سرعة عالية - تحدي ممتع!\n`;
         }
         
         // إضافة تحذير المخاطر للمستويات غير النهائية
         if (level.percent < 100) {
-            infoMessage += `\n⚠️ تحذير هام:\n`;
+            infoMessage += `\nتحذير هام:\n`;
             infoMessage += `${level.nextRisk}\n`;
             infoMessage += `إذا فشلت في الوصول للمستوى التالي = تخسر كل شيء!`;
         }
 
         // النص التفصيلي - بعيداً عن الثلاث جمل الأساسية
-        const questionText = this.add.text(centerX, 550, infoMessage, {
-            fontSize: '28px', // مكبر من 14px إلى 28px
+        const questionText = this.add.text(centerX, GAME_CONFIG.height / 2, infoMessage, {
+            fontSize: '32px', // مكبر أكثر
             fill: '#ffffff',
             fontFamily: 'Arial',
             fontWeight: 'bold',
             stroke: '#000000',
             strokeThickness: 3,
             align: 'center',
-            lineSpacing: 8,
-            wordWrap: { width: 1200 }, // مكبر من 600 إلى 1200
+            lineSpacing: 12,
+            wordWrap: { width: GAME_CONFIG.width / 2 }, // نصف الشاشة
             shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5);
         questionText.setDepth(55);
         
         // الجملة الثالثة: ماذا تقرر؟ - تحت الثانية مباشرة
-        const choiceText = this.add.text(centerX, 350, '🤔 ماذا تقرر؟', {
+        const choiceText = this.add.text(centerX, 350, 'ماذا تقرر؟', {
             fontSize: '38px', // مكبر من 20px إلى 38px
             fill: '#ffdd44',
             fontFamily: 'Arial Black',
@@ -2310,7 +2310,7 @@ class GameScene extends Phaser.Scene {
 
         // عد تنازلي للقرار - في الأسفل أكثر
         let countdown = 15;
-        const countdownText = this.add.text(centerX, GAME_CONFIG.height - 200, `⏰ الوقت المتبقي: ${countdown} ثانية`, {
+        const countdownText = this.add.text(centerX, GAME_CONFIG.height - 200, `الوقت المتبقي: ${countdown} ثانية`, {
             fontSize: '32px', // مكبر من 18px إلى 32px
             fill: '#ffaa00',
             fontFamily: 'Arial Black',
@@ -2327,7 +2327,7 @@ class GameScene extends Phaser.Scene {
             repeat: 14,
             callback: () => {
                 countdown--;
-                countdownText.setText(`⏰ الوقت المتبقي: ${countdown} ثانية`);
+                countdownText.setText(`الوقت المتبقي: ${countdown} ثانية`);
                 
                 // تغيير لون العد عند قرب الانتهاء
                 if (countdown <= 5) {
@@ -2693,19 +2693,20 @@ class GameScene extends Phaser.Scene {
         winBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
         
         // رسالة التهنئة
-        const congratsText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 200, 
-            `🎉 مبروك! 🎉\n${level.reward}`, {
+        const congratsText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 300, 
+            `مبروك!\n${level.reward}`, {
             fontSize: '72px', // مكبر من 32px إلى 72px
             fill: '#ffffff',
             fontFamily: 'Arial Black',
             align: 'center',
             stroke: '#27ae60',
             strokeThickness: 4,
+            lineSpacing: 15,
             shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 6, fill: true }
         }).setOrigin(0.5);
         
         // رسالة عرض الخصم
-        const discountText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 50, 
+        const discountText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 100, 
             'أظهر هذه الشاشة في المطعم\nلاستلام خصمك', {
             fontSize: '42px', // مكبر من 20px إلى 42px
             fill: '#ffffff',
@@ -2713,6 +2714,7 @@ class GameScene extends Phaser.Scene {
             align: 'center',
             stroke: '#000000',
             strokeThickness: 2,
+            lineSpacing: 15,
             shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5);
         
@@ -2730,13 +2732,13 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
         
         // زر إعادة اللعب
-        const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 150, 
-            '🔄 العب مرة أخرى', {
-            fontSize: '18px',
+        const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 250, 
+            'العب مرة أخرى', {
+            fontSize: '32px',
             fill: '#ffffff',
             fontFamily: 'Arial',
             backgroundColor: '#8B4513',
-            padding: { x: 20, y: 10 }
+            padding: { x: 30, y: 15 }
         }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
         
         restartBtn.on('pointerdown', () => {
