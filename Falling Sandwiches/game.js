@@ -8,8 +8,8 @@ const GAME_CONFIG = {
     
     // إعدادات اللاعب
     player: {
-        speed: 40,  // سرعة أعلى للاستجابة الفورية السريعة
-        size: 80
+        speed: 30,  // سرعة مناسبة للدقة HD
+        size: 40    // حجم مناسب للدقة HD
     },
     
     // إعدادات السندوتشات - متوازنة مع الأحجام الكبيرة 🔥🔥
@@ -519,10 +519,10 @@ class GameScene extends Phaser.Scene {
     createUI() {
         // خط فاصل عمودي بين منطقة اللعب والمعلومات
         const dividerLine = this.add.graphics();
-        dividerLine.lineStyle(6, 0xc49b41, 0.8); // خط أسمك للشاشة الكبيرة
+        dividerLine.lineStyle(3, 0xc49b41, 0.8); // خط مناسب للدقة HD
         dividerLine.beginPath();
-        dividerLine.moveTo(GAME_CONFIG.width - 190, 0);
-        dividerLine.lineTo(GAME_CONFIG.width - 190, GAME_CONFIG.height);
+        dividerLine.moveTo(GAME_CONFIG.width - 180, 0);
+        dividerLine.lineTo(GAME_CONFIG.width - 180, GAME_CONFIG.height);
         dividerLine.strokePath();
         
         // === لوحة المعلومات اليمنى ===
@@ -530,7 +530,7 @@ class GameScene extends Phaser.Scene {
     }
     
     createRightInfoPanel() {
-        const panelX = GAME_CONFIG.width - 175; // لوحة مناسبة للدقة HD
+        const panelX = GAME_CONFIG.width - 170; // لوحة مناسبة للدقة HD
         let currentY = 20; // مسافات مناسبة
         
         // خلفية اللوحة
@@ -545,7 +545,7 @@ class GameScene extends Phaser.Scene {
             fontWeight: '600',
             color: GAME_CONFIG.colors.primary
         });
-        currentY += 80;
+        currentY += 30;
         
         // === 2. المستوى ===
         this.ui.levelText = this.add.text(panelX, currentY, 'المستوى: 1', {
@@ -554,7 +554,7 @@ class GameScene extends Phaser.Scene {
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         });
-        currentY += 80;
+        currentY += 30;
         
         // === 3. أكياس البطاطس (الأرواح) ===
         this.ui.livesLabel = this.add.text(panelX, currentY, 'أكياس البطاطس:', {
@@ -562,14 +562,14 @@ class GameScene extends Phaser.Scene {
             fontSize: '16px', // خط مناسب للعنوان
             color: GAME_CONFIG.colors.primary
         });
-        currentY += 75;
+        currentY += 25;
         
         this.ui.livesText = this.add.text(panelX, currentY, '🍟🍟🍟', {
             fontFamily: 'Cairo, Arial',
             fontSize: '22px', // خط مناسب لأيقونات الأرواح
             color: GAME_CONFIG.colors.primary
         });
-        currentY += 120;
+        currentY += 40;
         
         // === 4. التقدم في البناء ===
         this.ui.progressTitle = this.add.text(panelX, currentY, '🍔 تقدم البرجر', {
@@ -578,7 +578,7 @@ class GameScene extends Phaser.Scene {
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.accent
         });
-        currentY += 90;
+        currentY += 30;
         
         // === 5. النسبة المئوية الكبيرة ===
         this.ui.discountPercentText = this.add.text(panelX, currentY, '0%', {
@@ -587,7 +587,7 @@ class GameScene extends Phaser.Scene {
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         });
-        currentY += 120;
+        currentY += 40;
         
         // === 6. الجزء الحالي من السندوتش ===
         this.ui.currentPartText = this.add.text(panelX, currentY, 'الطبق', {
@@ -596,7 +596,7 @@ class GameScene extends Phaser.Scene {
             fontWeight: '600',
             color: GAME_CONFIG.colors.dark
         });
-        currentY += 120;
+        currentY += 40;
         
 
         
@@ -607,7 +607,7 @@ class GameScene extends Phaser.Scene {
             fontWeight: 'bold',
             color: '#e74c3c'
         });
-        currentY += 50; // مسافة أكبر بين العنوان والنص
+        currentY += 20; // مسافة مناسبة بين العنوان والنص
         
         this.ui.riskLevelText = this.add.text(panelX, currentY, 'مبتدئ 🟢', {
             fontFamily: 'Cairo, Arial',
@@ -615,14 +615,14 @@ class GameScene extends Phaser.Scene {
             fontWeight: '600',
             color: '#27ae60'
         });
-        currentY += 80; // مسافة أكبر قبل "القادم"
+        currentY += 25; // مسافة مناسبة قبل "القادم"
         
         this.ui.nextMilestoneText = this.add.text(panelX, currentY, 'القادم: 10%', {
             fontFamily: 'Cairo, Arial',
             fontSize: '10px', // خط مناسب للمعلم القادم
             color: GAME_CONFIG.colors.text
         });
-        currentY += 90;
+        currentY += 30;
         
         // === 9. السندوتش المبني (في أسفل الصفحة) ===
         this.createMiniSandwich();
@@ -634,64 +634,64 @@ class GameScene extends Phaser.Scene {
     }
     
     createDiscountMeter() {
-        // موقع بناء السندوتش (أعلى اليمين) - حجم أكبر للشاشة 4K
-        const sandwichX = GAME_CONFIG.width - 150; // موقع أبعد لاستيعاب الحجم الأكبر
-        const sandwichY = 120; // موقع أسفل قليلاً
+        // موقع بناء السندوتش (أعلى اليمين) - مناسب للدقة HD
+        const sandwichX = GAME_CONFIG.width - 90; // موقع مناسب للدقة HD
+        const sandwichY = 50; // موقع أعلى مناسب
         
-        // خلفية شفافة للسندوتش - حجم أكبر
+        // خلفية شفافة للسندوتش - حجم مناسب
         this.ui.sandwichBg = this.add.graphics();
         this.ui.sandwichBg.fillStyle(0x000000, 0.1);
-        this.ui.sandwichBg.fillRoundedRect(sandwichX - 20, sandwichY - 20, 160, 420, 20); // مضاعف الحجم
+        this.ui.sandwichBg.fillRoundedRect(sandwichX - 10, sandwichY - 10, 80, 200, 10); // حجم مناسب للدقة HD
         
-        // إطار ذهبي حول منطقة السندوتش - أثخن
-        this.ui.sandwichBg.lineStyle(4, 0xc49b41);
-        this.ui.sandwichBg.strokeRoundedRect(sandwichX - 20, sandwichY - 20, 160, 420, 20);
+        // إطار ذهبي حول منطقة السندوتش
+        this.ui.sandwichBg.lineStyle(2, 0xc49b41);
+        this.ui.sandwichBg.strokeRoundedRect(sandwichX - 10, sandwichY - 10, 80, 200, 10);
         
-        // عنوان السندوتش - حجم وموضع أكبر
-        this.ui.sandwichTitle = this.add.text(sandwichX + 60, sandwichY - 60, 'برجر برجستا', {
+        // عنوان السندوتش - حجم وموضع مناسب
+        this.ui.sandwichTitle = this.add.text(sandwichX + 30, sandwichY - 30, 'برجر برجستا', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '22px', // خط مناسب لعنوان السندوتش للدقة HD
+            fontSize: '14px', // خط مناسب لعنوان السندوتش للدقة HD
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         }).setOrigin(0.5, 0);
         
         // مستويات الجوائز مع أيقونات - مواضع مناسبة للدقة HD
-        this.ui.reward30Icon = this.add.text(sandwichX - 20, sandwichY + 100, '🍟 30%', {
+        this.ui.reward30Icon = this.add.text(sandwichX - 10, sandwichY + 50, '🍟 30%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '18px', // خط مناسب للجوائز للدقة HD
+            fontSize: '12px', // خط مناسب للجوائز للدقة HD
             color: GAME_CONFIG.colors.dark
         }).setOrigin(1, 0.5);
         
-        this.ui.reward60Icon = this.add.text(sandwichX - 20, sandwichY + 60, '🍔 60%', {
+        this.ui.reward60Icon = this.add.text(sandwichX - 10, sandwichY + 30, '🍔 60%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '18px', // خط مناسب للجوائز للدقة HD
+            fontSize: '12px', // خط مناسب للجوائز للدقة HD
             color: GAME_CONFIG.colors.dark
         }).setOrigin(1, 0.5);
         
-        this.ui.reward100Icon = this.add.text(sandwichX - 20, sandwichY + 20, '🎉 100%', {
+        this.ui.reward100Icon = this.add.text(sandwichX - 10, sandwichY + 10, '🎉 100%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '18px', // خط مناسب للجوائز للدقة HD
+            fontSize: '12px', // خط مناسب للجوائز للدقة HD
             color: GAME_CONFIG.colors.dark
         }).setOrigin(1, 0.5);
         
         // خطوط مستويات الجوائز - أثخن وأكبر
         this.ui.sandwichBg.lineStyle(2, 0x8b6914, 0.5);
         this.ui.sandwichBg.beginPath();
-        this.ui.sandwichBg.moveTo(sandwichX - 10, sandwichY + 300);
-        this.ui.sandwichBg.lineTo(sandwichX + 130, sandwichY + 300);
-        this.ui.sandwichBg.moveTo(sandwichX - 10, sandwichY + 180);
-        this.ui.sandwichBg.lineTo(sandwichX + 130, sandwichY + 180);
-        this.ui.sandwichBg.moveTo(sandwichX - 10, sandwichY + 60);
-        this.ui.sandwichBg.lineTo(sandwichX + 130, sandwichY + 60);
+        this.ui.sandwichBg.moveTo(sandwichX - 10, sandwichY + 150);
+        this.ui.sandwichBg.lineTo(sandwichX + 65, sandwichY + 150);
+        this.ui.sandwichBg.moveTo(sandwichX - 10, sandwichY + 90);
+        this.ui.sandwichBg.lineTo(sandwichX + 65, sandwichY + 90);
+        this.ui.sandwichBg.moveTo(sandwichX - 10, sandwichY + 30);
+        this.ui.sandwichBg.lineTo(sandwichX + 65, sandwichY + 30);
         this.ui.sandwichBg.strokePath();
         
         // مكونات السندوتش (ستظهر تدريجياً)
         this.ui.sandwichLayers = this.add.graphics();
         
-        // نص النسبة المئوية - حجم وموضع أكبر
-        this.ui.discountPercentText = this.add.text(sandwichX + 60, sandwichY + 380, '0%', {
+        // نص النسبة المئوية - حجم وموضع مناسب
+        this.ui.discountPercentText = this.add.text(sandwichX + 30, sandwichY + 190, '0%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '28px', // خط مناسب للنسبة المئوية للدقة HD
+            fontSize: '20px', // خط مناسب للنسبة المئوية للدقة HD
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         }).setOrigin(0.5, 0);
