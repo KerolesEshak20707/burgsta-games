@@ -16,9 +16,9 @@ const GAME_CONFIG = {
     items: {
         baseSpeed: 120,        // سرعة مناسبة للعناصر الكبيرة
         speedIncrement: 20,    // زيادة تدريجية
-        baseSpawnRate: 2000,   // فترات أطول للراحة
+        baseSpawnRate: 4000,   // فترات أطول بكثير - 4 ثواني
         spawnRateDecrement: 80, // تسارع تدريجي
-        minSpawnRate: 600      // حد أدنى أبطأ للراحة
+        minSpawnRate: 1500     // حد أدنى أبطأ - ثانية ونص
     },
     
     // نظام الخصم - صعوبة عالية جداً 🔥
@@ -310,15 +310,15 @@ class GameManager {
         let spawnMultiplier = 1;
         
         if (this.discount >= 25) {
-            spawnMultiplier = 0.3; // كثيف بس مش جنون �
+            spawnMultiplier = 0.4; // كثيف بس مش جنون �
         } else if (this.discount >= 15) {
-            spawnMultiplier = 0.5; // متوسط السرعة 
+            spawnMultiplier = 0.6; // متوسط السرعة 
         } else if (this.discount >= 10) {
-            spawnMultiplier = 0.7;  // بداية التسريع
+            spawnMultiplier = 0.8;  // بداية التسريع
         } else if (this.discount >= 5) {
-            spawnMultiplier = 0.9;  // تسريع خفيف
+            spawnMultiplier = 1.0;  // تسريع خفيف
         } else {
-            spawnMultiplier = 1.5;  // هدوء وراحة قبل 5% - وقت للتفكير بهدوء
+            spawnMultiplier = 2.5;  // هدوء وراحة قبل 5% - وقت للتفكير بهدوء
         }
         
         const rate = GAME_CONFIG.items.baseSpawnRate * spawnMultiplier;
