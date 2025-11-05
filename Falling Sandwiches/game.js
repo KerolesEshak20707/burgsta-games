@@ -490,21 +490,21 @@ class GameScene extends Phaser.Scene {
     
     createPlayer() {
         // تحديد منطقة اللعب
-        const gameAreaWidth = GAME_CONFIG.width - 400;
+        const gameAreaWidth = GAME_CONFIG.width - 200;
         
-        // إنشاء اللاعب في موضع أعلى ليظهر بوضوح في دقة 4K
+        // إنشاء اللاعب في موضع مناسب للدقة HD
         this.player = this.physics.add.sprite(
             gameAreaWidth / 2, 
-            GAME_CONFIG.height - 300, // رفع البوكس لأعلى بـ250 بكسل
+            GAME_CONFIG.height - 100, // موضع مناسب للدقة HD
             'box'
         );
         
-        // تكبير الصندوق أكثر ليتناسب مع دقة 4K
-        this.player.setScale(0.8); // تكبير الصندوق إلى 80% ليكون واضح جداً في 4K
+        // تعديل الصندوق ليتناسب مع دقة HD
+        this.player.setScale(0.5); // حجم مناسب للدقة HD
         
         // تحسينات فيزياء للاستجابة الصاروخية
         this.player.setCollideWorldBounds(true);
-        this.player.body.setSize(120, 25); // منطقة تصادم أكبر تتناسب مع الحجم الجديد
+        this.player.body.setSize(80, 20); // منطقة تصادم مناسبة للحجم الجديد
         this.player.setGravityY(-400); // إلغاء تأثير الجاذبية على اللاعب
         this.player.body.setDrag(0); // إزالة أي مقاومة
         this.player.body.setMaxVelocity(0); // إيقاف السرعة التلقائية
@@ -521,8 +521,8 @@ class GameScene extends Phaser.Scene {
         const dividerLine = this.add.graphics();
         dividerLine.lineStyle(6, 0xc49b41, 0.8); // خط أسمك للشاشة الكبيرة
         dividerLine.beginPath();
-        dividerLine.moveTo(GAME_CONFIG.width - 380, 0);
-        dividerLine.lineTo(GAME_CONFIG.width - 380, GAME_CONFIG.height);
+        dividerLine.moveTo(GAME_CONFIG.width - 190, 0);
+        dividerLine.lineTo(GAME_CONFIG.width - 190, GAME_CONFIG.height);
         dividerLine.strokePath();
         
         // === لوحة المعلومات اليمنى ===
@@ -530,18 +530,18 @@ class GameScene extends Phaser.Scene {
     }
     
     createRightInfoPanel() {
-        const panelX = GAME_CONFIG.width - 350; // لوحة أعرض للشاشة 4K
-        let currentY = 40; // مسافات أكبر
+        const panelX = GAME_CONFIG.width - 175; // لوحة مناسبة للدقة HD
+        let currentY = 20; // مسافات مناسبة
         
         // خلفية اللوحة
         const panelBg = this.add.graphics();
         panelBg.fillStyle(0x000000, 0.1);
-        panelBg.fillRoundedRect(panelX - 20, 20, 340, GAME_CONFIG.height - 40, 20); // لوحة أعرض وأطول
+        panelBg.fillRoundedRect(panelX - 10, 10, 170, GAME_CONFIG.height - 20, 15); // لوحة مناسبة للدقة HD
         
         // === 1. النقاط ===
         this.ui.scoreText = this.add.text(panelX, currentY, 'النقاط: 0', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '48px', // خط أكبر للدقة 4K
+            fontSize: '16px', // خط مناسب للدقة HD
             fontWeight: '600',
             color: GAME_CONFIG.colors.primary
         });
@@ -550,7 +550,7 @@ class GameScene extends Phaser.Scene {
         // === 2. المستوى ===
         this.ui.levelText = this.add.text(panelX, currentY, 'المستوى: 1', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '48px', // خط أكبر
+            fontSize: '16px', // خط مناسب
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         });
@@ -559,14 +559,14 @@ class GameScene extends Phaser.Scene {
         // === 3. أكياس البطاطس (الأرواح) ===
         this.ui.livesLabel = this.add.text(panelX, currentY, 'أكياس البطاطس:', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '48px', // خط كبير للعنوان
+            fontSize: '16px', // خط مناسب للعنوان
             color: GAME_CONFIG.colors.primary
         });
         currentY += 75;
         
         this.ui.livesText = this.add.text(panelX, currentY, '🍟🍟🍟', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '64px', // خط كبير لأيقونات الأرواح
+            fontSize: '22px', // خط مناسب لأيقونات الأرواح
             color: GAME_CONFIG.colors.primary
         });
         currentY += 120;
@@ -574,7 +574,7 @@ class GameScene extends Phaser.Scene {
         // === 4. التقدم في البناء ===
         this.ui.progressTitle = this.add.text(panelX, currentY, '🍔 تقدم البرجر', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '48px', // خط كبير لعنوان التقدم
+            fontSize: '16px', // خط مناسب لعنوان التقدم
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.accent
         });
@@ -583,7 +583,7 @@ class GameScene extends Phaser.Scene {
         // === 5. النسبة المئوية الكبيرة ===
         this.ui.discountPercentText = this.add.text(panelX, currentY, '0%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '96px', // خط كبير جداً للنسبة المئوية
+            fontSize: '32px', // خط مناسب للنسبة المئوية
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         });
@@ -592,7 +592,7 @@ class GameScene extends Phaser.Scene {
         // === 6. الجزء الحالي من السندوتش ===
         this.ui.currentPartText = this.add.text(panelX, currentY, 'الطبق', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '42px', // خط كبير للجزء الحالي
+            fontSize: '14px', // خط مناسب للجزء الحالي
             fontWeight: '600',
             color: GAME_CONFIG.colors.dark
         });
@@ -603,7 +603,7 @@ class GameScene extends Phaser.Scene {
         // === 8. مؤشر مستوى المخاطرة 🎯 ===
         this.ui.riskLevelTitle = this.add.text(panelX, currentY, '🎯 مستوى التحدي', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '39px', // خط كبير لمستوى التحدي
+            fontSize: '13px', // خط مناسب لمستوى التحدي
             fontWeight: 'bold',
             color: '#e74c3c'
         });
@@ -611,7 +611,7 @@ class GameScene extends Phaser.Scene {
         
         this.ui.riskLevelText = this.add.text(panelX, currentY, 'مبتدئ 🟢', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '36px', // خط كبير لنص مستوى المخاطرة
+            fontSize: '12px', // خط مناسب لنص مستوى المخاطرة
             fontWeight: '600',
             color: '#27ae60'
         });
@@ -619,7 +619,7 @@ class GameScene extends Phaser.Scene {
         
         this.ui.nextMilestoneText = this.add.text(panelX, currentY, 'القادم: 10%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '30px', // خط كبير للمعلم القادم
+            fontSize: '10px', // خط مناسب للمعلم القادم
             color: GAME_CONFIG.colors.text
         });
         currentY += 90;
@@ -650,27 +650,27 @@ class GameScene extends Phaser.Scene {
         // عنوان السندوتش - حجم وموضع أكبر
         this.ui.sandwichTitle = this.add.text(sandwichX + 60, sandwichY - 60, 'برجر برجستا', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '64px', // خط أكبر لعنوان السندوتش للشاشة 4K
+            fontSize: '22px', // خط مناسب لعنوان السندوتش للدقة HD
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         }).setOrigin(0.5, 0);
         
-        // مستويات الجوائز مع أيقونات - مواضع أكبر
-        this.ui.reward30Icon = this.add.text(sandwichX - 50, sandwichY + 300, '🍟 30%', {
+        // مستويات الجوائز مع أيقونات - مواضع مناسبة للدقة HD
+        this.ui.reward30Icon = this.add.text(sandwichX - 20, sandwichY + 100, '🍟 30%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '54px', // خط أكبر للجوائز للشاشة 4K
+            fontSize: '18px', // خط مناسب للجوائز للدقة HD
             color: GAME_CONFIG.colors.dark
         }).setOrigin(1, 0.5);
         
-        this.ui.reward60Icon = this.add.text(sandwichX - 50, sandwichY + 180, '🍔 60%', {
+        this.ui.reward60Icon = this.add.text(sandwichX - 20, sandwichY + 60, '🍔 60%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '54px', // خط أكبر للجوائز للشاشة 4K
+            fontSize: '18px', // خط مناسب للجوائز للدقة HD
             color: GAME_CONFIG.colors.dark
         }).setOrigin(1, 0.5);
         
-        this.ui.reward100Icon = this.add.text(sandwichX - 50, sandwichY + 60, '🎉 100%', {
+        this.ui.reward100Icon = this.add.text(sandwichX - 20, sandwichY + 20, '🎉 100%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '54px', // خط أكبر للجوائز للشاشة 4K
+            fontSize: '18px', // خط مناسب للجوائز للدقة HD
             color: GAME_CONFIG.colors.dark
         }).setOrigin(1, 0.5);
         
@@ -691,7 +691,7 @@ class GameScene extends Phaser.Scene {
         // نص النسبة المئوية - حجم وموضع أكبر
         this.ui.discountPercentText = this.add.text(sandwichX + 60, sandwichY + 380, '0%', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '84px', // خط أكبر جداً للنسبة المئوية للشاشة 4K
+            fontSize: '28px', // خط مناسب للنسبة المئوية للدقة HD
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.primary
         }).setOrigin(0.5, 0);
@@ -1832,7 +1832,7 @@ class GameScene extends Phaser.Scene {
         goldenItem.setVelocityY(crazySpeed);
         
         // تأثيرات بصرية مميزة - حجم مناسب
-        goldenItem.setScale(0.8); // حجم مناسب مع البوكس
+        goldenItem.setScale(0.4); // حجم مناسب للدقة HD
         goldenItem.setTint(0xffd700); // لون ذهبي مشرق
         
         // تأثير إشعاع ذهبي
@@ -1879,13 +1879,13 @@ class GameScene extends Phaser.Scene {
         
         // تصغير الصور لتناسب اللعبة
         if (itemType === 'good') {
-            item.setScale(0.25); // تكبير الساندوتش الجيد قليلاً
+            item.setScale(0.15); // حجم مناسب للساندوتش الجيد للدقة HD
             item.setDepth(20); // السندويتشات الجيدة في المقدمة
         } else if (itemType === 'golden') {
-            item.setScale(2.2); // الذهبية كبيرة كما هي
+            item.setScale(1.1); // حجم مناسب للذهبية للدقة HD
             item.setDepth(25); // الذهبية فوق كل شيء
         } else {
-            item.setScale(0.12); // تصغير القنبلة أكثر
+            item.setScale(0.08); // حجم مناسب للقنبلة للدقة HD
             item.setDepth(10); // السيئة في الخلف
         }
         
