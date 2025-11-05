@@ -298,8 +298,9 @@ class GameManager {
             speedMultiplier = 3.0; // صعوبة قاتلة! 🔥
         } else if (this.discount >= 5) {
             speedMultiplier = 1.5; // بداية التحدي مؤجلة إلى 5%
+        } else {
+            speedMultiplier = 0.6; // أبطأ بكثير قبل 5% - سهولة فائقة!
         }
-        // إزالة الصعوبة من 3% - اللعبة أسهل في البداية
         
         return GAME_CONFIG.items.baseSpeed * speedMultiplier;
     }
@@ -316,8 +317,9 @@ class GameManager {
             spawnMultiplier = 0.4;  // ظهور قاتل! ⚡💀
         } else if (this.discount >= 5) {
             spawnMultiplier = 0.8;  // بداية الصعوبة مؤجلة إلى 5%
+        } else {
+            spawnMultiplier = 2.0;  // فترات أطول بكثير قبل 5% - وقت كافي للتفكير!
         }
-        // إزالة الزيادة من 3% - معدل عادي حتى 5%
         
         const rate = GAME_CONFIG.items.baseSpawnRate * spawnMultiplier;
         return Math.max(rate, GAME_CONFIG.items.minSpawnRate);
@@ -1251,12 +1253,19 @@ class GameScene extends Phaser.Scene {
     }
     
     collectItem(player, item) {
-        // فحص إضافي للنطاق الموسع في الوضع الذكي
-        if (this.smartCatchEnabled) {
-            const distance = Phaser.Math.Distance.Between(player.x, player.y, item.x, item.y);
-            if (distance > 150) { // خارج النطاق الموسع
-                return; // لا نجمع العنصر
-            }
+        // صندوق ذكي دائماً - نطاق توليرانس أوسع للالتقاط
+        const distance = Phaser.Math.Distance.Between(player.x, player.y, item.x, item.y);
+        let maxDistance = 100; // نطاق عادي
+        
+        // نطاق أوسع قبل الوصول لـ 5% - سهولة فائقة
+        if (this.gameManager.discount < 5) {
+            maxDistance = 180; // نطاق واسع جداً قبل 5%
+        } else if (this.smartCatchEnabled) {
+            maxDistance = 150; // نطاق موسع في الوضع الخاص
+        }
+        
+        if (distance > maxDistance) {
+            return; // خارج النطاق المسموح
         }
         
         // وضع علامة على أن العنصر تم جمعه
@@ -2145,6 +2154,15 @@ class GameScene extends Phaser.Scene {
             }
         }
         
+        // عرض مؤشر النطاق الموسع قبل 5%
+        if (this.player && this.gameManager.discount < 5) {
+            this.updateEasyModeIndicator();
+        } else if (this.easyModeIndicator) {
+            // إزالة المؤشر عند الوصول لـ 5%
+            this.easyModeIndicator.destroy();
+            this.easyModeIndicator = null;
+        }
+        
         // فحص النطاق الموسع للتقاط ذكي في مستوى 5%
         if (this.smartCatchEnabled && this.player) {
             this.fallingItems.children.entries.forEach(item => {
@@ -2641,6 +2659,20 @@ class GameScene extends Phaser.Scene {
         this.updateSmartCatchIndicator();
         
         console.log('🧲 تم تفعيل الصندوق الذكي - نطاق التقاط أوسع!');
+    }
+    
+    updateEasyModeIndicator() {
+        // مؤشر الوضع السهل قبل 5%
+        if (!this.easyModeIndicator && this.player) {
+            this.easyModeIndicator = this.add.graphics();
+        }
+        
+        if (this.easyModeIndicator && this.player) {
+            this.easyModeIndicator.clear();
+            this.easyModeIndicator.lineStyle(3, 0x00ff88, 0.6);
+            this.easyModeIndicator.strokeCircle(this.player.x, this.player.y, 180); // نطاق واسع
+            this.easyModeIndicator.setDepth(5);
+        }
     }
     
     updateSmartCatchIndicator() {
