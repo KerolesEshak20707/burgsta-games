@@ -1467,37 +1467,38 @@ class GameScene extends Phaser.Scene {
         celebrationBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
         celebrationBg.setDepth(200);
 
-        // العنوان الرئيسي - مبهج ومختصر
-        const mainTitle = this.add.text(GAME_CONFIG.width / 2, 400, 
-            'مبروك! وجبة مجانية', {
-            fontSize: '24px', // حجم مناسب ومختصر
+        // العنوان الرئيسي
+        const mainTitle = this.add.text(GAME_CONFIG.width / 2, 350, 
+            'مبروك حصلت علي الساندوتش الذهبي\nولك ساندوتش مجاني', {
+            fontSize: '20px',
             fill: '#FFD700',
             fontFamily: 'Arial Black',
             stroke: '#FFFFFF',
-            strokeThickness: 4,
+            strokeThickness: 3,
             align: 'center',
-            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 6, fill: true }
+            lineSpacing: 8,
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5);
         mainTitle.setDepth(201);
 
-        // رسالة مختصرة ومبهجة
-        const explanation = this.add.text(GAME_CONFIG.width / 2, 500, 
+        // رسالة مختصرة
+        const explanation = this.add.text(GAME_CONFIG.width / 2, 450, 
             'احضر هذه الشاشة لمطعم برجستا\nواحصل على وجبة مجانية كاملة', {
-            fontSize: '18px', // حجم واضح ومناسب
+            fontSize: '16px',
             fill: '#FFFFFF',
             fontFamily: 'Arial',
             stroke: '#FFD700',
             strokeThickness: 2,
             align: 'center',
-            lineSpacing: 8,
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+            lineSpacing: 6,
+            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 3, fill: true }
         }).setOrigin(0.5);
         explanation.setDepth(201);
 
         // تفاصيل بسيطة ومفيدة
-        const whatHappened = this.add.text(GAME_CONFIG.width / 2, 580, 
+        const whatHappened = this.add.text(GAME_CONFIG.width / 2, 520, 
             'صالحة لاستخدام واحد فقط', {
-            fontSize: '14px', // حجم مناسب
+            fontSize: '14px',
             fill: '#FFFACD',
             fontFamily: 'Arial',
             stroke: '#8B7D6B',
@@ -1506,6 +1507,36 @@ class GameScene extends Phaser.Scene {
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5);
         whatHappened.setDepth(201);
+
+        // زر "العب تاني"
+        const playAgainButton = this.add.text(GAME_CONFIG.width / 2, 580, 
+            'العب تاني', {
+            fontSize: '18px',
+            fill: '#FFFFFF',
+            fontFamily: 'Arial Black',
+            stroke: '#FFD700',
+            strokeThickness: 2,
+            align: 'center',
+            backgroundColor: '#FFD700',
+            padding: { x: 20, y: 10 },
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 3, fill: true }
+        }).setOrigin(0.5);
+        playAgainButton.setDepth(202);
+        playAgainButton.setInteractive({ cursor: 'pointer' });
+        
+        // عند النقر على زر "العب تاني"
+        playAgainButton.on('pointerdown', () => {
+            // إعادة تشغيل اللعبة
+            this.scene.restart();
+        });
+
+        // تأثير hover للزر
+        playAgainButton.on('pointerover', () => {
+            playAgainButton.setScale(1.1);
+        });
+        playAgainButton.on('pointerout', () => {
+            playAgainButton.setScale(1);
+        });
 
         // احتفال بسيط بدون تأثيرات مزعجة
 
@@ -1549,36 +1580,37 @@ class GameScene extends Phaser.Scene {
         celebrationBg.setDepth(200);
 
         // العنوان الرئيسي
-        const mainTitle = this.add.text(GAME_CONFIG.width / 2, 350, 
-            'مبروك! وجبة مجانية', {
-            fontSize: '24px', // حجم مناسب ومختصر
+        const mainTitle = this.add.text(GAME_CONFIG.width / 2, 320, 
+            'مبروك حصلت علي الساندوتش الذهبي\nولك ساندوتش مجاني', {
+            fontSize: '20px',
             fill: '#FFD700',
             fontFamily: 'Arial Black',
             stroke: '#FFFFFF',
-            strokeThickness: 4,
+            strokeThickness: 3,
             align: 'center',
-            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 6, fill: true }
+            lineSpacing: 8,
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5);
         mainTitle.setDepth(201);
 
-        // رسالة مختصرة ومبهجة
-        const explanation = this.add.text(GAME_CONFIG.width / 2, 450, 
+        // رسالة مختصرة
+        const explanation = this.add.text(GAME_CONFIG.width / 2, 420, 
             'احضر هذه الشاشة لمطعم برجستا\nواحصل على وجبة مجانية كاملة', {
-            fontSize: '18px', // حجم واضح ومناسب
+            fontSize: '16px',
             fill: '#FFFFFF',
             fontFamily: 'Arial',
             stroke: '#FFD700',
             strokeThickness: 2,
             align: 'center',
-            lineSpacing: 8,
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+            lineSpacing: 6,
+            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 3, fill: true }
         }).setOrigin(0.5);
         explanation.setDepth(201);
 
         // تفاصيل بسيطة ومفيدة
-        const whatHappened = this.add.text(GAME_CONFIG.width / 2, 520, 
+        const whatHappened = this.add.text(GAME_CONFIG.width / 2, 480, 
             'صالحة لاستخدام واحد فقط', {
-            fontSize: '14px', // حجم مناسب
+            fontSize: '14px',
             fill: '#FFFACD',
             fontFamily: 'Arial',
             stroke: '#8B7D6B',
@@ -1587,6 +1619,35 @@ class GameScene extends Phaser.Scene {
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5);
         whatHappened.setDepth(201);
+
+        // زر "العب تاني"
+        const playAgainButton2 = this.add.text(GAME_CONFIG.width / 2, 540, 
+            'العب تاني', {
+            fontSize: '18px',
+            fill: '#FFFFFF',
+            fontFamily: 'Arial Black',
+            stroke: '#FFD700',
+            strokeThickness: 2,
+            align: 'center',
+            backgroundColor: '#FFD700',
+            padding: { x: 20, y: 10 },
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 3, fill: true }
+        }).setOrigin(0.5);
+        playAgainButton2.setDepth(202);
+        playAgainButton2.setInteractive({ cursor: 'pointer' });
+        
+        // عند النقر على زر "العب تاني"
+        playAgainButton2.on('pointerdown', () => {
+            this.scene.restart();
+        });
+
+        // تأثير hover للزر
+        playAgainButton2.on('pointerover', () => {
+            playAgainButton2.setScale(1.1);
+        });
+        playAgainButton2.on('pointerout', () => {
+            playAgainButton2.setScale(1);
+        });
 
         // احتفال بسيط بدون تأثيرات مزعجة
 
@@ -1917,7 +1978,7 @@ class GameScene extends Phaser.Scene {
         
         // تصغير الصور لتناسب اللعبة
         if (itemType === 'good') {
-            item.setScale(0.25); // حجم واضح للساندوتش العادي! 🥪
+            item.setScale(0.15); // حجم الساندوتش العادي كما كان! 🥪
             item.setDepth(20); // السندويتشات الجيدة في المقدمة
         } else {
             item.setScale(0.05); // حجم أصغر للقنبلة - خطر خفي! 💣
