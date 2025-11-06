@@ -127,7 +127,7 @@ class GameManager {
         // إحصائيات
         this.goodCaught = 0;
         this.badCaught = 0;
-        this.goldenCaught = 0;
+        // تم حذف goldenCaught - نستخدم النظام الموحد فقط
         this.sandwichesMissed = 0; // 💔 السندوتشات المفقودة
         
         // أصوات اللعبة
@@ -159,53 +159,12 @@ class GameManager {
         this.maxFreeSandwichesPerDay = 2; // مرتان فقط يومياً
         
         // تهيئة نظام السندوتش الذهبي
-        this.initializeGoldenSandwichSystem();
+        // تم حذف نظام الساندوتش الذهبي القديم
     }
     
-    initializeGoldenSandwichSystem() {
-        // نظام السندوتش الذهبي - مرتان يومياً فقط قابل للإمساك
-        const today = new Date().toDateString();
-        const savedData = localStorage.getItem('burgstaGoldenSandwichData');
-        
-        if (savedData) {
-            const data = JSON.parse(savedData);
-            if (data.date === today) {
-                // نفس اليوم - استخدم البيانات المحفوظة
-                this.goldenSandwichesUsed = data.used || 0;
-            } else {
-                // يوم جديد - إعادة تعيين
-                this.goldenSandwichesUsed = 0;
-                this.saveGoldenSandwichData(today);
-            }
-        } else {
-            // أول مرة
-            this.goldenSandwichesUsed = 0; // Reset للاختبار
-            this.saveGoldenSandwichData(today);
-        }
-        
-        this.maxGoldenSandwichesPerDay = 2; // مرتان فقط يومياً قابل للإمساك
-    }
+    // تم حذف نظام الساندوتش الذهبي القديم - نستخدم النظام الموحد فقط
     
-    saveGoldenSandwichData(date) {
-        const data = {
-            date: date,
-            used: this.goldenSandwichesUsed
-        };
-        localStorage.setItem('burgstaGoldenSandwichData', JSON.stringify(data));
-    }
-    
-    canCatchGoldenSandwich() {
-        return this.goldenSandwichesUsed < this.maxGoldenSandwichesPerDay;
-    }
-    
-    useGoldenSandwich() {
-        if (this.canCatchGoldenSandwich()) {
-            this.goldenSandwichesUsed++;
-            this.saveGoldenSandwichData(new Date().toDateString());
-            return true;
-        }
-        return false;
-    }
+    // تم حذف canCatchGoldenSandwich و useGoldenSandwich - النظام القديم محذوف نهائياً
     
     saveFreeSandwichData(date) {
         const data = {
@@ -1337,9 +1296,7 @@ class GameScene extends Phaser.Scene {
             case 'good':
                 this.handleGoodSandwich();
                 break;
-            case 'golden':
-                this.handleGoldenSandwich();
-                break;
+            // تم حذف case 'golden' - نستخدم النظام الموحد فقط
             case 'bad':
                 this.handleBadItem();
                 break;
@@ -1406,7 +1363,6 @@ class GameScene extends Phaser.Scene {
             console.log('✅ Adding 3% discount');
             this.gameManager.addDiscount(3);
             this.gameManager.score += 100;
-            this.gameManager.goldenCaught++;
             
             this.showFloatingText('+3% خصم ذهبي!', '#FFD700', 2);
             this.createSpecialEffect(this.player.x, this.player.y);
@@ -1417,7 +1373,6 @@ class GameScene extends Phaser.Scene {
             console.log('✅ Adding 1.5% discount');
             this.gameManager.addDiscount(1.5);
             this.gameManager.score += 50;
-            this.gameManager.goldenCaught++;
             
             this.showFloatingText('+1.5% خصم ذهبي!', '#FFD700', 2);
             this.createSpecialEffect(this.player.x, this.player.y);
@@ -1645,54 +1600,9 @@ class GameScene extends Phaser.Scene {
         }
     }
     
-    handleSpecialGoldenSandwich(item) {
-        // فحص إذا كان قابل للإمساك اليوم
-        if (!item.canBeCaught) {
-            // السندوتش سريع جداً - لا يمكن الإمساك به
-            this.showMessage('الساندوتش الذهبي سريع جداً!', 2000, '#ff6600');
-            return;
-        }
-        
-        // نجح في الإمساك بالسندوتش الذهبي!
-        if (this.gameManager.useGoldenSandwich()) {
-            // مكافأة السندوتش الذهبي المضاعفة!
-            const goldenBonus = GAME_CONFIG.discount.goldenSandwich * 2; // مضاعف!
-            this.gameManager.addDiscount(goldenBonus);
-            this.gameManager.score += 100; // نقاط مضاعفة
-            this.gameManager.goldenCaught++;
-            
-            // تأثيرات بصرية خاصة
-            this.showFloatingText(`🏆 +${goldenBonus.toFixed(1)}% ذهبي! 🏆`, '#ffd700', 2.0);
-            this.createSpecialEffect(this.player.x, this.player.y);
-            
-            // صوت مميز
-            if (this.sounds && this.sounds.golden) {
-                this.sounds.golden.play();
-            }
-            
-            // رسالة نجاح مع الإشارة للصعوبة
-            this.showMessage(`مذهل! التقطت ساندوتش ذهبي نادر! مهارة عالية! (${this.gameManager.goldenSandwichesUsed}/2 اليوم)`, 3500, '#00ff00');
-        }
-    }
+    // تم حذف handleSpecialGoldenSandwich - النظام القديم محذوف نهائياً
     
-    handleGoldenSandwich() {
-        this.gameManager.addDiscount(GAME_CONFIG.discount.goldenSandwich);
-        this.gameManager.score += 50;
-        this.gameManager.goldenCaught++;
-        
-        // تأثير بصري خاص بصيغة مبسطة
-        this.showFloatingText(`+${GAME_CONFIG.discount.goldenSandwich.toFixed(1)}%`, GAME_CONFIG.colors.accent, 1.5);
-        this.createSpecialEffect(this.player.x, this.player.y);
-        
-        // صوت خاص
-        try {
-            if (this.sounds && this.sounds.golden) {
-                this.sounds.golden.play();
-            }
-        } catch (error) {
-            // تجاهل أخطاء الأصوات
-        }
-    }
+    // تم حذف handleGoldenSandwich() - نستخدم handleUnifiedGoldenSandwich فقط
     
     handleBadItem() {
         // 💥 القنبلة تخصم من الخصم المُجمّع
@@ -2194,7 +2104,7 @@ class GameScene extends Phaser.Scene {
         const stats = [
             `النقاط النهائية: ${this.gameManager.score}`,
             `السندوتشات الجيدة: ${this.gameManager.goodCaught}`,
-            `السندوتشات الذهبية: ${this.gameManager.goldenCaught}`,
+            // تم حذف عداد الساندوتشات الذهبية القديم
             `المستوى: ${this.gameManager.level}`
         ];
         
@@ -2788,8 +2698,8 @@ class GameScene extends Phaser.Scene {
         this.gameManager.isInRiskMode = false;
         
         // 🎯 بعد قرار الاستمرار - الساندوتش الذهبي يظهر دائماً!
-        // تم إزالة النظام القديم - الآن نستخدم triggerUnifiedGoldenSandwich فقط
-        console.log('🎯 الساندوتش الذهبي يظهر - صعب الالتقاط!');
+        this.triggerUnifiedGoldenSandwich(); // الساندوتش الموحد يظهر دائماً
+        console.log('🎯 الساندوتش الذهبي الموحد تم إطلاقه - صعب الالتقاط!');
         
         // زيادة الصعوبة حسب المستوى
         this.increaseDifficulty(level.difficulty);
@@ -3295,7 +3205,7 @@ class GameScene extends Phaser.Scene {
                 this.gameManager.lives = 3;
                 this.gameManager.goodCaught = 0;
                 this.gameManager.badCaught = 0;
-                this.gameManager.goldenCaught = 0;
+                // تم حذف goldenCaught - نستخدم النظام الموحد فقط
                 this.gameManager.sandwichesMissed = 0;
                 
                 // إعادة تعيين السندوتشات الذهبية للمخاطرة 🌟
