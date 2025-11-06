@@ -179,7 +179,7 @@ class GameManager {
             }
         } else {
             // أول مرة
-            this.goldenSandwichesUsed = 0;
+            this.goldenSandwichesUsed = 0; // Reset للاختبار
             this.saveGoldenSandwichData(today);
         }
         
@@ -1468,29 +1468,28 @@ class GameScene extends Phaser.Scene {
         celebrationBg.setDepth(200);
 
         // العنوان الرئيسي
-        const mainTitle = this.add.text(GAME_CONFIG.width / 2, 350, 
-            'مبروك حصلت علي الساندوتش الذهبي\nولك ساندوتش مجاني', {
-            fontSize: '20px',
+        const mainTitle = this.add.text(GAME_CONFIG.width / 2, 330, 
+            '🏆 مبروك أيها الأسطورة!\nلقد حصلت على الساندوتش الذهبي المجاني 🍔✨\nاستمتع بوجبتك الكاملة — لقد حققت إنجازًا نادرًا جدًا! 🔥', {
+            fontSize: '18px',
             fill: '#FFD700',
             fontFamily: 'Arial Black',
             stroke: '#FFFFFF',
-            strokeThickness: 3,
+            strokeThickness: 2,
             align: 'center',
-            lineSpacing: 8,
+            lineSpacing: 6,
             shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5);
         mainTitle.setDepth(201);
 
-        // رسالة مختصرة
-        const explanation = this.add.text(GAME_CONFIG.width / 2, 450, 
-            'احضر هذه الشاشة لمطعم برجستا\nواحصل على وجبة مجانية كاملة', {
+        // رسالة للكاشير
+        const explanation = this.add.text(GAME_CONFIG.width / 2, 460, 
+            'اظهر هذا للكاشير', {
             fontSize: '16px',
             fill: '#FFFFFF',
             fontFamily: 'Arial',
-            stroke: '#FFD700',
-            strokeThickness: 2,
+            stroke: '#000000',
+            strokeThickness: 3,
             align: 'center',
-            lineSpacing: 6,
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 3, fill: true }
         }).setOrigin(0.5);
         explanation.setDepth(201);
@@ -1508,17 +1507,17 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
         whatHappened.setDepth(201);
 
-        // زر "العب تاني"
-        const playAgainButton = this.add.text(GAME_CONFIG.width / 2, 580, 
-            'العب تاني', {
-            fontSize: '18px',
+        // زر "العب مرة أخرى"
+        const playAgainButton = this.add.text(GAME_CONFIG.width / 2, 540, 
+            '🔄 العب مرة أخرى', {
+            fontSize: '16px',
             fill: '#FFFFFF',
             fontFamily: 'Arial Black',
-            stroke: '#FFD700',
-            strokeThickness: 2,
+            stroke: '#8B4513',
+            strokeThickness: 1,
             align: 'center',
-            backgroundColor: '#FFD700',
-            padding: { x: 20, y: 10 },
+            backgroundColor: '#8B4513',
+            padding: { x: 16, y: 8 },
             shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 3, fill: true }
         }).setOrigin(0.5);
         playAgainButton.setDepth(202);
@@ -1580,29 +1579,28 @@ class GameScene extends Phaser.Scene {
         celebrationBg.setDepth(200);
 
         // العنوان الرئيسي
-        const mainTitle = this.add.text(GAME_CONFIG.width / 2, 320, 
-            'مبروك حصلت علي الساندوتش الذهبي\nولك ساندوتش مجاني', {
-            fontSize: '20px',
+        const mainTitle = this.add.text(GAME_CONFIG.width / 2, 300, 
+            '🏆 مبروك أيها الأسطورة!\nلقد حصلت على الساندوتش الذهبي المجاني 🍔✨\nاستمتع بوجبتك الكاملة — لقد حققت إنجازًا نادرًا جدًا! 🔥', {
+            fontSize: '18px',
             fill: '#FFD700',
             fontFamily: 'Arial Black',
             stroke: '#FFFFFF',
-            strokeThickness: 3,
+            strokeThickness: 2,
             align: 'center',
-            lineSpacing: 8,
+            lineSpacing: 6,
             shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5);
         mainTitle.setDepth(201);
 
-        // رسالة مختصرة
-        const explanation = this.add.text(GAME_CONFIG.width / 2, 420, 
-            'احضر هذه الشاشة لمطعم برجستا\nواحصل على وجبة مجانية كاملة', {
+        // رسالة للكاشير
+        const explanation = this.add.text(GAME_CONFIG.width / 2, 430, 
+            'اظهر هذا للكاشير', {
             fontSize: '16px',
             fill: '#FFFFFF',
             fontFamily: 'Arial',
-            stroke: '#FFD700',
-            strokeThickness: 2,
+            stroke: '#000000',
+            strokeThickness: 3,
             align: 'center',
-            lineSpacing: 6,
             shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 3, fill: true }
         }).setOrigin(0.5);
         explanation.setDepth(201);
@@ -1620,17 +1618,17 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
         whatHappened.setDepth(201);
 
-        // زر "العب تاني"
-        const playAgainButton2 = this.add.text(GAME_CONFIG.width / 2, 540, 
-            'العب تاني', {
-            fontSize: '18px',
+        // زر "العب مرة أخرى"
+        const playAgainButton2 = this.add.text(GAME_CONFIG.width / 2, 510, 
+            '🔄 العب مرة أخرى', {
+            fontSize: '16px',
             fill: '#FFFFFF',
             fontFamily: 'Arial Black',
-            stroke: '#FFD700',
-            strokeThickness: 2,
+            stroke: '#8B4513',
+            strokeThickness: 1,
             align: 'center',
-            backgroundColor: '#FFD700',
-            padding: { x: 20, y: 10 },
+            backgroundColor: '#8B4513',
+            padding: { x: 16, y: 8 },
             shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 3, fill: true }
         }).setOrigin(0.5);
         playAgainButton2.setDepth(202);
@@ -1959,8 +1957,8 @@ class GameScene extends Phaser.Scene {
         // بدون حركة جانبية - مسار مستقيم ثابت
         goldenItem.body.setVelocityX(0); // مسار مستقيم فقط // سرعة صاروخية! �
         
-        // حجم أكبر قليلاً ليكون أوضح! 🥪
-        goldenItem.setScale(0.25); // حجم أكبر للرؤية الواضحة
+        // حجم أكبر ليكون واضح جداً! 🥪
+        goldenItem.setScale(0.35); // حجم أكبر بوضوح
         goldenItem.setTint(0xFFD700); // ذهبي براق
         goldenItem.setDepth(100); // فوق كل شيء
         
@@ -2939,8 +2937,8 @@ class GameScene extends Phaser.Scene {
                 // بدون حركة جانبية - مسار مستقيم ثابت
                 goldenItem.setVelocityX(0);
                 
-                // حجم أكبر قليلاً ليكون أوضح
-                goldenItem.setScale(0.25); // حجم أكبر للرؤية الواضحة! ⭐
+                // حجم أكبر ليكون واضح جداً
+                goldenItem.setScale(0.35); // حجم أكبر بوضوح! ⭐
                 goldenItem.setDepth(100); // فوق كل شيء
                 
                 if (canGetFreeMeal) {
