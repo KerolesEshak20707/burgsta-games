@@ -2802,8 +2802,7 @@ class GameScene extends Phaser.Scene {
                 // ✨ إضافة جزيئات ذهبية متطايرة حول الساندوتش
                 this.addGoldenParticles(goldenItem);
                 
-                // رسالة توضح الجائزة بدون أسرار
-                this.showMessage(`ساندوتش ذهبي! ${prizeMessage}`, 3000, prizeColor);
+                // الإشعار سيظهر فقط عند الالتقاط - ليس عند الظهور
                 
                 // تأثير وميض سريع يدل على الصعوبة
                 this.tweens.add({
