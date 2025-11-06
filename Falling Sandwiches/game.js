@@ -2749,8 +2749,8 @@ class GameScene extends Phaser.Scene {
                 const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
                 const x = Math.random() * (gameAreaWidth - 50) + 25; // مكان عشوائي
                 
-                // إنشاء الساندوتش الذهبي بشكل ساندوتش عادي + تأثيرات ذهبية
-                const goldenItem = this.physics.add.sprite(x, -30, 'sandwich1');
+                // إنشاء الساندوتش الذهبي باستخدام صورة اورجينال + تأثيرات ذهبية
+                const goldenItem = this.physics.add.sprite(x, -30, 'goodSandwich');
                 goldenItem.itemType = 'unifiedGolden';
                 goldenItem.isUnifiedGoldenSandwich = true;
                 goldenItem.prizeType = prizeType;
