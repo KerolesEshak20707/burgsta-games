@@ -1374,13 +1374,11 @@ class GameScene extends Phaser.Scene {
     }
 
     handleUnifiedGoldenSandwich(item) {
-        // 🎁 نظام المكافأة العشوائي الجديد
-        const randomLuck = Math.random();
-        const todayData = this.gameManager.getDailyData();
+        // 🎁 نظام الجوائز المحدد مسبقاً
+        const prizeType = item.prizeType;
         
-        // مرتين فقط في اليوم كحد أقصى
-        if (todayData.freeSandwiches < 2 && randomLuck < 0.15) { // 15% فقط!
-            // 🎉 وجبة مجانية كاملة - الحظ الذهبي!
+        if (prizeType === 'freeMeal') {
+            // 🎉 وجبة مجانية كاملة
             this.handleFreeSandwich(item);
             this.gameManager.incrementFreeSandwichCount();
             this.showFloatingText('🎁 وجبة مجانية كاملة!', '#ffd700', 3);
@@ -1399,21 +1397,25 @@ class GameScene extends Phaser.Scene {
                     this.showWinScreen();
                 }
             });
-        } else {
-            // خصم مميز (1.5% أو 3%)
-            const goldenBonus = (Math.random() < 0.5) ? 1.5 : 3;
-            this.gameManager.addDiscount(goldenBonus);
+        } else if (prizeType === 'discount3') {
+            // خصم 3%
+            this.gameManager.addDiscount(3);
             this.gameManager.score += 100;
             this.gameManager.goldenCaught++;
             
-            this.showFloatingText(`+${goldenBonus}% خصم ذهبي!`, '#ffd700', 2);
+            this.showFloatingText('+3% خصم ذهبي!', '#32CD32', 2);
             this.createSpecialEffect(this.player.x, this.player.y);
+            this.showMessage('خصم 3% ممتاز!', 2500, '#32CD32');
             
-            // رسالة مناسبة
-            const message = todayData.freeSandwiches >= 2 ? 
-                'خصم ذهبي رائع! (انتهت الوجبات المجانية اليوم)' : 
-                'خصم ذهبي ممتاز!';
-            this.showMessage(message, 2500, '#ffd700');
+        } else if (prizeType === 'discount1_5') {
+            // خصم 1.5%
+            this.gameManager.addDiscount(1.5);
+            this.gameManager.score += 50;
+            this.gameManager.goldenCaught++;
+            
+            this.showFloatingText('+1.5% خصم ذهبي!', '#87CEEB', 2);
+            this.createSpecialEffect(this.player.x, this.player.y);
+            this.showMessage('خصم 1.5% رائع!', 2500, '#87CEEB');
         }
         
         // صوت مميز
@@ -2913,9 +2915,28 @@ class GameScene extends Phaser.Scene {
         // الساندوتش الذهبي الموحد - نادر جداً وصعب للغاية!
         console.log('🏆 إطلاق الساندوتش الذهبي الموحد!');
         
-        // تحديد الحالة اليومية للوجبات المجانية
+        // تحديد نوع الجائزة بشكل عشوائي
         const canGetFreeMeal = this.gameManager.canGetFreeSandwich();
         const freeMealsLeft = 2 - this.gameManager.freeSandwichesUsed;
+        
+        // نظام الجوائز العشوائي - مع حماية من الوجبات المجانية
+        const randomChance = Math.random() * 100;
+        let prizeType, prizeMessage, prizeColor;
+        
+        if (canGetFreeMeal && randomChance < 15) { // 15% وجبة مجانية (فقط إذا متاحة!)
+            prizeType = 'freeMeal';
+            prizeMessage = 'وجبة مجانية!';
+            prizeColor = '#FFD700';
+        } else if (randomChance < 57.5) { // إعادة توزيع النسب عند عدم توفر وجبات مجانية
+            // خصم 3% (42.5% من المتبقي)
+            prizeType = 'discount3';
+            prizeMessage = 'خصم 3%!';
+            prizeColor = '#32CD32';
+        } else { // 42.5% خصم 1.5%
+            prizeType = 'discount1_5';
+            prizeMessage = 'خصم 1.5%!';
+            prizeColor = '#87CEEB';
+        }
         
         // تأخير عشوائي لجعل الظهور غير متوقع
         const randomDelay = Math.random() * 3000 + 500; // من نصف ثانية إلى 3.5 ثانية
@@ -2925,11 +2946,13 @@ class GameScene extends Phaser.Scene {
                 const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
                 const x = Math.random() * (gameAreaWidth - 50) + 25; // مكان عشوائي
                 
-                // إنشاء الساندوتش الذهبي الموحد
+                // إنشاء الساندوتش الذهبي مع نوع الجائزة المحدد مسبقاً
                 const goldenItem = this.physics.add.sprite(x, -30, 'sandwich1');
                 goldenItem.itemType = 'unifiedGolden';
                 goldenItem.isUnifiedGoldenSandwich = true;
-                goldenItem.canGetFreeMeal = canGetFreeMeal;
+                goldenItem.prizeType = prizeType;
+                goldenItem.prizeMessage = prizeMessage;
+                goldenItem.prizeColor = prizeColor;
                 
                 // سرعة عالية جداً لتحدي أكبر!
                 goldenItem.setVelocityY(3000); // سرعة ثابتة عالية
@@ -2941,18 +2964,18 @@ class GameScene extends Phaser.Scene {
                 goldenItem.setScale(0.35); // حجم أكبر بوضوح! ⭐
                 goldenItem.setDepth(100); // فوق كل شيء
                 
-                if (canGetFreeMeal) {
-                    // وجبة مجانية متاحة - توهج ذهبي ماسي!
-                    goldenItem.setTint(0xFFD700); // ذهبي براق
-                    this.showMessage(`ساندوتش ذهبي ماسي! وجبة مجانية 100%! (${freeMealsLeft} متبقية اليوم)`, 4000, '#FFD700');
-                    
-                    // تأثيرات الماس للوجبة المجانية
+                // تحديد المظهر والرسالة حسب نوع الجائزة
+                if (prizeType === 'freeMeal') {
+                    goldenItem.setTint(0xFFD700); // ذهبي للوجبة المجانية
                     this.addDiamondEffects(goldenItem);
+                } else if (prizeType === 'discount3') {
+                    goldenItem.setTint(0x32CD32); // أخضر للخصم 3%
                 } else {
-                    // خصمات فقط - توهج فضي
-                    goldenItem.setTint(0xC0C0C0); // فضي
-                    this.showMessage('ساندوتش ذهبي! خصمات مضاعفة! (انتهت الوجبات المجانية اليوم)', 3500, '#C0C0C0');
+                    goldenItem.setTint(0x87CEEB); // أزرق فاتح للخصم 1.5%
                 }
+                
+                // رسالة توضح الجائزة بدون أسرار
+                this.showMessage(`ساندوتش ذهبي! ${prizeMessage}`, 3000, prizeColor);
                 
                 // تأثير وميض سريع يدل على الصعوبة
                 this.tweens.add({
