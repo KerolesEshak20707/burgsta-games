@@ -2863,7 +2863,7 @@ class GameScene extends Phaser.Scene {
                 this.fallingItems.add(goldenItem);
                 
                 // رسالة مثيرة
-                this.showFloatingText(`💫 سندوتش ${level.percent}%!`, '#ffd700', 2);
+                this.showFloatingText(`💫 ساندوتش ذهبي!`, '#ffd700', 2);
             }
         });
     }
