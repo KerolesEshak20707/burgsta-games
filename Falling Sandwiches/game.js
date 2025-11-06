@@ -8,17 +8,17 @@ const GAME_CONFIG = {
     
     // إعدادات اللاعب
     player: {
-        speed: 30,  // سرعة مناسبة للدقة HD
+        speed: 45,  // سرعة متوازنة ومريحة 😊
         size: 40    // حجم مناسب للدقة HD
     },
     
     // إعدادات السندوتشات - متوازنة مع الأحجام الكبيرة 🔥🔥
     items: {
-        baseSpeed: 70,         // سرعة أبطأ - وقت للإمساك بالعناصر
-        speedIncrement: 20,    // زيادة تدريجية
-        baseSpawnRate: 1500,   // بداية سريعة - ثانية ونص
+        baseSpeed: 90,         // سرعة متوازنة - مريحة في البداية �
+        speedIncrement: 30,    // زيادة سريعة للإثارة
+        baseSpawnRate: 1200,   // بداية مريحة ومتوازنة �
         spawnRateDecrement: 80, // تسارع تدريجي
-        minSpawnRate: 800      // حد أدنى أسرع
+        minSpawnRate: 300      // حد أدنى معقول للتحدي النهائي ⚡
     },
     
     // نظام الخصم - للمحترفين فقط! 🔥
@@ -50,7 +50,7 @@ const RISK_LEVELS = [
         difficulty: 0.5,
         reached: false,
         description: "مبروك! وصلت للمستوى الأول",
-        reward: "خصم 5% + فرصة ساندوتش ذهبي خاص قد يمنحك وجبة مجانية + عودة للصعوبة الطبيعية",
+        reward: "تهنئة! إنجاز رائع + فرصة ساندوتش ذهبي خاص + عودة للصعوبة الطبيعية",
         nextRisk: "ستعود اللعبة للصعوبة الطبيعية..."
     },
     { 
@@ -59,7 +59,7 @@ const RISK_LEVELS = [
         difficulty: 1,
         reached: false,
         description: "مبروك! وصلت للمستوى الثاني",
-        reward: "خصم 10% على طلبك + سندويتش ذهبي سريع",
+        reward: "إنجاز ممتاز! + سندويتش ذهبي سريع",
         nextRisk: "الصعوبة ستزيد قليلاً..."
     },
     { 
@@ -68,7 +68,7 @@ const RISK_LEVELS = [
         difficulty: 2,
         reached: false,
         description: "ممتاز! مستوى متقدم",
-        reward: "خصم ربع على طلبك + سندويتش ذهبي أسرع", 
+        reward: "إنجاز رائع جداً! + سندويتش ذهبي أسرع", 
         nextRisk: "سرعة أكبر وعناصر سيئة أكثر!"
     },
     { 
@@ -77,7 +77,7 @@ const RISK_LEVELS = [
         difficulty: 3,
         reached: false,
         description: "رائع جداً! نصف الطريق",
-        reward: "خصم نصف السعر + سندويتش ذهبي فائق السرعة",
+        reward: "إنجاز خيالي! + سندويتش ذهبي فائق السرعة",
         nextRisk: "تحدي شديد في انتظارك..."
     },
     { 
@@ -228,6 +228,34 @@ class GameManager {
         return false;
     }
     
+    getDailyData() {
+        // إرجاع بيانات اليوم الحالي
+        const today = new Date().toDateString();
+        const savedData = localStorage.getItem('burgstaFreeSandwichData');
+        
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            if (data.date === today) {
+                return {
+                    freeSandwiches: data.used || 0,
+                    date: today
+                };
+            }
+        }
+        
+        // يوم جديد - إرجاع بيانات نظيفة
+        return {
+            freeSandwiches: 0,
+            date: today
+        };
+    }
+    
+    incrementFreeSandwichCount() {
+        // زيادة عداد الوجبات المجانية اليوم
+        this.freeSandwichesUsed++;
+        this.saveFreeSandwichData(new Date().toDateString());
+    }
+    
     addDiscount(amount) {
         const oldDiscount = this.discount;
         this.discount = Math.max(0, Math.min(this.discount + amount, GAME_CONFIG.discount.maxDiscount));
@@ -287,19 +315,19 @@ class GameManager {
     }
     
     getCurrentItemSpeed() {
-        // سرعة تدريجية للمحترفين من البداية! 🔥
+        // سرعة جنونية للمحترفين من البداية! �💥
         let speedMultiplier = 1.0;
         
         if (this.discount >= 25) {
-            speedMultiplier = 7.5; // شبه مستحيل 💀
+            speedMultiplier = 12.0; // صاروخ فضائي! 🚀💀 // صاروخ فضائي! ��💀
         } else if (this.discount >= 15) {
-            speedMultiplier = 4.2; // مجنون 🔥🔥
+            speedMultiplier = 7.0; // سرعة عالية بعد 15%! 🔥🔥 // برق خاطف! ⚡🔥🔥
         } else if (this.discount >= 10) {
-            speedMultiplier = 2.8; // صعب جداً 🔥
+            speedMultiplier = 5.0; // هنا يبدأ الجنون بعد 10%! 💫🔥 // سرعة الضوء! 💫🔥
         } else if (this.discount >= 5) {
-            speedMultiplier = 2.0; // سريع - تحدي حقيقي
+            speedMultiplier = 2.5; // سرعة معتدلة بعد 5% 🏃‍♂️ // نار محرقة! 🔥🔥
         } else {
-            speedMultiplier = 1.4; // أسرع من البداية - للمحترفين!
+            speedMultiplier = 1.8; // بداية ممتعة مع تحدي خفيف 🏃‍♂️
         }
         
         return GAME_CONFIG.items.baseSpeed * speedMultiplier;
@@ -311,15 +339,15 @@ class GameManager {
         let spawnMultiplier = 1.0;
         
         if (this.discount >= 25) {
-            spawnMultiplier = 0.15; // مجنون - ظهور سريع جداً 💀
+            spawnMultiplier = 0.05; // إعصار ساندوتشات! 🌪️💀
         } else if (this.discount >= 15) {
-            spawnMultiplier = 0.25; // سريع جداً 🔥🔥
+            spawnMultiplier = 0.08; // مطر غزير! ☔🔥🔥
         } else if (this.discount >= 10) {
-            spawnMultiplier = 0.4;  // سريع �
+            spawnMultiplier = 0.25; // هنا يبدأ التحدي بعد 10%! 💧🔥 // شلال ساندوتشات! 💧🔥  // سريع �
         } else if (this.discount >= 5) {
-            spawnMultiplier = 0.5;  // سريع - تحدي حقيقي
+            spawnMultiplier = 0.5; // سرعة معتدلة بعد 5% 🏃‍♂️
         } else {
-            spawnMultiplier = 0.7;  // أسرع من البداية - للمحترفين!
+            spawnMultiplier = 0.6; // بداية ممتعة مع نشاط أكثر 🏃‍♂️ // بداية مريحة وسهلة �
         }
         
         const rate = GAME_CONFIG.items.baseSpawnRate * spawnMultiplier;
@@ -426,7 +454,7 @@ class GameScene extends Phaser.Scene {
         this.setupCollisions();
         
         // ✅ إعداد مراقبة حدود العالم لحذف العناصر  
-        const gameAreaWidth = GAME_CONFIG.width - 200; // مساحة مناسبة للوحة مع الدقة HD
+        const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي الفاصل
         this.physics.world.setBounds(0, 0, gameAreaWidth, GAME_CONFIG.height + 100); // امتداد أسفل الشاشة
         
         this.physics.world.on('worldbounds', (body) => {
@@ -490,7 +518,7 @@ class GameScene extends Phaser.Scene {
     
     createPlayer() {
         // تحديد منطقة اللعب
-        const gameAreaWidth = GAME_CONFIG.width - 200;
+        const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
         
         // إنشاء اللاعب في موضع مناسب للدقة HD
         this.player = this.physics.add.sprite(
@@ -499,12 +527,12 @@ class GameScene extends Phaser.Scene {
             'box'
         );
         
-        // تعديل الصندوق ليتناسب مع دقة HD
-        this.player.setScale(0.5); // حجم مناسب للدقة HD
+        // تعديل الصندوق ليتناسب مع دقة HD - حجم أصغر للتحدي
+        this.player.setScale(0.35); // حجم أصغر لتحدي أكبر! 📦
         
         // تحسينات فيزياء للاستجابة الصاروخية
         this.player.setCollideWorldBounds(true);
-        this.player.body.setSize(80, 20); // منطقة تصادم مناسبة للحجم الجديد
+        this.player.body.setSize(80, 40); // منطقة تصادم أصغر للمهارة
         this.player.setGravityY(-400); // إلغاء تأثير الجاذبية على اللاعب
         this.player.body.setDrag(0); // إزالة أي مقاومة
         this.player.body.setMaxVelocity(0); // إيقاف السرعة التلقائية
@@ -1011,7 +1039,7 @@ class GameScene extends Phaser.Scene {
         for (let i = 0; i < 12; i++) {
             const emoji = foodEmojis[Math.floor(Math.random() * foodEmojis.length)];
             const emojiText = this.add.text(sandwichX + 35, sandwichY - 10, emoji, {
-                fontSize: '60px' // خط كبير للإيموجي
+                fontSize: '20px' // حجم مناسب للإيموجي للدقة HD
             }).setOrigin(0.5);
             
             const emojiAngle = Math.random() * Math.PI * 2;
@@ -1033,7 +1061,7 @@ class GameScene extends Phaser.Scene {
         
         // 5. رسالة تهنئة متحركة
         const congratsText = this.add.text(sandwichX + 35, sandwichY - 80, '🍔 برجر مثالي! 🍔\n+100 نقطة!', {
-            fontSize: '72px', // خط كبير للتهنئة
+            fontSize: '24px', // حجم مناسب للدقة HD
             fill: '#FFD700',
             fontFamily: 'Arial Black',
             fontStyle: 'bold',
@@ -1218,7 +1246,7 @@ class GameScene extends Phaser.Scene {
     
     setupControls() {
         // تحديد حدود منطقة اللعب
-        const gameAreaWidth = GAME_CONFIG.width - 400; // منطقة اللعب فقط مع اللوحة الكبيرة
+        const gameAreaWidth = GAME_CONFIG.width - 180; // منطقة اللعب حتى الخط الذهبي
         const minX = 40; // الحد الأدنى (نصف عرض اللاعب)
         const maxX = gameAreaWidth - 40; // الحد الأقصى
         
@@ -1256,7 +1284,7 @@ class GameScene extends Phaser.Scene {
     collectItem(player, item) {
         // نطاق التقاط دقيق للمحترفين فقط - لا سهولة! 🔥
         const distance = Phaser.Math.Distance.Between(player.x, player.y, item.x, item.y);
-        const maxDistance = 100; // نطاق ثابت - مهارة حقيقية مطلوبة!
+        const maxDistance = 45; // نطاق أصغر جداً - دقة عالية مطلوبة! 🎯
         
         if (distance > maxDistance) {
             return; // خارج النطاق - لا مساعدة!
@@ -1346,53 +1374,51 @@ class GameScene extends Phaser.Scene {
     }
 
     handleUnifiedGoldenSandwich(item) {
-        // الساندوتش الذهبي الموحد الجديد!
+        // 🎁 نظام المكافأة العشوائي الجديد
+        const randomLuck = Math.random();
+        const todayData = this.gameManager.getDailyData();
         
-        if (item.canGetFreeMeal) {
-            // يمكن الحصول على وجبة مجانية!
-            if (this.gameManager.useFreeSandwich()) {
-                // وجبة مجانية كاملة - 100% خصم!
-                this.gameManager.discount = 100;
-                this.gameManager.gameWon = true;
-                
-                // إيقاف اللعبة
-                this.spawnTimer.paused = true;
-                this.physics.pause();
-                
-                // رسالة احتفال مميزة
-                this.showUnifiedGoldenCelebration();
-                
-                // صوت مميز
-                if (this.sounds && this.sounds.golden) {
-                    this.sounds.golden.play();
+        // مرتين فقط في اليوم كحد أقصى
+        if (todayData.freeSandwiches < 2 && randomLuck < 0.15) { // 15% فقط!
+            // 🎉 وجبة مجانية كاملة - الحظ الذهبي!
+            this.handleFreeSandwich(item);
+            this.gameManager.incrementFreeSandwichCount();
+            this.showFloatingText('🎁 وجبة مجانية كاملة!', '#ffd700', 3);
+            
+            // احتفال خاص للوجبة المجانية
+            this.gameManager.discount = 100;
+            this.gameManager.gameWon = true;
+            this.spawnTimer.paused = true;
+            this.physics.pause();
+            
+            this.showMessage('🎊 الحظ الذهبي! وجبة مجانية كاملة!', 4000, '#ffd700');
+            
+            this.time.addEvent({
+                delay: 4000,
+                callback: () => {
+                    this.showWinScreen();
                 }
-                
-                // إظهار شاشة الفوز بعد 4 ثوانِ
-                this.time.addEvent({
-                    delay: 4000,
-                    callback: () => {
-                        this.showWinScreen();
-                    }
-                });
-            }
+            });
         } else {
-            // خصمات مضاعفة فقط - لا وجبات مجانية متبقية
-            const goldenBonus = GAME_CONFIG.discount.goldenSandwich * 2.5; // خصم مضاعف!
+            // خصم مميز (1.5% أو 3%)
+            const goldenBonus = (Math.random() < 0.5) ? 1.5 : 3;
             this.gameManager.addDiscount(goldenBonus);
-            this.gameManager.score += 150; // نقاط مضاعفة
+            this.gameManager.score += 100;
             this.gameManager.goldenCaught++;
             
-            // تأثيرات بصرية
-            this.showFloatingText(`+${goldenBonus.toFixed(1)}% ذهبي مضاعف!`, '#C0C0C0', 2.0);
+            this.showFloatingText(`+${goldenBonus}% خصم ذهبي!`, '#ffd700', 2);
             this.createSpecialEffect(this.player.x, this.player.y);
             
-            // صوت مميز
-            if (this.sounds && this.sounds.golden) {
-                this.sounds.golden.play();
-            }
-            
-            // رسالة نجاح
-            this.showMessage('ممتاز! خصم ذهبي مضاعف! (انتهت الوجبات المجانية اليوم)', 3500, '#C0C0C0');
+            // رسالة مناسبة
+            const message = todayData.freeSandwiches >= 2 ? 
+                'خصم ذهبي رائع! (انتهت الوجبات المجانية اليوم)' : 
+                'خصم ذهبي ممتاز!';
+            this.showMessage(message, 2500, '#ffd700');
+        }
+        
+        // صوت مميز
+        if (this.sounds && this.sounds.golden) {
+            this.sounds.golden.play();
         }
     }
     
@@ -1441,63 +1467,47 @@ class GameScene extends Phaser.Scene {
         celebrationBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
         celebrationBg.setDepth(200);
 
-        // العنوان الرئيسي - مذهل ولامع
+        // العنوان الرئيسي - مبهج ومختصر
         const mainTitle = this.add.text(GAME_CONFIG.width / 2, 400, 
-            'تهانينا! لقد حصلت على الساندوتش الذهبي السحري!', {
-            fontSize: '84px',
+            'مبروك! وجبة مجانية', {
+            fontSize: '24px', // حجم مناسب ومختصر
             fill: '#FFD700',
             fontFamily: 'Arial Black',
             stroke: '#FFFFFF',
-            strokeThickness: 6,
+            strokeThickness: 4,
             align: 'center',
-            shadow: { offsetX: 4, offsetY: 4, color: '#000000', blur: 8, fill: true }
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 6, fill: true }
         }).setOrigin(0.5);
         mainTitle.setDepth(201);
 
-        // شرح ما هو الساندوتش الذهبي المجاني مع توضيح الندرة
-        const explanation = this.add.text(GAME_CONFIG.width / 2, 600, 
-            'الساندوتش الذهبي المجاني نادر جداً - 5% فقط احتمال ظهور!\n' +
-            'يمنحك وجبة مجانية كاملة 100% بدون أي شروط!\n' + 
-            'يظهر مرتين فقط يومياً - أنت محظوظ جداً!', {
-            fontSize: '48px',
+        // رسالة مختصرة ومبهجة
+        const explanation = this.add.text(GAME_CONFIG.width / 2, 500, 
+            'احضر هذه الشاشة لمطعم برجستا\nواحصل على وجبة مجانية كاملة', {
+            fontSize: '18px', // حجم واضح ومناسب
             fill: '#FFFFFF',
             fontFamily: 'Arial',
             stroke: '#FFD700',
-            strokeThickness: 3,
+            strokeThickness: 2,
             align: 'center',
-            lineSpacing: 15,
+            lineSpacing: 8,
             shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5);
         explanation.setDepth(201);
 
-        // ما حدث بالضبط
-        const whatHappened = this.add.text(GAME_CONFIG.width / 2, 850, 
-            'ما حدث الآن:\n' +
-            '• التقطت ساندوتش ذهبي سحري بنجاح\n' +
-            '• حصلت على وجبة مجانية كاملة 100%\n' +
-            '• يمكنك إظهار هذه الشاشة في مطعم برجستا\n' +
-            '• استمتع بوجبتك المجانية!', {
-            fontSize: '42px',
+        // تفاصيل بسيطة ومفيدة
+        const whatHappened = this.add.text(GAME_CONFIG.width / 2, 580, 
+            'صالحة لاستخدام واحد فقط', {
+            fontSize: '14px', // حجم مناسب
             fill: '#FFFACD',
             fontFamily: 'Arial',
             stroke: '#8B7D6B',
             strokeThickness: 2,
             align: 'center',
-            lineSpacing: 12,
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 3, fill: true }
+            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5);
         whatHappened.setDepth(201);
 
-        // تأثيرات متحركة للنص الرئيسي
-        this.tweens.add({
-            targets: mainTitle,
-            scaleX: 1.1,
-            scaleY: 1.1,
-            duration: 1000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
+        // احتفال بسيط بدون تأثيرات مزعجة
 
         // تأثير وميض ذهبي للخلفية
         this.tweens.add({
@@ -1540,60 +1550,45 @@ class GameScene extends Phaser.Scene {
 
         // العنوان الرئيسي
         const mainTitle = this.add.text(GAME_CONFIG.width / 2, 350, 
-            'مبروك! الساندوتش الذهبي النادر!', {
-            fontSize: '88px',
+            'مبروك! وجبة مجانية', {
+            fontSize: '24px', // حجم مناسب ومختصر
             fill: '#FFD700',
             fontFamily: 'Arial Black',
             stroke: '#FFFFFF',
-            strokeThickness: 8,
+            strokeThickness: 4,
             align: 'center',
-            shadow: { offsetX: 4, offsetY: 4, color: '#000000', blur: 8, fill: true }
+            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 6, fill: true }
         }).setOrigin(0.5);
         mainTitle.setDepth(201);
 
-        // شرح ما هو الساندوتش الموحد
-        const explanation = this.add.text(GAME_CONFIG.width / 2, 550, 
-            'الساندوتش الذهبي الموحد - نادر جداً!\n' +
-            'مرتين فقط يومياً = وجبة مجانية 100%\n' + 
-            'باقي اليوم = خصمات ذهبية مضاعفة فقط', {
-            fontSize: '52px',
+        // رسالة مختصرة ومبهجة
+        const explanation = this.add.text(GAME_CONFIG.width / 2, 450, 
+            'احضر هذه الشاشة لمطعم برجستا\nواحصل على وجبة مجانية كاملة', {
+            fontSize: '18px', // حجم واضح ومناسب
             fill: '#FFFFFF',
             fontFamily: 'Arial',
             stroke: '#FFD700',
-            strokeThickness: 4,
+            strokeThickness: 2,
             align: 'center',
-            lineSpacing: 18,
-            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 5, fill: true }
+            lineSpacing: 8,
+            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
         }).setOrigin(0.5);
         explanation.setDepth(201);
 
-        // ما حدث الآن
-        const whatHappened = this.add.text(GAME_CONFIG.width / 2, 800, 
-            'لقد حصلت على وجبة مجانية 100%!\n' +
-            '• التقطت الساندوتش في الوقت المناسب\n' +
-            '• كان لديك فرص متبقية اليوم\n' +
-            '• استمتع بوجبتك المجانية في برجستا!', {
-            fontSize: '46px',
+        // تفاصيل بسيطة ومفيدة
+        const whatHappened = this.add.text(GAME_CONFIG.width / 2, 520, 
+            'صالحة لاستخدام واحد فقط', {
+            fontSize: '14px', // حجم مناسب
             fill: '#FFFACD',
             fontFamily: 'Arial',
             stroke: '#8B7D6B',
-            strokeThickness: 3,
+            strokeThickness: 2,
             align: 'center',
-            lineSpacing: 15,
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
+            shadow: { offsetX: 1, offsetY: 1, color: '#000000', blur: 2, fill: true }
         }).setOrigin(0.5);
         whatHappened.setDepth(201);
 
-        // تأثيرات متحركة
-        this.tweens.add({
-            targets: mainTitle,
-            scaleX: 1.1,
-            scaleY: 1.1,
-            duration: 1000,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
+        // احتفال بسيط بدون تأثيرات مزعجة
 
         // جزيئات ذهبية
         for (let i = 0; i < 25; i++) {
@@ -1766,7 +1761,7 @@ class GameScene extends Phaser.Scene {
         if (this.gameManager.gameOver || this.gameManager.gameWon) return;
         
         // تحديد منطقة اللعب (الجانب الأيسر فقط - قبل الخط الفاصل)
-        const gameAreaWidth = GAME_CONFIG.width - 400; // ترك 400px للوحة البيانات الكبيرة
+        const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي الفاصل
         
         // تحديد نوع العنصر (بدون سندوتشات ذهبية عادية)
         const currentDifficulty = this.getCurrentDifficultyLevel();
@@ -1774,34 +1769,49 @@ class GameScene extends Phaser.Scene {
         // احتماليات صعبة جداً - خصم حقيقي يستحق التحدي! 💰
         let badChance;
         
-        // صعوبة تدريجية للمحترفين من البداية! 🔥
+        // صعوبة تدريجية - سهلة في البداية، جحيم بعد 10%! ��
         if (this.gameManager.discount < 5) {
-            badChance = 0.45; // 45% قنابل - تحدي من البداية!
+            badChance = 0.35; // 35% قنابل - بداية ممتعة مع تحدي 🏃‍♂️
         } else if (this.gameManager.discount < 10) {
-            badChance = 0.60; // 60% قنابل - صعب حقيقي
+            badChance = 0.55; // 55% قنابل - تحدي ملحوظ 🔥
         } else if (this.gameManager.discount < 15) {
-            badChance = 0.75; // 75% قنابل - للمحترفين فقط! 🔥
+            badChance = 0.75; // 75% قنابل - هنا يبدأ الجحيم! 🔥💣
+        } else if (this.gameManager.discount < 20) {
+            badChance = 0.85; // 85% قنابل - منطقة حرب! 💥🔥
         } else if (this.gameManager.discount < 25) {
-            badChance = 0.85; // 85% قنابل - شديد الصعوبة! 🔥🔥
+            badChance = 0.92; // 92% قنابل - أرض المعركة! 💀🔥🔥
         } else {
-            badChance = 0.95; // 95% قنابل - شبه مستحيل! 💀
+            badChance = 0.97; // 97% قنابل - جهنم على الأرض! 👹💀
         }
         
-        // إنتاج عنصر واحد فقط في كل مرة - بدون انتظار!
-        const x = Math.random() * (gameAreaWidth - 50) + 25;
-        let itemType, texture;
-        const rand = Math.random();
+        // تدرج في عدد الأشياء حسب النسبة - سهل في البداية! 📈
+        let itemCount = 1; // شيء واحد بالأساس
+        if (this.gameManager.discount >= 15) {
+            // بعد 15% - مطر من الساندوتشات! 
+            itemCount = Math.random() < 0.4 ? 3 : (Math.random() < 0.7 ? 2 : 1); 
+        } else if (this.gameManager.discount >= 10) {
+            // بعد 10% - شيئين أحياناً
+            itemCount = Math.random() < 0.3 ? 2 : 1;
+        } // قبل 10% = شيء واحد فقط
         
-        if (rand < badChance) {
-            itemType = 'bad';
-            texture = 'badItem';
-        } else {
-            itemType = 'good';
-            texture = 'goodSandwich';
+        for (let i = 0; i < itemCount; i++) {
+            const x = Math.random() * (gameAreaWidth - 50) + 25;
+            let itemType, texture;
+            const rand = Math.random();
+            
+            if (rand < badChance) {
+                itemType = 'bad';
+                texture = 'badItem';
+            } else {
+                itemType = 'good';
+                texture = 'goodSandwich';
+            }
+            
+            // إنشاء فوري مع تأخير صغير بين كل شيء
+            this.time.delayedCall(i * 50, () => {
+                this.createFallingItem(x, itemType, texture);
+            });
         }
-        
-        // إنشاء فوري بدون تأخير
-        this.createFallingItem(x, itemType, texture);
     }
     
     checkSpecialGoldenSandwich() {
@@ -1820,7 +1830,7 @@ class GameScene extends Phaser.Scene {
     
     launchSpecialGoldenSandwich() {
         // إطلاق السندوتش الذهبي بسرعة جنونية!
-        const gameAreaWidth = GAME_CONFIG.width - 400;
+        const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
         const x = Math.random() * (gameAreaWidth - 50) + 25;
         
         // إنشاء السندوتش الذهبي الخاص
@@ -1832,7 +1842,7 @@ class GameScene extends Phaser.Scene {
         goldenItem.setVelocityY(crazySpeed);
         
         // تأثيرات بصرية مميزة - حجم مناسب
-        goldenItem.setScale(0.4); // حجم مناسب للدقة HD
+        goldenItem.setScale(0.25); // حجم أصغر لتحدي أكبر! 🌟
         goldenItem.setTint(0xffd700); // لون ذهبي مشرق
         
         // تأثير إشعاع ذهبي
@@ -1855,7 +1865,7 @@ class GameScene extends Phaser.Scene {
             repeat: -1,
             callback: () => {
                 if (goldenItem && goldenItem.active && !goldenItem.isCollected && !goldenItem.hasDropped) {
-                    if (goldenItem.y >= GAME_CONFIG.height - 250) { // تحديث الحد ليتناسب مع موضع البوكس الجديد
+                    if (goldenItem.y >= GAME_CONFIG.height - 50) { // السندوتش يُفقد عندما يمر البوكس بـ50 بكسل
                         goldenItem.hasDropped = true;
                         this.handleItemDropped(goldenItem);
                         if (goldenItem.dropChecker) {
@@ -1871,6 +1881,35 @@ class GameScene extends Phaser.Scene {
         // رسالة للاعب
         this.showFloatingText('💫 السندوتش الذهبي!', '#ffd700', 2);
     }
+
+    spawnGoldenSandwich(isSpecialStage = false) {
+        // 🎯 الساندوتش الذهبي - نفس حجم العادي، مكان ثابت، سرعة عالية!
+        const gameAreaWidth = GAME_CONFIG.width - 180;
+        // مكان ثابت في وسط الشاشة للنزول
+        const x = gameAreaWidth / 2;
+        
+        // إنشاء الساندوتش الذهبي
+        const goldenItem = this.physics.add.sprite(x, -30, 'goldenSandwich');
+        goldenItem.itemType = 'unifiedGolden';
+        goldenItem.isUnifiedGoldenSandwich = true;
+        
+        // ⚡ سرعة نزول عالية جداً - بدون حركة جانبية!
+        goldenItem.body.setVelocityY(3000); // سرعة نزول أعلى بكثير! 🚀💨
+        
+        // بدون حركة جانبية - مسار مستقيم ثابت
+        goldenItem.body.setVelocityX(0); // مسار مستقيم فقط // سرعة صاروخية! �
+        
+        // نفس حجم الساندوتش العادي تماماً! 🥪
+        goldenItem.setScale(0.1); // نفس حجم الساندوتش العادي
+        goldenItem.setTint(0xFFD700); // ذهبي براق
+        goldenItem.setDepth(100); // فوق كل شيء
+        
+        // إضافة للمجموعة
+        this.fallingItems.add(goldenItem);
+        
+        // رسالة مثيرة
+        this.showFloatingText('🥪 ساندوتش ذهبي سريع!', '#ffd700', 3);
+    }
     
     createFallingItem(x, itemType, texture) {
         // إنشاء العنصر المتساقط
@@ -1879,13 +1918,13 @@ class GameScene extends Phaser.Scene {
         
         // تصغير الصور لتناسب اللعبة
         if (itemType === 'good') {
-            item.setScale(0.15); // حجم مناسب للساندوتش الجيد للدقة HD
+            item.setScale(0.1); // حجم أصغر لتحدي أكبر! 🥪
             item.setDepth(20); // السندويتشات الجيدة في المقدمة
         } else if (itemType === 'golden') {
-            item.setScale(1.1); // حجم مناسب للذهبية للدقة HD
+            item.setScale(0.7); // حجم أصغر للساندوتش الذهبي! ⭐
             item.setDepth(25); // الذهبية فوق كل شيء
         } else {
-            item.setScale(0.08); // حجم مناسب للقنبلة للدقة HD
+            item.setScale(0.05); // حجم أصغر للقنبلة - خطر خفي! 💣
             item.setDepth(10); // السيئة في الخلف
         }
         
@@ -1914,7 +1953,7 @@ class GameScene extends Phaser.Scene {
                     }
                     
                     // إذا وصل العنصر إلى منطقة أسفل البوكس (تحت الموضع الجديد)
-                    if (item.y >= GAME_CONFIG.height - 250) { // تحديث الحد ليتناسب مع موضع البوكس الجديد
+                    if (item.y >= GAME_CONFIG.height - 50) { // السندوتش يُفقد عندما يمر البوكس بـ50 بكسل
                         item.hasDropped = true;
                         this.handleItemDropped(item);
                         if (item.dropChecker) {
@@ -1956,7 +1995,7 @@ class GameScene extends Phaser.Scene {
             goodItem.isBeingAdjusted = true;
             
             // اختر اتجاه الحركة (يمين أو يسار) بناءً على المساحة المتاحة
-            const gameAreaWidth = GAME_CONFIG.width - 400;
+            const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
             let targetX = goodItem.x;
             
             if (goodItem.x < gameAreaWidth / 2) {
@@ -2007,7 +2046,7 @@ class GameScene extends Phaser.Scene {
         
         const achievementText = this.add.text(GAME_CONFIG.width / 2, 150, message, {
             fontFamily: 'Cairo, Arial',
-            fontSize: '54px', // خط كبير للإنجازات
+            fontSize: '18px', // حجم مناسب للدقة HD
             fontWeight: 'bold',
             color: GAME_CONFIG.colors.light,
             align: 'center'
@@ -2277,7 +2316,7 @@ class GameScene extends Phaser.Scene {
         
         this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 50, finalStats.join('\n'), {
             fontFamily: 'Cairo, Arial',
-            fontSize: '48px', // تكبير الخط 3 مرات
+            fontSize: '16px', // حجم مناسب للدقة HD
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 4, // تكبير السمك أيضاً
@@ -2288,7 +2327,7 @@ class GameScene extends Phaser.Scene {
         // زر إعادة اللعب
         const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 300, 'حاول مرة أخرى', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '60px', // تكبير الخط 3 مرات
+            fontSize: '20px', // حجم مناسب للدقة HD
             fontWeight: 'bold',
             color: '#ffffff',
             stroke: '#000000',
@@ -2389,7 +2428,7 @@ class GameScene extends Phaser.Scene {
     update() {
         // تحكم صاروخي بالمفاتيح للاستجابة الفورية
         if (this.player && !this.gameManager.gameOver && !this.gameManager.gameWon) {
-            const gameAreaWidth = GAME_CONFIG.width - 400;
+            const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
             const speed = GAME_CONFIG.player.speed;
             
             // حركة يسار ويمين بالمفاتيح
@@ -2406,7 +2445,7 @@ class GameScene extends Phaser.Scene {
         // لا توجد مساعدة - مهارة خالصة مطلوبة! 🔥
         
         // تنظيف العناصر التي تخرج من منطقة اللعب أو الشاشة
-        const gameAreaWidth = GAME_CONFIG.width - 400;
+        const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
         
         this.fallingItems.children.entries.forEach(item => {
             // حذف العناصر التي خرجت من الأسفل أو دخلت منطقة البيانات
@@ -2460,7 +2499,7 @@ class GameScene extends Phaser.Scene {
 
         // الجملة الأولى: مبروك وصلت للمستوى الأول - في أعلى الصفحة
         const titleText = this.add.text(centerX, 150, level.description, {
-            fontSize: '60px', // مكبر من 32px إلى 60px
+            fontSize: '20px', // حجم مناسب للدقة HD
             fill: '#ffff00',
             fontFamily: 'Arial Black',
             stroke: '#000000',
@@ -2472,7 +2511,7 @@ class GameScene extends Phaser.Scene {
 
         // الجملة الثانية: خصم 10% - تحت الأولى مباشرة
         const rewardText = this.add.text(centerX, 250, level.reward, {
-            fontSize: '42px', // مكبر من 24px إلى 42px
+            fontSize: '14px', // حجم مناسب للدقة HD
             fill: '#00ff00',
             fontFamily: 'Arial Black',
             stroke: '#000000',
@@ -2482,38 +2521,45 @@ class GameScene extends Phaser.Scene {
         }).setOrigin(0.5);
         rewardText.setDepth(55);
 
-        // إنشاء النص الشامل في طباعة واحدة
-        let infoMessage = `لديك خياران:\n\n`;
+        // إنشاء النص - رسالة كاملة في المرة الأولى فقط (5%)، رسالة مختصرة بعد ذلك
+        let infoMessage = '';
         
-        // الخيار الأول: الانسحاب
-        infoMessage += `الخيار الأول - الانسحاب الآمن:\n`;
-        infoMessage += `احصل على ${level.percent}% خصم مضمون الآن\n\n`;
-        
-        // الخيار الثاني: المتابعة
-        infoMessage += `الخيار الثاني - المتابعة للمغامرة:\n`;
-        if (level.percent < 100) {
-            const nextLevel = level.percent === 5 ? 10 : level.percent === 10 ? 25 : level.percent === 25 ? 50 : level.percent === 50 ? 75 : 100;
-            infoMessage += `هدف: الوصول للمستوى التالي (${nextLevel}% خصم)\n`;
-        } else {
-            infoMessage += `هذا المستوى الأخير - 100% وجبة مجانية!\n`;
-        }
-        
-        // إضافة معلومة السندويتش الذهبي إذا كان متاحاً
-        if (level.reward.includes('سندويتش ذهبي')) {
-            infoMessage += `مكافأة فورية: سندويتش ذهبي (+3% خصم)\n`;
-            infoMessage += `سرعة عالية - تحدي ممتع!\n`;
-        }
-        
-        // إضافة تحذير المخاطر للمستويات غير النهائية
-        if (level.percent < 100) {
+        if (level.percent === 5) {
+            // الرسالة الكاملة للمرة الأولى فقط
+            infoMessage = `لديك خياران:\n\n`;
+            
+            // الخيار الأول: الانسحاب
+            infoMessage += `الخيار الأول - الانسحاب الآمن:\n`;
+            infoMessage += `انهاء اللعب والفوز بما حققت\n\n`;
+            
+            // الخيار الثاني: المتابعة
+            infoMessage += `الخيار الثاني - المتابعة للمغامرة:\n`;
+            const nextLevel = 10;
+            infoMessage += `هدف: الوصول للمستوى التالي (${nextLevel}%)\n`;
+            
+            // إضافة معلومة السندويتش الذهبي إذا كان متاحاً
+            if (level.reward.includes('سندويتش ذهبي')) {
+                infoMessage += `مكافأة فورية: سندويتش ذهبي (+3% خصم)\n`;
+                infoMessage += `سرعة عالية - تحدي ممتع!\n`;
+            }
+            
+            // إضافة تحذير المخاطر
             infoMessage += `\nتحذير هام:\n`;
             infoMessage += `${level.nextRisk}\n`;
             infoMessage += `إذا فشلت في الوصول للمستوى التالي = تخسر كل شيء!`;
+        } else {
+            // رسالة مختصرة جداً للمرات التالية
+            if (level.percent < 100) {
+                const nextLevel = level.percent === 10 ? 25 : level.percent === 25 ? 50 : level.percent === 50 ? 75 : 100;
+                infoMessage = `انسحاب آمن أم متابعة للمستوى ${nextLevel}%؟`;
+            } else {
+                infoMessage = `انسحاب آمن أم متابعة للإنجاز النهائي؟`;
+            }
         }
 
         // النص التفصيلي - بعيداً عن الثلاث جمل الأساسية
         const questionText = this.add.text(centerX, GAME_CONFIG.height / 2, infoMessage, {
-            fontSize: '32px', // مكبر أكثر
+            fontSize: '11px', // حجم مناسب للدقة HD
             fill: '#ffffff',
             fontFamily: 'Arial',
             fontWeight: 'bold',
@@ -2528,7 +2574,7 @@ class GameScene extends Phaser.Scene {
         
         // الجملة الثالثة: ماذا تقرر؟ - تحت الثانية مباشرة
         const choiceText = this.add.text(centerX, 350, 'ماذا تقرر؟', {
-            fontSize: '38px', // مكبر من 20px إلى 38px
+            fontSize: '13px', // حجم مناسب للدقة HD
             fill: '#ffdd44',
             fontFamily: 'Arial Black',
             stroke: '#000000',
@@ -2543,7 +2589,7 @@ class GameScene extends Phaser.Scene {
         // عد تنازلي للقرار - في الأسفل أكثر
         let countdown = 15;
         const countdownText = this.add.text(centerX, GAME_CONFIG.height - 200, `الوقت المتبقي: ${countdown} ثانية`, {
-            fontSize: '32px', // مكبر من 18px إلى 32px
+            fontSize: '18px', // حجم مناسب للدقة HD
             fill: '#ffaa00',
             fontFamily: 'Arial Black',
             stroke: '#000000',
@@ -2598,7 +2644,7 @@ class GameScene extends Phaser.Scene {
         withdrawBg.setDepth(59);
         
         const withdrawBtn = this.add.text(centerX - 300, GAME_CONFIG.height - 110, 'انسحب الآن', {
-            fontSize: '32px',
+            fontSize: '18px', // حجم مناسب للدقة HD
             fill: '#ffffff',
             fontFamily: 'Arial Black',
             stroke: '#000000',
@@ -2616,7 +2662,7 @@ class GameScene extends Phaser.Scene {
         continueBg.setDepth(59);
         
         const continueBtn = this.add.text(centerX + 300, GAME_CONFIG.height - 110, 'أكمل اللعب', {
-            fontSize: '32px',
+            fontSize: '18px', // حجم مناسب للدقة HD
             fill: '#ffffff',
             fontFamily: 'Arial Black',
             stroke: '#000000',
@@ -2788,16 +2834,9 @@ class GameScene extends Phaser.Scene {
         // اللاعب اختار المواصلة والمخاطرة
         this.gameManager.isInRiskMode = false;
         
-        // الساندوتش الذهبي الموحد - نادر جداً!
-        if (level.percent >= 5) {
-            const shouldAppearGoldenSandwich = Math.random() < 0.08; // 8% فقط احتمال ظهور!
-            if (shouldAppearGoldenSandwich) {
-                console.log('� الساندوتش الذهبي النادر سيظهر!');
-                this.triggerUnifiedGoldenSandwich();
-            } else {
-                console.log('🚫 الساندوتش الذهبي لم يظهر - نادر جداً!');
-            }
-        }
+        // 🎯 بعد قرار الاستمرار - الساندوتش الذهبي يظهر دائماً!
+        this.spawnGoldenSandwich(true); // يظهر دائماً بعد الاستمرار
+        console.log('🎯 الساندوتش الذهبي يظهر - صعب الالتقاط!');
         
         // زيادة الصعوبة حسب المستوى
         this.increaseDifficulty(level.difficulty);
@@ -2828,7 +2867,7 @@ class GameScene extends Phaser.Scene {
         this.time.addEvent({
             delay: randomDelay,
             callback: () => {
-                const gameAreaWidth = GAME_CONFIG.width - 400;
+                const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
                 const x = Math.random() * (gameAreaWidth - 50) + 25;
                 
                 // إنشاء الساندوتش الذهبي الموحد
@@ -2849,7 +2888,7 @@ class GameScene extends Phaser.Scene {
                 goldenItem.setVelocityX(sideMovement);
                 
                 // تأثيرات بصرية حسب نوع المكافأة
-                goldenItem.setDisplaySize(150, 150); // حجم مميز
+                goldenItem.setDisplaySize(85, 85); // حجم أصغر للتحدي! ⭐
                 goldenItem.setDepth(100); // فوق كل شيء
                 
                 if (canGetFreeMeal) {
@@ -2921,7 +2960,7 @@ class GameScene extends Phaser.Scene {
                     repeat: -1,
                     callback: () => {
                         if (goldenItem && goldenItem.active && !goldenItem.isCollected && !goldenItem.hasDropped) {
-                            if (goldenItem.y >= GAME_CONFIG.height - 250) { // تحديث الحد ليتناسب مع موضع البوكس الجديد
+                            if (goldenItem.y >= GAME_CONFIG.height - 50) { // السندوتش يُفقد عندما يمر البوكس بـ50 بكسل
                                 goldenItem.hasDropped = true;
                                 this.handleItemDropped(goldenItem);
                                 if (goldenItem.dropChecker) {
@@ -2961,7 +3000,7 @@ class GameScene extends Phaser.Scene {
         // رسالة التهنئة
         const congratsText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 300, 
             `مبروك!\n${level.reward}`, {
-            fontSize: '72px', // مكبر من 32px إلى 72px
+            fontSize: '24px', // حجم مناسب للدقة HD
             fill: '#ffffff',
             fontFamily: 'Arial Black',
             align: 'center',
@@ -2971,10 +3010,10 @@ class GameScene extends Phaser.Scene {
             shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 6, fill: true }
         }).setOrigin(0.5);
         
-        // رسالة عرض الخصم
-        const discountText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 100, 
-            'أظهر هذه الشاشة في المطعم\nلاستلام خصمك', {
-            fontSize: '42px', // مكبر من 20px إلى 42px
+        // رسالة تهنئة بسيطة
+        const messageText = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 - 50, 
+            'تهانينا على الفوز!\nشكراً لك على اللعب', {
+            fontSize: '18px',
             fill: '#ffffff',
             fontFamily: 'Arial',
             align: 'center',
@@ -2982,19 +3021,6 @@ class GameScene extends Phaser.Scene {
             strokeThickness: 2,
             lineSpacing: 15,
             shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
-        }).setOrigin(0.5);
-        
-        // رقم الخصم بارز
-        const discountCode = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 150, 
-            `كود الخصم: BURGSTA${level.percent}`, {
-            fontSize: '48px', // مكبر من 24px إلى 48px
-            fill: '#FFD700',
-            fontFamily: 'Arial Black',
-            backgroundColor: '#27ae60',
-            padding: { x: 30, y: 20 }, // مكبر من 20,10 إلى 30,20
-            stroke: '#000000',
-            strokeThickness: 3,
-            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 5, fill: true }
         }).setOrigin(0.5);
         
         // زر إعادة اللعب
@@ -3400,7 +3426,7 @@ class GameScene extends Phaser.Scene {
         
         // نص الحدث الخاص
         const eventText = this.add.text(centerX, centerY - 100, '🎉 حدث نادر جداً! 🎉', {
-            fontSize: '60px',
+            fontSize: '20px', // حجم مناسب للدقة HD
             fill: '#FFFFFF',
             fontFamily: 'Arial Black',
             stroke: '#FFD700',
@@ -3464,7 +3490,7 @@ class GameScene extends Phaser.Scene {
         const x = Phaser.Math.Between(100, GAME_CONFIG.width - 100);
         
         const freeSandwich = this.physics.add.sprite(x, -100, 'sandwich1');
-        freeSandwich.setDisplaySize(120, 120); // حجم أكبر قليلاً
+        freeSandwich.setDisplaySize(70, 70); // حجم أصغر للتحدي! 🎯
         freeSandwich.setVelocity(0, 300); // سرعة متوسطة
         freeSandwich.setDepth(25);
         
@@ -3554,7 +3580,7 @@ class GameScene extends Phaser.Scene {
         );
         
         // مظهر خاص للساندوتش المجاني - كقطعة ماس ذهبية! ✨💎
-        freeSandwich.setDisplaySize(160, 160); // حجم أكبر ومميز جداً
+        freeSandwich.setDisplaySize(90, 90); // حجم أصغر للمهارة! 💎
         freeSandwich.setTint(0xFFD700); // لون ذهبي براق
         freeSandwich.isFreeSandwich = true;
         freeSandwich.canBeCaught = canCatch;
