@@ -257,9 +257,8 @@ class GameManager {
     }
     
     triggerWin(message) {
-        if (window.gameScene) {
-            window.gameScene.showWinScreen(message);
-        }
+        // تم حذف البوكس المزعج - الآن الوجبة المجانية تعمل بسلاسة
+        console.log('🎉 تم ربح الوجبة المجانية!', message);
     }
     
     loseLife() {
@@ -1350,13 +1349,8 @@ class GameScene extends Phaser.Scene {
                 this.sounds.golden.play();
             }
             
-            // إظهار شاشة الفوز بعد 4 ثوانِ
-            this.time.addEvent({
-                delay: 4000,
-                callback: () => {
-                    this.showWinScreen();
-                }
-            });
+            // الوجبة المجانية جاهزة - بدون بوكس مزعج!
+            
         } else if (prizeType === 'discount3') {
             // خصم 3%
             console.log('✅ Adding 3% discount');
@@ -2067,85 +2061,6 @@ class GameScene extends Phaser.Scene {
             }
         });
     }
-    
-    showWinScreen(message) {
-        // إيقاف اللعبة
-        this.spawnTimer.paused = true;
-        this.physics.pause();
-        
-        // إنشاء نافذة تهنئة منظمة
-        const popup = this.add.container(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2);
-        
-        // خلفية معتمة لمنع التداخل
-        const winBg = this.add.graphics();
-        winBg.fillStyle(0x000000, 0.7);
-        winBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
-        winBg.setDepth(10);
-        
-        // صندوق الرسالة مع خلفية ذهبية فاخرة
-        const messageBox = this.add.graphics();
-        messageBox.fillStyle(0x1a1a1a, 0.95); // خلفية رمادية داكنة بدلاً من البيضاء
-        messageBox.lineStyle(3, 0xFFD700, 1); // إطار ذهبي أوضح
-        messageBox.fillRoundedRect(-150, -80, 300, 160, 15);
-        messageBox.strokeRoundedRect(-150, -80, 300, 160, 15);
-        
-        // نص التهنئة
-        const titleText = this.add.text(0, -60, '🎉 مبروك! 🎉', {
-            fontFamily: 'Arial Black',
-            fontSize: '32px',
-            fontWeight: 'bold',
-            color: '#FFD700', // ذهبي لامع
-            stroke: '#000000',
-            strokeThickness: 2,
-            align: 'center'
-        }).setOrigin(0.5);
-        
-        const messageText = this.add.text(0, 0, message, {
-            fontFamily: 'Arial',
-            fontSize: '20px',
-            fontWeight: 'bold',
-            color: '#333333',
-            align: 'center',
-            lineSpacing: 8,
-            wordWrap: { width: 400 }
-        }).setOrigin(0.5);
-        
-        // إضافة العناصر للـ container
-        popup.add([messageBox, titleText, messageText]);
-        popup.setDepth(15);
-        
-        // إحصائيات
-        const stats = [
-            `النقاط النهائية: ${this.gameManager.score}`,
-            `السندوتشات الجيدة: ${this.gameManager.goodCaught}`,
-            // تم حذف عداد الساندوتشات الذهبية القديم
-            `المستوى: ${this.gameManager.level}`
-        ];
-        
-        this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 40, stats.join('\n'), {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '16px',
-            color: GAME_CONFIG.colors.light,
-            align: 'center',
-            lineSpacing: 5
-        }).setOrigin(0.5);
-        
-        // زر إعادة اللعب
-        const restartBtn = this.add.text(GAME_CONFIG.width / 2, GAME_CONFIG.height / 2 + 120, '🔄 العب مرة أخرى', {
-            fontFamily: 'Cairo, Arial',
-            fontSize: '20px',
-            fontWeight: 'bold',
-            color: GAME_CONFIG.colors.accent,
-            backgroundColor: GAME_CONFIG.colors.light,
-            padding: { x: 20, y: 10 }
-        }).setOrigin(0.5).setInteractive({ cursor: 'pointer' });
-        
-        restartBtn.on('pointerdown', () => {
-            this.resetGameCompletely();
-            this.scene.restart();
-        });
-    }
-    
     showGameOver() {
         // إيقاف اللعبة
         this.spawnTimer.paused = true;
