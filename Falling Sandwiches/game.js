@@ -662,8 +662,9 @@ class GameScene extends Phaser.Scene {
     }
     
     createDiscountMeter() {
-        // موقع بناء السندوتش (أعلى اليمين) - مناسب للدقة HD
-        const sandwichX = GAME_CONFIG.width - 90; // موقع مناسب للدقة HD
+        // موقع بناء السندوتش (في الجزء الأيمن خارج منطقة اللعب)
+        const gameAreaWidth = GAME_CONFIG.width - 180; // حد منطقة اللعب
+        const sandwichX = gameAreaWidth + 90; // وسط المنطقة اليمنى (180/2 = 90)
         const sandwichY = 50; // موقع أعلى مناسب
         
         // خلفية شفافة للسندوتش - حجم مناسب
