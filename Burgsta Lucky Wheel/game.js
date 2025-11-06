@@ -1240,30 +1240,30 @@ class GameScene extends Phaser.Scene {
         const overlay = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
             .setDepth(200);
         
-        // ظل الصندوق
+        // ظل الصندوق (مناسب لدقة HD)
         const messageShadow = this.add.graphics();
         messageShadow.fillStyle(0x000000, 0.4);
-        messageShadow.fillRoundedRect(width / 2 - 165, height / 2 - 120, 330, 240, 20);
+        messageShadow.fillRoundedRect(width / 2 - 132, height / 2 - 96, 264, 192, 16);
         messageShadow.setDepth(201);
         
         // صندوق الرسالة مع تدرج
         const messageBox = this.add.graphics();
         messageBox.fillGradientStyle(0xfaf6e8, 0xf5f1e6, 0xe8dcc0, 0xf0e6d2, 1);
-        messageBox.lineStyle(4, 0xc49b41);
-        messageBox.fillRoundedRect(width / 2 - 170, height / 2 - 125, 340, 250, 20);
-        messageBox.strokeRoundedRect(width / 2 - 170, height / 2 - 125, 340, 250, 20);
+        messageBox.lineStyle(3, 0xc49b41);
+        messageBox.fillRoundedRect(width / 2 - 136, height / 2 - 100, 272, 200, 16);
+        messageBox.strokeRoundedRect(width / 2 - 136, height / 2 - 100, 272, 200, 16);
         messageBox.setDepth(202);
 
         // حدود داخلية ذهبية
         const innerBorder = this.add.graphics();
         innerBorder.lineStyle(2, 0xd4af37, 0.8);
-        innerBorder.strokeRoundedRect(width / 2 - 155, height / 2 - 110, 310, 220, 15);
+        innerBorder.strokeRoundedRect(width / 2 - 124, height / 2 - 88, 248, 176, 12);
         innerBorder.setDepth(203);
         
         // نص التهنئة مع تأثيرات
-        const congratsText = this.add.text(width / 2, height / 2 - 80, '🎉 مبروك! 🎉', {
+        const congratsText = this.add.text(width / 2, height / 2 - 64, 'مبروك!', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '36px',
+            fontSize: '24px',
             fontWeight: 'bold',
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
@@ -1288,9 +1288,9 @@ class GameScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
         
-        this.add.text(width / 2, height / 2 - 20, 'لقد فزت بـ', {
+        this.add.text(width / 2, height / 2 - 16, 'لقد فزت بـ', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '22px',
+            fontSize: '16px',
             fontWeight: '500',
             color: gameManager.colors.text,
             shadow: {
@@ -1302,9 +1302,9 @@ class GameScene extends Phaser.Scene {
             }
         }).setOrigin(0.5).setDepth(205);
         
-        const prizeText = this.add.text(width / 2, height / 2 + 20, prize, {
+        const prizeText = this.add.text(width / 2, height / 2 + 16, prize, {
             fontFamily: 'Cairo, Arial',
-            fontSize: '30px',
+            fontSize: '20px',
             fontWeight: 'bold',
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
@@ -1355,41 +1355,41 @@ class GameScene extends Phaser.Scene {
             .setInteractive()
             .setDepth(200); // عمق أعلى من الزر
         
-        // ظل الصندوق (مناسب للدقة HD)
+        // ظل الصندوق (مناسب لدقة HD)
         const messageShadow = this.add.graphics();
         messageShadow.fillStyle(0x000000, 0.4);
-        const winBoxW = 1400;  // عرض أكبر
-        const winBoxH = 800;   // ارتفاع أكبر
-        messageShadow.fillRoundedRect(width / 2 - winBoxW / 2 - 15, height / 2 - winBoxH / 2 - 15, winBoxW + 30, winBoxH + 30, 30);
+        const winBoxW = 400;  // عرض مناسب لدقة HD
+        const winBoxH = 280;   // ارتفاع مناسب لدقة HD
+        messageShadow.fillRoundedRect(width / 2 - winBoxW / 2 + 3, height / 2 - winBoxH / 2 + 3, winBoxW, winBoxH, 20);
         messageShadow.setDepth(201);
         
         // صندوق الرسالة مع تدرج
         const messageBox = this.add.graphics();
         messageBox.fillGradientStyle(0xfaf6e8, 0xf5f1e6, 0xe8dcc0, 0xf0e6d2, 1);
-        messageBox.lineStyle(6, 0xc49b41);
-        messageBox.fillRoundedRect(width / 2 - winBoxW / 2, height / 2 - winBoxH / 2, winBoxW, winBoxH, 30);
-        messageBox.strokeRoundedRect(width / 2 - winBoxW / 2, height / 2 - winBoxH / 2, winBoxW, winBoxH, 30);
+        messageBox.lineStyle(4, 0xc49b41);
+        messageBox.fillRoundedRect(width / 2 - winBoxW / 2, height / 2 - winBoxH / 2, winBoxW, winBoxH, 20);
+        messageBox.strokeRoundedRect(width / 2 - winBoxW / 2, height / 2 - winBoxH / 2, winBoxW, winBoxH, 20);
         messageBox.setDepth(202);
 
         // حدود داخلية ذهبية
         const innerBorder = this.add.graphics();
-        innerBorder.lineStyle(6, 0xd4af37, 0.8); // خط أثخن
-        innerBorder.strokeRoundedRect(width / 2 - winBoxW / 2 + 20, height / 2 - winBoxH / 2 + 20, winBoxW - 40, winBoxH - 40, 25);
+        innerBorder.lineStyle(2, 0xd4af37, 0.8);
+        innerBorder.strokeRoundedRect(width / 2 - winBoxW / 2 + 10, height / 2 - winBoxH / 2 + 10, winBoxW - 20, winBoxH - 20, 15);
         innerBorder.setDepth(203);
         
-        // نص التهنئة مع تأثيرات (موضع أعلى داخل الصندوق الكبير)
-        const congratsText = this.add.text(width / 2, height / 2 - 250, '🎉 مبروك! 🎉', {
+        // نص التهنئة (مناسب لدقة HD)
+        const congratsText = this.add.text(width / 2, height / 2 - 80, 'مبروك!', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '108px', // تكبير للدقة 4K
+            fontSize: '28px', // مناسب لدقة HD
             fontWeight: 'bold',
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
-            strokeThickness: 6, // تكبير السمك
+            strokeThickness: 2,
             shadow: {
-                offsetX: 9,
-                offsetY: 9,
+                offsetX: 2,
+                offsetY: 2,
                 color: 'rgba(0,0,0,0.3)',
-                blur: 15,
+                blur: 4,
                 fill: true
             }
         }).setOrigin(0.5).setDepth(204);
@@ -1405,27 +1405,27 @@ class GameScene extends Phaser.Scene {
             ease: 'Sine.easeInOut'
         });
         
-        this.add.text(width / 2, height / 2 - 80, 'لقد فزت بـ', {
+        this.add.text(width / 2, height / 2 - 30, 'لقد فزت بـ', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '66px', // تكبير للدقة 4K
+            fontSize: '18px', // مناسب لدقة HD
             fontWeight: '500',
             color: gameManager.colors.text,
             shadow: {
-                offsetX: 3,
-                offsetY: 3,
+                offsetX: 1,
+                offsetY: 1,
                 color: 'rgba(0,0,0,0.2)',
-                blur: 6,
+                blur: 2,
                 fill: true
             }
         }).setOrigin(0.5).setDepth(205);
         
-        const prizeText = this.add.text(width / 2, height / 2, prize, {
+        const prizeText = this.add.text(width / 2, height / 2 + 10, prize, {
             fontFamily: 'Cairo, Arabic',
-            fontSize: '90px', // تكبير للدقة 4K
+            fontSize: '22px', // مناسب لدقة HD
             fontWeight: 'bold',
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
-            strokeThickness: 3, // تكبير السمك
+            strokeThickness: 2,
             shadow: {
                 offsetX: 6,
                 offsetY: 6,
@@ -1445,24 +1445,24 @@ class GameScene extends Phaser.Scene {
             ease: 'Power2.easeInOut'
         });
         
-        this.add.text(width / 2, height / 2 + 120, 'اتجه للكاشير لاستلام جائزتك', {
+        this.add.text(width / 2, height / 2 + 60, 'اتجه للكاشير لاستلام جائزتك', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '54px', // تكبير للدقة 4K
+            fontSize: '14px', // مناسب لدقة HD
             fontWeight: '400',
             color: gameManager.colors.text,
             align: 'center',
             backgroundColor: 'rgba(255,255,255,0.8)',
-            padding: { x: 45, y: 24 } // تكبير الحشو
+            padding: { x: 12, y: 6 }
         }).setOrigin(0.5).setDepth(207);
 
-        // 👆 رسالة النقر للمتابعة
-        const clickToContinueText = this.add.text(width / 2, height / 2 + 250, '👆 اضغط في أي مكان للمتابعة', {
+        // رسالة النقر للمتابعة
+        const clickToContinueText = this.add.text(width / 2, height / 2 + 100, 'اضغط في أي مكان للمتابعة', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '48px', // تكبير للدقة 4K
+            fontSize: '14px', // مناسب لدقة HD
             fontWeight: '400',
             color: gameManager.colors.primary,
             backgroundColor: 'rgba(196, 155, 65, 0.2)',
-            padding: { x: 60, y: 30 } // تكبير الحشو
+            padding: { x: 16, y: 8 }
         }).setOrigin(0.5).setDepth(208);
 
         // تأثير وميض لرسالة النقر
@@ -1501,44 +1501,43 @@ class GameScene extends Phaser.Scene {
             .setInteractive()
             .setDepth(200);
         
-    // ظل الصندوق (مكبر ليتناسب مع النص الكبير في 4K)
+    // ظل الصندوق (مناسب لدقة HD)
     const messageShadow = this.add.graphics();
     messageShadow.fillStyle(0x000000, 0.4);
-    // صندوق أكبر: العرض والارتفاع مرفوعان ليتناسبا مع الخط الكبير
-    const tryLaterBoxW = 400;
-    const tryLaterBoxH = 480;
-    messageShadow.fillRoundedRect(width / 2 - tryLaterBoxW / 2, height / 2 - tryLaterBoxH / 2, tryLaterBoxW, tryLaterBoxH, 30);
+    // صندوق مناسب لدقة HD
+    const tryLaterBoxW = 320;
+    const tryLaterBoxH = 200;
+    messageShadow.fillRoundedRect(width / 2 - tryLaterBoxW / 2 + 3, height / 2 - tryLaterBoxH / 2 + 3, tryLaterBoxW, tryLaterBoxH, 20);
     messageShadow.setDepth(201);
 
     // صندوق الرسالة
     const messageBox = this.add.graphics();
     messageBox.fillGradientStyle(0xfaf6e8, 0xf5f1e6, 0xe8dcc0, 0xf0e6d2, 1);
-    messageBox.lineStyle(6, 0xc49b41);
-    messageBox.fillRoundedRect(width / 2 - tryLaterBoxW / 2, height / 2 - tryLaterBoxH / 2, tryLaterBoxW, tryLaterBoxH, 30);
-    messageBox.strokeRoundedRect(width / 2 - tryLaterBoxW / 2, height / 2 - tryLaterBoxH / 2, tryLaterBoxW, tryLaterBoxH, 30);
+    messageBox.lineStyle(4, 0xc49b41);
+    messageBox.fillRoundedRect(width / 2 - tryLaterBoxW / 2, height / 2 - tryLaterBoxH / 2, tryLaterBoxW, tryLaterBoxH, 20);
+    messageBox.strokeRoundedRect(width / 2 - tryLaterBoxW / 2, height / 2 - tryLaterBoxH / 2, tryLaterBoxW, tryLaterBoxH, 20);
     messageBox.setDepth(202);
 
         // نص "حاول في وقت لاحق"
-        // وضع النص داخل الصندوق الأكبر (موضع أعلى قليلاً ليظهر متناغمًا)
-        const messageText = this.add.text(width / 2, height / 2 - 60, '⏰ حاول في وقت لاحق', {
+        const messageText = this.add.text(width / 2, height / 2 - 20, 'حاول في وقت لاحق', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '84px', // تكبير للدقة 4K
+            fontSize: '28px', // مناسب لدقة HD
             fontWeight: 'bold',
             color: gameManager.colors.primary,
             stroke: gameManager.colors.dark,
-            strokeThickness: 6 // تكبير السمك
+            strokeThickness: 2
         }).setOrigin(0.5).setDepth(203);
 
 
 
-        // 👆 رسالة النقر للمتابعة
-        const clickToContinueText = this.add.text(width / 2, height / 2 + 150, '👆 اضغط في أي مكان للمتابعة', {
+        // رسالة النقر للمتابعة
+        const clickToContinueText = this.add.text(width / 2, height / 2 + 40, 'اضغط في أي مكان للمتابعة', {
             fontFamily: 'Cairo, Arial',
-            fontSize: '48px', // تكبير للدقة 4K
+            fontSize: '16px', // مناسب لدقة HD
             fontWeight: '400',
             color: gameManager.colors.primary,
             backgroundColor: 'rgba(196, 155, 65, 0.2)',
-            padding: { x: 60, y: 30 } // تكبير الحشو
+            padding: { x: 20, y: 8 }
         }).setOrigin(0.5).setDepth(205);
 
         // تأثير نبضة للنص الرئيسي

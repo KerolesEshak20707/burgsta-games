@@ -1883,10 +1883,9 @@ class GameScene extends Phaser.Scene {
     }
 
     spawnGoldenSandwich(isSpecialStage = false) {
-        // 🎯 الساندوتش الذهبي - نفس حجم العادي، مكان ثابت، سرعة عالية!
+        // 🎯 الساندوتش الذهبي - نفس حجم العادي، مكان عشوائي، سرعة عالية!
         const gameAreaWidth = GAME_CONFIG.width - 180;
-        // مكان ثابت في وسط الشاشة للنزول
-        const x = gameAreaWidth / 2;
+        const x = Math.random() * (gameAreaWidth - 50) + 25; // مكان عشوائي
         
         // إنشاء الساندوتش الذهبي
         const goldenItem = this.physics.add.sprite(x, -30, 'goldenSandwich');
@@ -1900,7 +1899,7 @@ class GameScene extends Phaser.Scene {
         goldenItem.body.setVelocityX(0); // مسار مستقيم فقط // سرعة صاروخية! �
         
         // نفس حجم الساندوتش العادي تماماً! 🥪
-        goldenItem.setScale(0.1); // نفس حجم الساندوتش العادي
+        goldenItem.setScale(0.15); // نفس حجم الساندوتش العادي
         goldenItem.setTint(0xFFD700); // ذهبي براق
         goldenItem.setDepth(100); // فوق كل شيء
         
@@ -1918,11 +1917,8 @@ class GameScene extends Phaser.Scene {
         
         // تصغير الصور لتناسب اللعبة
         if (itemType === 'good') {
-            item.setScale(0.1); // حجم أصغر لتحدي أكبر! 🥪
+            item.setScale(0.15); // حجم واضح للساندوتش العادي! 🥪
             item.setDepth(20); // السندويتشات الجيدة في المقدمة
-        } else if (itemType === 'golden') {
-            item.setScale(0.7); // حجم أصغر للساندوتش الذهبي! ⭐
-            item.setDepth(25); // الذهبية فوق كل شيء
         } else {
             item.setScale(0.05); // حجم أصغر للقنبلة - خطر خفي! 💣
             item.setDepth(10); // السيئة في الخلف
@@ -1948,7 +1944,7 @@ class GameScene extends Phaser.Scene {
                 if (item && item.active && !item.isCollected && !item.hasDropped) {
                     
                     // 🎯 حل ذكي: إذا كان السندويتش جيد ومحاط بسيء، حرّكه للجانب
-                    if (itemType === 'good' || itemType === 'golden') {
+                    if (itemType === 'good') {
                         this.checkAndAdjustGoodItemPosition(item);
                     }
                     
@@ -2868,7 +2864,7 @@ class GameScene extends Phaser.Scene {
             delay: randomDelay,
             callback: () => {
                 const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
-                const x = Math.random() * (gameAreaWidth - 50) + 25;
+                const x = Math.random() * (gameAreaWidth - 50) + 25; // مكان عشوائي
                 
                 // إنشاء الساندوتش الذهبي الموحد
                 const goldenItem = this.physics.add.sprite(x, -30, 'sandwich1');
@@ -2876,19 +2872,14 @@ class GameScene extends Phaser.Scene {
                 goldenItem.isUnifiedGoldenSandwich = true;
                 goldenItem.canGetFreeMeal = canGetFreeMeal;
                 
-                // السرعة: صاروخية تجعل الإمساك به تحدي حقيقي!
-                const baseSpeed = this.gameManager.getCurrentItemSpeed() * 5; // سرعة صاروخية!
-                const finalSpeed = canGetFreeMeal ? baseSpeed * 0.8 : baseSpeed * 1.2; // أبطأ قليلاً للوجبة المجانية
-                goldenItem.setVelocityY(finalSpeed);
+                // سرعة عالية جداً لتحدي أكبر!
+                goldenItem.setVelocityY(3000); // سرعة ثابتة عالية
                 
-                // حركة جانبية عشوائية لزيادة الصعوبة
-                const sideMovement = canGetFreeMeal ? 
-                    Phaser.Math.Between(-120, 120) : // حركة متوسطة للوجبة المجانية
-                    Phaser.Math.Between(-200, 200);  // حركة أقل جنونية للخصمات
-                goldenItem.setVelocityX(sideMovement);
+                // بدون حركة جانبية - مسار مستقيم ثابت
+                goldenItem.setVelocityX(0);
                 
-                // تأثيرات بصرية حسب نوع المكافأة
-                goldenItem.setDisplaySize(85, 85); // حجم أصغر للتحدي! ⭐
+                // نفس حجم الساندوتش العادي تماماً
+                goldenItem.setScale(0.15); // نفس حجم الساندوتش العادي! ⭐
                 goldenItem.setDepth(100); // فوق كل شيء
                 
                 if (canGetFreeMeal) {
@@ -3085,7 +3076,7 @@ class GameScene extends Phaser.Scene {
         }
         
         // معالجة سقوط العناصر بدون التقاطها
-        if (item.itemType === 'good' || item.itemType === 'golden') {
+        if (item.itemType === 'good') {
             // 💔 خسارة حياة عند فقدان سندوتش جيد أو ذهبي
             this.gameManager.lives = Math.max(0, this.gameManager.lives - 1); // حماية من القيم السالبة
             this.gameManager.sandwichesMissed++; // تسجيل السندوتش المفقود
