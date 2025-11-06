@@ -1319,21 +1319,17 @@ class GameScene extends Phaser.Scene {
         
         // فحص إذا كان الساندوتش الذهبي الموحد الجديد
         if (item.isUnifiedGoldenSandwich) {
-            this.handleUnifiedGoldenSandwich(item);
+            // حفظ بيانات الجائزة قبل حذف العنصر
+            const prizeData = {
+                prizeType: item.prizeType,
+                prizeMessage: item.prizeMessage,
+                prizeColor: item.prizeColor
+            };
+            this.handleUnifiedGoldenSandwich(prizeData);
             return;
         }
         
-        // فحص إذا كان ساندوتش مجاني خاص (النظام القديم - للتوافق)
-        if (item.isFreeSandwich) {
-            this.handleFreeSandwich(item);
-            return;
-        }
-        
-        // فحص إذا كان ساندوتش ذهبي خاص (النظام القديم - للتوافق)
-        if (item.isGoldenSandwich) {
-            this.handleSpecialGoldenSandwich(item);
-            return;
-        }
+        // تم حذف الأنظمة القديمة - نستخدم triggerUnifiedGoldenSandwich فقط
         
         // معالجة حسب نوع العنصر
         switch (item.itemType) {
@@ -1373,13 +1369,13 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    handleUnifiedGoldenSandwich(item) {
+    handleUnifiedGoldenSandwich(prizeData) {
         // 🎁 نظام الجوائز المحدد مسبقاً
-        const prizeType = item.prizeType;
+        console.log('🏆 Handling golden sandwich:', prizeData);
+        const prizeType = prizeData.prizeType;
         
         if (prizeType === 'freeMeal') {
             // 🎉 وجبة مجانية كاملة
-            this.handleFreeSandwich(item);
             this.gameManager.incrementFreeSandwichCount();
             this.showFloatingText('🎁 وجبة مجانية كاملة!', '#ffd700', 3);
             
@@ -1389,8 +1385,15 @@ class GameScene extends Phaser.Scene {
             this.spawnTimer.paused = true;
             this.physics.pause();
             
-            this.showMessage('🎊 الحظ الذهبي! وجبة مجانية كاملة!', 4000, '#ffd700');
+            // رسالة احتفال مميزة
+            this.showGoldenFreeSandwichCelebration();
             
+            // صوت مميز
+            if (this.sounds && this.sounds.golden) {
+                this.sounds.golden.play();
+            }
+            
+            // إظهار شاشة الفوز بعد 4 ثوانِ
             this.time.addEvent({
                 delay: 4000,
                 callback: () => {
@@ -1399,23 +1402,27 @@ class GameScene extends Phaser.Scene {
             });
         } else if (prizeType === 'discount3') {
             // خصم 3%
+            console.log('✅ Adding 3% discount');
             this.gameManager.addDiscount(3);
             this.gameManager.score += 100;
             this.gameManager.goldenCaught++;
             
-            this.showFloatingText('+3% خصم ذهبي!', '#32CD32', 2);
+            this.showFloatingText('+3% خصم ذهبي!', '#FFD700', 2);
             this.createSpecialEffect(this.player.x, this.player.y);
-            this.showMessage('خصم 3% ممتاز!', 2500, '#32CD32');
+            this.showMessage('🌟 خصم 3% ممتاز!', 2500, '#FFD700');
             
         } else if (prizeType === 'discount1_5') {
             // خصم 1.5%
+            console.log('✅ Adding 1.5% discount');
             this.gameManager.addDiscount(1.5);
             this.gameManager.score += 50;
             this.gameManager.goldenCaught++;
             
-            this.showFloatingText('+1.5% خصم ذهبي!', '#87CEEB', 2);
+            this.showFloatingText('+1.5% خصم ذهبي!', '#FFD700', 2);
             this.createSpecialEffect(this.player.x, this.player.y);
-            this.showMessage('خصم 1.5% رائع!', 2500, '#87CEEB');
+            this.showMessage('⭐ خصم 1.5% رائع!', 2500, '#FFD700');
+        } else {
+            console.error('❌ Unknown prize type:', prizeType);
         }
         
         // صوت مميز
@@ -1424,41 +1431,7 @@ class GameScene extends Phaser.Scene {
         }
     }
     
-    handleFreeSandwich(item) {
-        // فحص إذا كان مسموح الإمساك به اليوم
-        if (!item.canBeCaught) {
-            // الساندوتش سريع جداً - لا يمكن الإمساك به
-            this.showMessage('سريع جداً! لقد استنفدت محاولاتك اليوم', 2000, '#ff6600');
-            return;
-        }
-        
-        // نجح في الإمساك بالساندوتش المجاني!
-        if (this.gameManager.useFreeSandwich()) {
-            // ساندوتش مجاني كامل - 100% خصم!
-            this.gameManager.discount = 100;
-            this.gameManager.gameWon = true;
-            
-            // إيقاف اللعبة
-            this.spawnTimer.paused = true;
-            this.physics.pause();
-            
-            // رسالة احتفال مميزة ومعلوماتية
-            this.showGoldenFreeSandwichCelebration();
-            
-            // صوت مميز
-            if (this.sounds && this.sounds.golden) {
-                this.sounds.golden.play();
-            }
-            
-            // إظهار شاشة الفوز بعد 4 ثوانِ للاستمتاع بالاحتفال
-            this.time.addEvent({
-                delay: 4000,
-                callback: () => {
-                    this.showWinScreen();
-                }
-            });
-        }
-    }
+    // تم حذف handleFreeSandwich القديم - الآن مدمج في handleUnifiedGoldenSandwich
 
     showGoldenFreeSandwichCelebration() {
         // خلفية احتفالية لامعة
@@ -1675,7 +1648,7 @@ class GameScene extends Phaser.Scene {
         // فحص إذا كان قابل للإمساك اليوم
         if (!item.canBeCaught) {
             // السندوتش سريع جداً - لا يمكن الإمساك به
-            this.showMessage('سريع جداً! لقد استنفدت فرصك الذهبية اليوم', 2000, '#ff6600');
+            this.showMessage('الساندوتش الذهبي سريع جداً!', 2000, '#ff6600');
             return;
         }
         
@@ -1876,8 +1849,8 @@ class GameScene extends Phaser.Scene {
     }
     
     checkSpecialGoldenSandwich() {
-        // السندوتش الذهبي يظهر فقط عند مستويات المخاطرة (وليس تلقائياً)
-        // هذه الدالة محجوزة لنظام المخاطرة
+        // تم إزالة النظام القديم - نستخدم triggerUnifiedGoldenSandwich فقط
+        return;
     }
     
     showGoldenSandwichWarning() {
@@ -1889,87 +1862,9 @@ class GameScene extends Phaser.Scene {
         }
     }
     
-    launchSpecialGoldenSandwich() {
-        // إطلاق السندوتش الذهبي بسرعة جنونية!
-        const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
-        const x = Math.random() * (gameAreaWidth - 50) + 25;
-        
-        // إنشاء السندوتش الذهبي الخاص
-        const goldenItem = this.physics.add.sprite(x, -30, 'goldenSandwich');
-        goldenItem.itemType = 'golden';
-        
-        // سرعة جنونية! (أسرع 3 مرات من العادي)
-        const crazySpeed = this.gameManager.getCurrentItemSpeed() * 3;
-        goldenItem.setVelocityY(crazySpeed);
-        
-        // تأثيرات بصرية مميزة - حجم مناسب
-        goldenItem.setScale(0.25); // حجم أصغر لتحدي أكبر! 🌟
-        goldenItem.setTint(0xffd700); // لون ذهبي مشرق
-        
-        // تأثير إشعاع ذهبي
-        this.tweens.add({
-            targets: goldenItem,
-            alpha: 0.7,
-            duration: 200,
-            yoyo: true,
-            repeat: -1
-        });
-        
-        // نفس نظام التتبع المعتاد
-        goldenItem.setCollideWorldBounds(true);
-        goldenItem.body.onWorldBounds = true;
-        goldenItem.hasDropped = false;
-        goldenItem.isCollected = false;
-        
-        goldenItem.dropChecker = this.time.addEvent({
-            delay: 100,
-            repeat: -1,
-            callback: () => {
-                if (goldenItem && goldenItem.active && !goldenItem.isCollected && !goldenItem.hasDropped) {
-                    if (goldenItem.y >= GAME_CONFIG.height - 50) { // السندوتش يُفقد عندما يمر البوكس بـ50 بكسل
-                        goldenItem.hasDropped = true;
-                        this.handleItemDropped(goldenItem);
-                        if (goldenItem.dropChecker) {
-                            goldenItem.dropChecker.destroy();
-                        }
-                    }
-                }
-            }
-        });
-        
-        this.fallingItems.add(goldenItem);
-        
-        // رسالة للاعب
-        this.showFloatingText('💫 السندوتش الذهبي!', '#ffd700', 2);
-    }
+    // تم حذف النظام القديم launchSpecialGoldenSandwich - نستخدم triggerUnifiedGoldenSandwich فقط
 
-    spawnGoldenSandwich(isSpecialStage = false) {
-        // 🎯 الساندوتش الذهبي - نفس حجم العادي، مكان عشوائي، سرعة عالية!
-        const gameAreaWidth = GAME_CONFIG.width - 180;
-        const x = Math.random() * (gameAreaWidth - 50) + 25; // مكان عشوائي
-        
-        // إنشاء الساندوتش الذهبي
-        const goldenItem = this.physics.add.sprite(x, -30, 'goldenSandwich');
-        goldenItem.itemType = 'unifiedGolden';
-        goldenItem.isUnifiedGoldenSandwich = true;
-        
-        // ⚡ سرعة نزول عالية جداً - بدون حركة جانبية!
-        goldenItem.body.setVelocityY(3000); // سرعة نزول أعلى بكثير! 🚀💨
-        
-        // بدون حركة جانبية - مسار مستقيم ثابت
-        goldenItem.body.setVelocityX(0); // مسار مستقيم فقط // سرعة صاروخية! �
-        
-        // حجم أكبر ليكون واضح جداً! 🥪
-        goldenItem.setScale(0.35); // حجم أكبر بوضوح
-        goldenItem.setTint(0xFFD700); // ذهبي براق
-        goldenItem.setDepth(100); // فوق كل شيء
-        
-        // إضافة للمجموعة
-        this.fallingItems.add(goldenItem);
-        
-        // رسالة مثيرة
-        this.showFloatingText('🥪 ساندوتش ذهبي سريع!', '#ffd700', 3);
-    }
+    // تم حذف النظام القديم spawnGoldenSandwich - نستخدم triggerUnifiedGoldenSandwich فقط
     
     createFallingItem(x, itemType, texture) {
         // إنشاء العنصر المتساقط
@@ -2892,7 +2787,7 @@ class GameScene extends Phaser.Scene {
         this.gameManager.isInRiskMode = false;
         
         // 🎯 بعد قرار الاستمرار - الساندوتش الذهبي يظهر دائماً!
-        this.spawnGoldenSandwich(true); // يظهر دائماً بعد الاستمرار
+        // تم إزالة النظام القديم - الآن نستخدم triggerUnifiedGoldenSandwich فقط
         console.log('🎯 الساندوتش الذهبي يظهر - صعب الالتقاط!');
         
         // زيادة الصعوبة حسب المستوى
@@ -2926,16 +2821,16 @@ class GameScene extends Phaser.Scene {
         if (canGetFreeMeal && randomChance < 15) { // 15% وجبة مجانية (فقط إذا متاحة!)
             prizeType = 'freeMeal';
             prizeMessage = 'وجبة مجانية!';
-            prizeColor = '#FFD700';
+            prizeColor = '#FFD700'; // ذهبي فقط للساندوتش
         } else if (randomChance < 57.5) { // إعادة توزيع النسب عند عدم توفر وجبات مجانية
             // خصم 3% (42.5% من المتبقي)
             prizeType = 'discount3';
             prizeMessage = 'خصم 3%!';
-            prizeColor = '#32CD32';
+            prizeColor = '#FFD700'; // نفس اللون الذهبي
         } else { // 42.5% خصم 1.5%
             prizeType = 'discount1_5';
             prizeMessage = 'خصم 1.5%!';
-            prizeColor = '#87CEEB';
+            prizeColor = '#FFD700'; // نفس اللون الذهبي
         }
         
         // تأخير عشوائي لجعل الظهور غير متوقع
@@ -2943,10 +2838,22 @@ class GameScene extends Phaser.Scene {
         this.time.addEvent({
             delay: randomDelay,
             callback: () => {
+                // فحص مرة أخرى قبل الإنشاء - ضمان إضافي!
+                const finalCanGetFreeMeal = this.gameManager.canGetFreeSandwich();
+                
+                // إذا كانت الجائزة وجبة مجانية بس الحد خلص - غير الجائزة!
+                if (prizeType === 'freeMeal' && !finalCanGetFreeMeal) {
+                    // تحويل لخصم 3% بدلاً من الوجبة المجانية
+                    prizeType = 'discount3';
+                    prizeMessage = 'خصم 3%!';
+                    prizeColor = '#FFD700';
+                    console.log('🔄 تم تغيير الجائزة من وجبة مجانية إلى خصم 3% - الحد اليومي انتهى');
+                }
+                
                 const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
                 const x = Math.random() * (gameAreaWidth - 50) + 25; // مكان عشوائي
                 
-                // إنشاء الساندوتش الذهبي مع نوع الجائزة المحدد مسبقاً
+                // إنشاء الساندوتش الذهبي مع نوع الجائزة المحدد والمفحوص
                 const goldenItem = this.physics.add.sprite(x, -30, 'sandwich1');
                 goldenItem.itemType = 'unifiedGolden';
                 goldenItem.isUnifiedGoldenSandwich = true;
@@ -2964,14 +2871,12 @@ class GameScene extends Phaser.Scene {
                 goldenItem.setScale(0.35); // حجم أكبر بوضوح! ⭐
                 goldenItem.setDepth(100); // فوق كل شيء
                 
-                // تحديد المظهر والرسالة حسب نوع الجائزة
+                // لون ذهبي موحد لجميع الساندوتشات الذهبية
+                goldenItem.setTint(0xFFD700); // ذهبي دايماً
+                
+                // تأثيرات خاصة للوجبة المجانية فقط
                 if (prizeType === 'freeMeal') {
-                    goldenItem.setTint(0xFFD700); // ذهبي للوجبة المجانية
                     this.addDiamondEffects(goldenItem);
-                } else if (prizeType === 'discount3') {
-                    goldenItem.setTint(0x32CD32); // أخضر للخصم 3%
-                } else {
-                    goldenItem.setTint(0x87CEEB); // أزرق فاتح للخصم 1.5%
                 }
                 
                 // رسالة توضح الجائزة بدون أسرار
@@ -3459,191 +3364,15 @@ class GameScene extends Phaser.Scene {
     
     // ===== نظام الساندوتش المجاني النادر 🎁 =====
     
-    triggerFreeSandwichEvent() {
-        // استخدام الساندوتش المجاني
-        if (!this.gameManager.useFreeSandwich()) {
-            return; // لم تعد هناك ساندوتشات مجانية متاحة
-        }
-        
-        // إيقاف اللعبة مؤقتاً لإظهار الحدث الخاص
-        this.spawnTimer.paused = true;
-        this.physics.pause();
-        
-        // تشغيل صوت خاص للحدث النادر
-        this.sounds.golden.play();
-        
-        // عرض رسالة الساندوتش المجاني
-        this.showFreeSandwichMessage();
-        
-        // إطلاق ساندوتش مجاني سريع ونادر
-        this.time.addEvent({
-            delay: 2000, // بعد ثانيتين من الرسالة
-            callback: () => {
-                this.launchFreeSandwich();
-                // استئناف اللعبة
-                this.spawnTimer.paused = false;
-                this.physics.resume();
-            }
-        });
-    }
+    // تم حذف النظام القديم triggerFreeSandwichEvent - نستخدم triggerUnifiedGoldenSandwich فقط
     
-    showFreeSandwichMessage() {
-        const centerX = GAME_CONFIG.width / 2;
-        const centerY = GAME_CONFIG.height / 2;
-        
-        // خلفية متوهجة خاصة
-        const specialBg = this.add.graphics();
-        specialBg.fillGradientStyle(0xFFD700, 0xFFD700, 0xFF6B35, 0xFF6B35, 0.9);
-        specialBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
-        specialBg.setDepth(70);
-        
-        // نص الحدث الخاص
-        const eventText = this.add.text(centerX, centerY - 100, '🎉 حدث نادر جداً! 🎉', {
-            fontSize: '20px', // حجم مناسب للدقة HD
-            fill: '#FFFFFF',
-            fontFamily: 'Arial Black',
-            stroke: '#FFD700',
-            strokeThickness: 8,
-            align: 'center',
-            shadow: { offsetX: 4, offsetY: 4, color: '#000000', blur: 8, fill: true }
-        }).setOrigin(0.5);
-        eventText.setDepth(75);
-        
-        // نص الساندوتش المجاني
-        const freeText = this.add.text(centerX, centerY, '🥪 ساندوتش مجاني كامل! 🥪', {
-            fontSize: '40px',
-            fill: '#00FF00',
-            fontFamily: 'Arial Black',
-            stroke: '#000000',
-            strokeThickness: 6,
-            align: 'center',
-            shadow: { offsetX: 3, offsetY: 3, color: '#000000', blur: 6, fill: true }
-        }).setOrigin(0.5);
-        freeText.setDepth(75);
-        
-        // نص توضيحي
-        const infoText = this.add.text(centerX, centerY + 80, 'احصل على خصم 100% فوراً!\nهذا الحدث نادر جداً - مرتان فقط يومياً', {
-            fontSize: '24px',
-            fill: '#FFFF00',
-            fontFamily: 'Arial',
-            fontWeight: 'bold',
-            stroke: '#000000',
-            strokeThickness: 4,
-            align: 'center',
-            lineSpacing: 10,
-            shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true }
-        }).setOrigin(0.5);
-        infoText.setDepth(75);
-        
-        // تأثيرات بصرية متحركة
-        this.tweens.add({
-            targets: eventText,
-            scaleX: 1.2,
-            scaleY: 1.2,
-            duration: 500,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-        
-        // إزالة الرسالة بعد ثانيتين
-        this.time.addEvent({
-            delay: 2000,
-            callback: () => {
-                specialBg.destroy();
-                eventText.destroy();
-                freeText.destroy();
-                infoText.destroy();
-            }
-        });
-    }
+    // تم حذف النظام القديم showFreeSandwichMessage - نستخدم triggerUnifiedGoldenSandwich فقط
     
-    launchFreeSandwich() {
-        // إنشاء ساندوتش مجاني خاص بتأثيرات بصرية مميزة
-        const x = Phaser.Math.Between(100, GAME_CONFIG.width - 100);
-        
-        const freeSandwich = this.physics.add.sprite(x, -100, 'sandwich1');
-        freeSandwich.setDisplaySize(70, 70); // حجم أصغر للتحدي! 🎯
-        freeSandwich.setVelocity(0, 300); // سرعة متوسطة
-        freeSandwich.setDepth(25);
-        
-        // تأثير توهج ذهبي خاص
-        freeSandwich.setTint(0xFFD700);
-        
-        // تأثير دوران مميز
-        this.tweens.add({
-            targets: freeSandwich,
-            rotation: Math.PI * 2,
-            duration: 1000,
-            repeat: -1,
-            ease: 'Linear'
-        });
-        
-        // تأثير نبضات الحجم
-        this.tweens.add({
-            targets: freeSandwich,
-            scaleX: 1.3,
-            scaleY: 1.3,
-            duration: 800,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
-        
-        // جعل الساندوتش يتفاعل مع اللاعب
-        this.physics.add.overlap(this.player, freeSandwich, () => {
-            // الساندوتش المجاني يعطي خصم 100% فوراً!
-            this.gameManager.discount = 100;
-            this.updateUI();
-            
-            // تأثيرات خاصة للساندوتش المجاني
-            freeSandwich.destroy();
-            this.sounds.golden.play();
-            this.createParticleEffect(freeSandwich.x, freeSandwich.y, 0xFFD700, 20);
-            
-            // رسالة تهنئة خاصة
-            this.showMessage('🎉 ساندوتش مجاني! خصم 100%! 🎉', 3000, 0xFFD700);
-            
-            // إنهاء اللعبة بالفوز الفوري
-            this.time.addEvent({
-                delay: 1000,
-                callback: () => {
-                    this.endGame(true, '🎁 فزت بساندوتش مجاني كامل!');
-                }
-            });
-        });
-        
-        // إزالة الساندوتش إذا خرج من الشاشة
-        freeSandwich.setCollideWorldBounds(false);
-        this.time.addEvent({
-            delay: 8000, // 8 ثوان للوصول
-            callback: () => {
-                if (freeSandwich && freeSandwich.active) {
-                    freeSandwich.destroy();
-                }
-            }
-        });
-        
-        // إضافة الساندوتش لمجموعة العناصر النشطة
-        if (!this.activeFoodItems) {
-            this.activeFoodItems = this.physics.add.group();
-        }
-        this.activeFoodItems.add(freeSandwich);
-    }
+    // تم حذف النظام القديم launchFreeSandwich - نستخدم triggerUnifiedGoldenSandwich فقط
     
-    triggerFreeSandwichEvent() {
-        // تحديد السرعة بناءً على المحاولات المتبقية اليوم
-        const canCatch = this.gameManager.canGetFreeSandwich(); // هل يمكن الإمساك به؟
-        
-        // سرعة السقوط: إذا لم يعد مسموح له = سرعة فائقة، وإلا سرعة عادية  
-        const dropSpeed = canCatch ? 800 : 2000; // السرعة الفائقة تجعل الإمساك مستحيل تقريباً
-        
-        // إظهار رسالة حسب الحالة مع توضيح الندرة
-        if (canCatch) {
-            this.showMessage(`ساندوتش ماسي نادر جداً! وجبة مجانية 100%! (${this.gameManager.freeSandwichesUsed + 1}/2 محاولات اليوم)`, 4000, '#FFD700');
-        } else {
-            this.showMessage(`ساندوتش ماسي نادر لكن سريع! لقد استنفدت محاولاتك اليومية (2/2)`, 3500, '#ffaa00');
-        }
+    // تم حذف النظام القديم triggerFreeSandwichEvent الثاني - نستخدم triggerUnifiedGoldenSandwich فقط
+    triggerFreeSandwichEventOLD() {
+        // النظام القديم محذوف
         
         // إنشاء الساندوتش المجاني الخاص
         const freeSandwich = this.physics.add.sprite(
@@ -3784,6 +3513,8 @@ class GameScene extends Phaser.Scene {
             }
         });
     }
+
+    // تم حذف النظام القديم triggerFreeSandwichEvent الثاني - نستخدم triggerUnifiedGoldenSandwich فقط
 }
 
 // إعداد وتشغيل اللعبة - محسّنة للـ WebView
