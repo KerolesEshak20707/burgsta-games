@@ -2608,6 +2608,62 @@ class GameScene extends Phaser.Scene {
         });
     }
     
+    addGoldenParticles(goldenItem) {
+        // إنشاء جزيئات ذهبية متطايرة حول الساندوتش
+        const particles = [];
+        const particleCount = 6;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = this.add.graphics();
+            particle.fillStyle(0xFFD700, 0.8);
+            particle.fillCircle(0, 0, 3);
+            particle.setDepth(98);
+            particles.push(particle);
+            
+            // حركة دائرية حول الساندوتش
+            const angle = (i / particleCount) * Math.PI * 2;
+            const radius = 40;
+            
+            particle.baseAngle = angle;
+            particle.radius = radius;
+        }
+        
+        // تحديث مواقع الجزيئات
+        goldenItem.particles = particles;
+        goldenItem.particleTimer = this.time.addEvent({
+            delay: 50,
+            repeat: -1,
+            callback: () => {
+                if (!goldenItem.active) {
+                    particles.forEach(p => p.destroy());
+                    return;
+                }
+                
+                particles.forEach((particle, index) => {
+                    const time = this.time.now * 0.003;
+                    const angle = particle.baseAngle + time;
+                    
+                    particle.x = goldenItem.x + Math.cos(angle) * particle.radius;
+                    particle.y = goldenItem.y + Math.sin(angle) * particle.radius;
+                    
+                    // تأثير نبض
+                    const pulseScale = 1 + Math.sin(time * 3 + index) * 0.3;
+                    particle.setScale(pulseScale);
+                });
+            }
+        });
+        
+        // تنظيف الجزيئات عند تدمير الساندوتش
+        goldenItem.on('destroy', () => {
+            if (goldenItem.particles) {
+                goldenItem.particles.forEach(p => p.destroy());
+            }
+            if (goldenItem.particleTimer) {
+                goldenItem.particleTimer.destroy();
+            }
+        });
+    }
+    
     takeReward(level) {
         // اللاعب اختار الانسحاب والحصول على المكافأة
         this.sounds.golden.play();
@@ -2693,8 +2749,8 @@ class GameScene extends Phaser.Scene {
                 const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
                 const x = Math.random() * (gameAreaWidth - 50) + 25; // مكان عشوائي
                 
-                // إنشاء الساندوتش الذهبي مع الشكل المخصوص
-                const goldenItem = this.physics.add.sprite(x, -30, 'goldenSandwich');
+                // إنشاء الساندوتش الذهبي بشكل ساندوتش عادي + تأثيرات ذهبية
+                const goldenItem = this.physics.add.sprite(x, -30, 'sandwich1');
                 goldenItem.itemType = 'unifiedGolden';
                 goldenItem.isUnifiedGoldenSandwich = true;
                 goldenItem.prizeType = prizeType;
@@ -2711,13 +2767,40 @@ class GameScene extends Phaser.Scene {
                 goldenItem.setScale(0.35); // حجم أكبر بوضوح! ⭐
                 goldenItem.setDepth(100); // فوق كل شيء
                 
-                // لون ذهبي موحد لجميع الساندوتشات الذهبية
-                goldenItem.setTint(0xFFD700); // ذهبي دايماً
+                // 🌟 التأثيرات الذهبية الرائعة على الساندوتش العادي
+                goldenItem.setTint(0xFFD700); // لون ذهبي لامع
+                
+                // ⭐ إضافة هالة ذهبية متوهجة
+                const goldenGlow = this.add.graphics();
+                goldenGlow.fillStyle(0xFFD700, 0.3);
+                goldenGlow.fillCircle(0, 0, 60);
+                goldenGlow.setDepth(99); // تحت الساندوتش مباشرة
+                goldenItem.goldenGlow = goldenGlow;
+                
+                // ربط الهالة بالساندوتش
+                goldenItem.on('destroy', () => {
+                    if (goldenGlow) goldenGlow.destroy();
+                });
+                
+                // تأثير نبض للهالة الذهبية
+                this.tweens.add({
+                    targets: goldenGlow,
+                    scaleX: 1.3,
+                    scaleY: 1.3,
+                    alpha: 0.1,
+                    duration: 800,
+                    yoyo: true,
+                    repeat: -1,
+                    ease: 'Sine.easeInOut'
+                });
                 
                 // تأثيرات خاصة للوجبة المجانية فقط
                 if (prizeType === 'freeMeal') {
                     this.addDiamondEffects(goldenItem);
                 }
+                
+                // ✨ إضافة جزيئات ذهبية متطايرة حول الساندوتش
+                this.addGoldenParticles(goldenItem);
                 
                 // رسالة توضح الجائزة بدون أسرار
                 this.showMessage(`ساندوتش ذهبي! ${prizeMessage}`, 3000, prizeColor);
@@ -2754,6 +2837,28 @@ class GameScene extends Phaser.Scene {
                 // إضافة للمجموعة
                 this.fallingItems.add(goldenItem);
                 goldenItem.hasDropped = false;
+                
+                // تحديث موقع الهالة الذهبية مع حركة الساندوتش
+                const updateGlowPosition = () => {
+                    if (goldenItem && goldenItem.goldenGlow && goldenItem.active) {
+                        goldenItem.goldenGlow.x = goldenItem.x;
+                        goldenItem.goldenGlow.y = goldenItem.y;
+                    }
+                };
+                
+                // إضافة مؤقت لتحديث الهالة
+                goldenItem.glowUpdater = this.time.addEvent({
+                    delay: 16, // 60 FPS
+                    repeat: -1,
+                    callback: updateGlowPosition
+                });
+                
+                // تنظيف المؤقت عند تدمير الساندوتش
+                goldenItem.on('destroy', () => {
+                    if (goldenItem.glowUpdater) {
+                        goldenItem.glowUpdater.destroy();
+                    }
+                });
                 goldenItem.isCollected = false;
                 
                 // إضافة مؤقت للاختفاء السريع
