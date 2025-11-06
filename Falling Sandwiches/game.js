@@ -1335,7 +1335,6 @@ class GameScene extends Phaser.Scene {
         if (prizeType === 'freeMeal') {
             // 🎉 وجبة مجانية كاملة
             this.gameManager.incrementFreeSandwichCount();
-            this.showFloatingText('🎁 وجبة مجانية كاملة!', '#ffd700', 3);
             
             // احتفال خاص للوجبة المجانية
             this.gameManager.discount = 100;
@@ -1364,9 +1363,8 @@ class GameScene extends Phaser.Scene {
             this.gameManager.addDiscount(3);
             this.gameManager.score += 100;
             
-            this.showFloatingText('+3% خصم ذهبي!', '#FFD700', 2);
             this.createSpecialEffect(this.player.x, this.player.y);
-            this.showMessage('🌟 خصم 3% ممتاز!', 2500, '#FFD700');
+            this.showMessage('🌟 خصم 3% ذهبي ممتاز!', 2500, '#FFD700');
             
         } else if (prizeType === 'discount1_5') {
             // خصم 1.5%
@@ -1374,9 +1372,8 @@ class GameScene extends Phaser.Scene {
             this.gameManager.addDiscount(1.5);
             this.gameManager.score += 50;
             
-            this.showFloatingText('+1.5% خصم ذهبي!', '#FFD700', 2);
             this.createSpecialEffect(this.player.x, this.player.y);
-            this.showMessage('⭐ خصم 1.5% رائع!', 2500, '#FFD700');
+            this.showMessage('⭐ خصم 1.5% ذهبي رائع!', 2500, '#FFD700');
         } else {
             console.error('❌ Unknown prize type:', prizeType);
         }
@@ -1636,18 +1633,23 @@ class GameScene extends Phaser.Scene {
     }
     
     showFloatingText(text, color, scale = 1) {
-        const floatingText = this.add.text(this.player.x, this.player.y - 30, text, {
+        const floatingText = this.add.text(this.player.x, this.player.y - 40, text, {
             fontFamily: 'Cairo, Arial',
-            fontSize: `${24 * scale}px`,
+            fontSize: `${22 * scale}px`,
             fontWeight: 'bold',
-            color: color
+            color: color,
+            stroke: '#000000',
+            strokeThickness: 1
         }).setOrigin(0.5);
+        
+        floatingText.setDepth(998); // فوق اللعبة تحت الرسائل
         
         this.tweens.add({
             targets: floatingText,
-            y: floatingText.y - 80,
+            y: floatingText.y - 100,
             alpha: 0,
-            duration: 1000,
+            scale: scale * 1.2,
+            duration: 1200,
             ease: 'Power2.easeOut',
             onComplete: () => floatingText.destroy()
         });
@@ -1929,24 +1931,35 @@ class GameScene extends Phaser.Scene {
     }
     
     showMessage(message, duration = 2000, color = '#ffffff') {
+        // إزالة الرسائل القديمة إن وجدت
+        if (this.currentMessage) {
+            this.currentMessage.messageBg.destroy();
+            this.currentMessage.messageText.destroy();
+        }
+        
         // إنشاء خلفية للرسالة
         const messageBg = this.add.graphics();
-        messageBg.fillStyle(0x000000, 0.8);
+        messageBg.fillStyle(0x000000, 0.85);
         messageBg.fillRoundedRect(GAME_CONFIG.width / 2 - 200, 100, 400, 80, 20);
         
         // إطار ملون حسب نوع الرسالة
-        messageBg.lineStyle(4, Phaser.Display.Color.HexStringToColor(color).color, 1);
+        messageBg.lineStyle(3, Phaser.Display.Color.HexStringToColor(color).color, 1);
         messageBg.strokeRoundedRect(GAME_CONFIG.width / 2 - 200, 100, 400, 80, 20);
+        messageBg.setDepth(999); // فوق كل شيء
         
         // النص
         const messageText = this.add.text(GAME_CONFIG.width / 2, 140, message, {
-            fontFamily: 'Arial',
-            fontSize: '28px',
+            fontFamily: 'Cairo, Arial',
+            fontSize: '26px',
             fontWeight: 'bold',
             color: color,
             align: 'center',
             wordWrap: { width: 360 }
         }).setOrigin(0.5);
+        messageText.setDepth(1000); // فوق الخلفية
+        
+        // حفظ المرجع
+        this.currentMessage = { messageBg, messageText };
         
         // تأثير ظهور واختفاء
         messageBg.setAlpha(0);
@@ -1968,6 +1981,7 @@ class GameScene extends Phaser.Scene {
             onComplete: () => {
                 messageBg.destroy();
                 messageText.destroy();
+                this.currentMessage = null;
             }
         });
     }
@@ -2068,10 +2082,10 @@ class GameScene extends Phaser.Scene {
         winBg.fillRect(0, 0, GAME_CONFIG.width, GAME_CONFIG.height);
         winBg.setDepth(10);
         
-        // صندوق الرسالة مع خلفية
+        // صندوق الرسالة مع خلفية ذهبية فاخرة
         const messageBox = this.add.graphics();
-        messageBox.fillStyle(0xffffff, 0.95);
-        messageBox.lineStyle(2, 0xc49b41, 1);
+        messageBox.fillStyle(0x1a1a1a, 0.95); // خلفية رمادية داكنة بدلاً من البيضاء
+        messageBox.lineStyle(3, 0xFFD700, 1); // إطار ذهبي أوضح
         messageBox.fillRoundedRect(-150, -80, 300, 160, 15);
         messageBox.strokeRoundedRect(-150, -80, 300, 160, 15);
         
@@ -2080,7 +2094,7 @@ class GameScene extends Phaser.Scene {
             fontFamily: 'Arial Black',
             fontSize: '32px',
             fontWeight: 'bold',
-            color: '#c49b41',
+            color: '#FFD700', // ذهبي لامع
             stroke: '#000000',
             strokeThickness: 2,
             align: 'center'
@@ -2764,8 +2778,8 @@ class GameScene extends Phaser.Scene {
                 const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
                 const x = Math.random() * (gameAreaWidth - 50) + 25; // مكان عشوائي
                 
-                // إنشاء الساندوتش الذهبي مع نوع الجائزة المحدد والمفحوص
-                const goldenItem = this.physics.add.sprite(x, -30, 'sandwich1');
+                // إنشاء الساندوتش الذهبي مع الشكل المخصوص
+                const goldenItem = this.physics.add.sprite(x, -30, 'goldenSandwich');
                 goldenItem.itemType = 'unifiedGolden';
                 goldenItem.isUnifiedGoldenSandwich = true;
                 goldenItem.prizeType = prizeType;
@@ -2862,8 +2876,7 @@ class GameScene extends Phaser.Scene {
                 
                 this.fallingItems.add(goldenItem);
                 
-                // رسالة مثيرة
-                this.showFloatingText(`💫 ساندوتش ذهبي!`, '#ffd700', 2);
+                // الإشعار سيظهر فقط عند الالتقاط - لا نظهر شيء هنا
             }
         });
     }
