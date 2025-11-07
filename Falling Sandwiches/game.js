@@ -2707,8 +2707,8 @@ class GameScene extends Phaser.Scene {
                 goldenItem.prizeMessage = prizeMessage;
                 goldenItem.prizeColor = prizeColor;
                 
-                // سرعة عالية جداً لتحدي أكبر!
-                goldenItem.setVelocityY(3000); // سرعة ثابتة عالية
+                // سرعة مجنونة للمحترفين فقط! 🔥⚡
+                goldenItem.setVelocityY(5000); // سرعة البرق - تحدي المحترفين!
                 
                 // بدون حركة جانبية - مسار مستقيم ثابت
                 goldenItem.setVelocityX(0);
@@ -2728,9 +2728,9 @@ class GameScene extends Phaser.Scene {
                 goldenItem.hasDropped = false;
                 goldenItem.isCollected = false;
                 
-                // إضافة مؤقت للاختفاء السريع
+                // إضافة مؤقت للاختفاء السريع جداً - تحدي المحترفين! ⚡
                 this.time.addEvent({
-                    delay: canGetFreeMeal ? 4000 : 2500, // وقت أطول للوجبة المجانية، أقل للخصمات
+                    delay: canGetFreeMeal ? 2000 : 1200, // وقت قصير جداً - للمحترفين فقط!
                     callback: () => {
                         if (goldenItem && goldenItem.active) {
                             // إضافة تأثير اختفاء
