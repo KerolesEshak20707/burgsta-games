@@ -2543,25 +2543,9 @@ class GameScene extends Phaser.Scene {
             }
         });
         
-        // دوران سحري
-        this.tweens.add({
-            targets: goldenItem,
-            rotation: Math.PI * 4,
-            duration: 2500,
-            repeat: -1,
-            ease: 'Linear'
-        });
+        // تم إزالة الدوران - الساندوتش ينزل طبيعياً
         
-        // نبضة متألقة
-        this.tweens.add({
-            targets: goldenItem,
-            scaleX: 1.3,
-            scaleY: 1.3,
-            duration: 800,
-            yoyo: true,
-            repeat: -1,
-            ease: 'Sine.easeInOut'
-        });
+        // تم إزالة النبضة - حجم ثابت
         
         // وميض الماس
         this.tweens.add({
