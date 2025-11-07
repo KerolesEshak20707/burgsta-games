@@ -342,49 +342,15 @@ class GameScene extends Phaser.Scene {
         // تحميل صور الساندوتشات الحقيقية
         this.load.image('goodSandwich', 'images/اورجينال.png');
         this.load.image('badItem', 'images/boom.png');
+        this.load.image('goldenSandwich', 'images/Gold.png'); // الساندوتش الذهبي المخصوص
         
         // إنشاء باقي الأشكال (الساندوتش الذهبي فقط)
         this.createGameAssets();
     }
     
     createGameAssets() {
-        // إنشاء الساندوتش الذهبي فقط (باقي الساندوتشات تستخدم صور حقيقية)
-        // ملاحظة: اللاعب والساندوتشات الجيدة/السيئة تستخدم صور png
-        
-        // سندوتش ذهبي (برجر فاخر) - حجم كبير للشاشة 4K
-        const goldenSandwichGraphics = this.add.graphics();
-        // إشعاع ذهبي في الخلفية - أكبر
-        goldenSandwichGraphics.fillStyle(0xffd700, 0.3);
-        goldenSandwichGraphics.fillCircle(66, 51, 75);
-        // الخبز العلوي (ذهبي لامع) - مكبر 3 مرات
-        goldenSandwichGraphics.fillStyle(0xffd700);
-        goldenSandwichGraphics.fillRoundedRect(15, 6, 105, 36, 18);
-        // تأثير لمعان - أكبر
-        goldenSandwichGraphics.fillStyle(0xffffe0);
-        goldenSandwichGraphics.fillRoundedRect(21, 12, 45, 12, 6);
-        // بذور ذهبية - أكبر وأكثر وضوحاً
-        goldenSandwichGraphics.fillStyle(0xffa500);
-        goldenSandwichGraphics.fillCircle(36, 24, 3);
-        goldenSandwichGraphics.fillCircle(60, 18, 3);
-        goldenSandwichGraphics.fillCircle(84, 21, 3);
-        // الخس الذهبي - أكبر
-        goldenSandwichGraphics.fillStyle(0x32cd32);
-        goldenSandwichGraphics.fillRect(18, 42, 99, 9);
-        // اللحم المميز - أكبر
-        goldenSandwichGraphics.fillStyle(0xa0522d);
-        goldenSandwichGraphics.fillRect(21, 51, 93, 15);
-        // الجبن الذهبي - أكبر
-        goldenSandwichGraphics.fillStyle(0xffd700);
-        goldenSandwichGraphics.fillRect(18, 66, 99, 9);
-        // الخبز السفلي - أكبر
-        goldenSandwichGraphics.fillStyle(0xdaa520);
-        goldenSandwichGraphics.fillRoundedRect(12, 75, 111, 30, 15);
-        // حدود ذهبية - أثخن
-        goldenSandwichGraphics.lineStyle(6, 0xffd700);
-        goldenSandwichGraphics.strokeRoundedRect(9, 3, 117, 102, 24);
-        goldenSandwichGraphics.generateTexture('goldenSandwich', 135, 105); // حجم كبير 3x
-        goldenSandwichGraphics.destroy();
-
+        // الآن نستخدم صورة Gold.png المخصوصة - لا حاجة لرسم الساندوتش الذهبي
+        // جميع الساندوتشات تستخدم صور حقيقية من مجلد images
     }
     
     create() {
@@ -2749,8 +2715,8 @@ class GameScene extends Phaser.Scene {
                 const gameAreaWidth = GAME_CONFIG.width - 180; // حتى الخط الذهبي
                 const x = Math.random() * (gameAreaWidth - 50) + 25; // مكان عشوائي
                 
-                // إنشاء الساندوتش الذهبي باستخدام صورة اورجينال + تأثيرات ذهبية
-                const goldenItem = this.physics.add.sprite(x, -30, 'goodSandwich');
+                // إنشاء الساندوتش الذهبي باستخدام صورة Gold.png المخصوصة + تأثيرات ذهبية
+                const goldenItem = this.physics.add.sprite(x, -30, 'goldenSandwich');
                 goldenItem.itemType = 'unifiedGolden';
                 goldenItem.isUnifiedGoldenSandwich = true;
                 goldenItem.prizeType = prizeType;
@@ -2767,8 +2733,8 @@ class GameScene extends Phaser.Scene {
                 goldenItem.setScale(0.35); // حجم أكبر بوضوح! ⭐
                 goldenItem.setDepth(100); // فوق كل شيء
                 
-                // 🌟 بدون تغيير لون الصورة - نعتمد على الهالة الذهبية للتأثير
-                // goldenItem.setTint(0xFFD700); // تم إزالة التلوين لإظهار الصورة الأصلية
+                // 🌟 تحسين ذهبي خفيف لصورة الذهب المخصوصة
+                goldenItem.setTint(0xFFFFAA); // تلوين ذهبي خفيف يحافظ على وضوح الصورة
                 
                 // ⭐ إضافة هالة ذهبية متوهجة
                 const goldenGlow = this.add.graphics();
