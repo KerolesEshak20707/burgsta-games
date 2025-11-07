@@ -2733,97 +2733,15 @@ class GameScene extends Phaser.Scene {
                 goldenItem.setScale(0.35); // حجم أكبر بوضوح! ⭐
                 goldenItem.setDepth(100); // فوق كل شيء
                 
-                // 🌟 تحسين ذهبي خفيف لصورة الذهب المخصوصة
-                goldenItem.setTint(0xFFFFAA); // تلوين ذهبي خفيف يحافظ على وضوح الصورة
+                // صورة Gold.png الأصلية بدون أي تأثيرات أو تلوين
                 
-                // ⭐ إضافة هالة ذهبية متوهجة
-                const goldenGlow = this.add.graphics();
-                goldenGlow.fillStyle(0xFFD700, 0.3);
-                goldenGlow.fillCircle(0, 0, 60);
-                goldenGlow.setDepth(99); // تحت الساندوتش مباشرة
-                goldenItem.goldenGlow = goldenGlow;
+                // ساندوتش ذهبي بسيط - صورة Gold.png فقط بدون مؤثرات
                 
-                // ربط الهالة بالساندوتش
-                goldenItem.on('destroy', () => {
-                    if (goldenGlow) goldenGlow.destroy();
-                });
-                
-                // تأثير نبض للهالة الذهبية
-                this.tweens.add({
-                    targets: goldenGlow,
-                    scaleX: 1.3,
-                    scaleY: 1.3,
-                    alpha: 0.1,
-                    duration: 800,
-                    yoyo: true,
-                    repeat: -1,
-                    ease: 'Sine.easeInOut'
-                });
-                
-                // تأثيرات خاصة للوجبة المجانية فقط
-                if (prizeType === 'freeMeal') {
-                    this.addDiamondEffects(goldenItem);
-                }
-                
-                // ✨ إضافة جزيئات ذهبية متطايرة حول الساندوتش
-                this.addGoldenParticles(goldenItem);
-                
-                // الإشعار سيظهر فقط عند الالتقاط - ليس عند الظهور
-                
-                // تأثير وميض سريع يدل على الصعوبة
-                this.tweens.add({
-                    targets: goldenItem,
-                    alpha: 0.2,
-                    duration: canGetFreeMeal ? 150 : 80, // وميض سريع جداً للوجبة المجانية، أسرع للخصمات
-                    yoyo: true,
-                    repeat: -1,
-                    ease: 'Power2'
-                });
-                
-                // تأثير دوران سريع مجنون
-                this.tweens.add({
-                    targets: goldenItem,
-                    rotation: Math.PI * 4, // دوران مضاعف
-                    duration: canGetFreeMeal ? 400 : 200, // دوران أبطأ للوجبة المجانية، أسرع للخصمات
-                    repeat: -1,
-                    ease: 'Linear'
-                });
-                
-                // تأثير اهتزاز للإشارة للصعوبة
-                this.tweens.add({
-                    targets: goldenItem,
-                    x: goldenItem.x + 10,
-                    duration: 100,
-                    yoyo: true,
-                    repeat: -1,
-                    ease: 'Power1'
-                });
+                // ساندوتش ذهبي بسيط بدون مؤثرات معقدة
                 
                 // إضافة للمجموعة
                 this.fallingItems.add(goldenItem);
                 goldenItem.hasDropped = false;
-                
-                // تحديث موقع الهالة الذهبية مع حركة الساندوتش
-                const updateGlowPosition = () => {
-                    if (goldenItem && goldenItem.goldenGlow && goldenItem.active) {
-                        goldenItem.goldenGlow.x = goldenItem.x;
-                        goldenItem.goldenGlow.y = goldenItem.y;
-                    }
-                };
-                
-                // إضافة مؤقت لتحديث الهالة
-                goldenItem.glowUpdater = this.time.addEvent({
-                    delay: 16, // 60 FPS
-                    repeat: -1,
-                    callback: updateGlowPosition
-                });
-                
-                // تنظيف المؤقت عند تدمير الساندوتش
-                goldenItem.on('destroy', () => {
-                    if (goldenItem.glowUpdater) {
-                        goldenItem.glowUpdater.destroy();
-                    }
-                });
                 goldenItem.isCollected = false;
                 
                 // إضافة مؤقت للاختفاء السريع
