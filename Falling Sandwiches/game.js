@@ -2713,8 +2713,8 @@ class GameScene extends Phaser.Scene {
                 // بدون حركة جانبية - مسار مستقيم ثابت
                 goldenItem.setVelocityX(0);
                 
-                // حجم أكبر ليكون واضح جداً
-                goldenItem.setScale(0.35); // حجم أكبر بوضوح! ⭐
+                // نفس حجم الساندوتش العادي
+                goldenItem.setScale(0.15); // نفس حجم الساندوتش العادي
                 goldenItem.setDepth(100); // فوق كل شيء
                 
                 // صورة Gold.png الأصلية بدون أي تأثيرات أو تلوين
