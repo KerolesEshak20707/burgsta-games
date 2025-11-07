@@ -1413,7 +1413,8 @@ class GameScene extends Phaser.Scene {
         
         // عند النقر على زر "العب تاني"
         playAgainButton.on('pointerdown', () => {
-            // إعادة تشغيل اللعبة
+            // تنظيف كامل قبل إعادة التشغيل
+            this.resetGameCompletely();
             this.scene.restart();
         });
 
@@ -1524,6 +1525,8 @@ class GameScene extends Phaser.Scene {
         
         // عند النقر على زر "العب تاني"
         playAgainButton2.on('pointerdown', () => {
+            // تنظيف كامل قبل إعادة التشغيل
+            this.resetGameCompletely();
             this.scene.restart();
         });
 
